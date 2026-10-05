@@ -49,3 +49,11 @@ No accepted architecture or support-policy change. C02 remains unaccepted. These
 ## Exact next step
 
 Execute and inspect the complete mandatory C02 matrix on this candidate, correct failures within C02, then publish exact-HEAD evidence and open an unmerged review PR only after every mandatory criterion is met. Do not start C03 or Gate 3.
+
+## First execution and corrections
+
+Initial candidate `8d775c2e926990e431e5e29d5a36dd8e0a487615`, tree `62e839c6035ac14efd110bd6ddbc4f91b5b0ac21`, push workflow `37338739582`: FAILURE. All nine job logs inspected. Unit suites pass 7 tests/80 assertions and lint/negative package probes pass on PHP 8.3/8.4/8.5. PHP 8.4 quality stops on two PHPStan findings (future class-string reflection and an unguarded WordPress constant); WPCS/audits not reached. All six WordPress suites pass 3/142 and original HTTP/TLS suites pass 3/10. All six C02 suites reach the active-plugin scenario and fail identically at the HEAD transport probe: curl custom method lacked NOBODY and waited for a body that HEAD correctly omits. Each reports 6 tests/403 assertions/one failure, not a pass for later scenarios.
+
+All six preflights verified zero credentials and no target invocation, then issued disposable service/human Application Passwords. Evidence scanning failed because the mode-0600 file created by container root was unreadable to the host runner. This also interrupted the original exit trap before explicit revocation/Compose teardown. No cleanup success is claimed for that run; those credentials remained confined to the discarded GitHub-hosted job environments. No secret artifact uploaded from the six failed jobs because disclosure checks failed. Correct the fixture ownership while retaining mode 0600, and make cleanup collect errors while always attempting revocation and environment destruction. Do not suppress scan failures or loosen secret permissions.
+
+Corrections also add final callback fencing after permission callbacks, pre-validation fixed-handler identity checks, complete core-stack cleanup on exceptions, and denial of credential-bearing non-REST requests before public callbacks. No accepted pin, test assertion, matrix lane or C03 boundary is relaxed. Subsequent exact-candidate execution remains required.

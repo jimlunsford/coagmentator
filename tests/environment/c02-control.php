@@ -36,6 +36,7 @@ if ( 'setup' === $mode ) {
 	file_put_contents( $reg, json_encode( array( 'version' => 1, 'protected_user_ids' => array( $service ), 'credential_uuids' => array() ) ) );
 	file_put_contents( $path, json_encode( $data ) );
 	chmod( $path, 0600 );
+	chown( $path, fileowner( $root ) );
 	echo "Disposable identities created with no Application Passwords; ordinary service password discarded.\n";
 } elseif ( 'preflight' === $mode ) {
 	$data = json_decode( file_get_contents( $path ), true, 512, JSON_THROW_ON_ERROR );

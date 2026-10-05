@@ -23,7 +23,21 @@ if [[ ${C01_MODE:-} == unit ]]; then
   exit 0
 fi
 compose=(docker compose --project-name "c01-${C01_PHP}-${C01_DATABASE}" --env-file .runtime/compose.env -f tests/environment/compose.yml)
-trap 'python3 tests/environment/check-evidence.py; "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup; "${compose[@]}" down --volumes --remove-orphans' EXIT
+cleanup() {
+  original_status=$?
+  trap - EXIT
+  set +e
+  python3 tests/environment/check-evidence.py
+  scan_status=$?
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup
+  revoke_status=$?
+  "${compose[@]}" down --volumes --remove-orphans
+  destroy_status=$?
+  if (( original_status || scan_status || revoke_status || destroy_status )); then
+    exit 1
+  fi
+}
+trap cleanup EXIT
 "${compose[@]}" up -d database php edge
 "${compose[@]}" exec -T edge nginx -v
 # Bounded readiness probe, without printing connection errors or passwords.

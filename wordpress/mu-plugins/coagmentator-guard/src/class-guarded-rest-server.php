@@ -112,6 +112,13 @@ final class Guarded_REST_Server extends \WP_REST_Server {
 		if ( $restricted && ( ! $guard->admits( $request->get_route() ) || ! Route_Boundary::canonical( $request->get_route(), $request->get_method(), $_SERVER, $guard->prefix() ) || ! $this->scope->enter( $request ) ) ) {
 			return self::denial();
 		}
+		if ( $restricted ) {
+			$matched = $this->match_request_to_handler( $request );
+			if ( is_wp_error( $matched ) || $matched[0] !== $request->get_route() || $request->has_param( '_method' ) || is_wp_error( $guard->before_callbacks( null, $matched[1], $request ) ) ) {
+				$this->scope->leave();
+				return self::denial();
+			}
+		}
 		$stack_depth = count( $this->dispatching_requests );
 		try {
 			return parent::dispatch( $request );

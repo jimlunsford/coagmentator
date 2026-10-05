@@ -97,11 +97,25 @@ final class Guard {
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Bounded, operator-owned readiness file, not C03's feature policy.
 		$policy = file_get_contents( COAGMENTATOR_GUARD_FEATURE_POLICY, false, null, 0, 129 );
-		if ( '{"version":1,"guard_api":1}' !== trim( false === $policy ? '' : $policy ) || ! class_exists( 'Coagmentator\\Rest\\ReadController', false ) ) {
+		$handler_class = 'Coagmentator\\Rest\\ReadController';
+		if ( '{"version":1,"guard_api":1}' !== trim( false === $policy ? '' : $policy ) || ! class_exists( $handler_class, false ) || ! defined( 'WP_PLUGIN_DIR' ) || ! is_string( WP_PLUGIN_DIR ) ) {
 			return false;
 		}
-		$class = new \ReflectionClass( 'Coagmentator\\Rest\\ReadController' );
-		return $class->isFinal() && $class->getFileName() === realpath( WP_PLUGIN_DIR . '/coagmentator/src/Rest/ReadController.php' );
+		$class = new \ReflectionClass( $handler_class );
+		$operation = substr( $route, strlen( '/coagmentator/v1/' ) );
+		if ( ! $class->isFinal() || $class->getFileName() !== realpath( WP_PLUGIN_DIR . '/coagmentator/src/Rest/ReadController.php' ) || ! $class->hasMethod( $operation ) || ! $class->hasMethod( 'authorize_guard_request' ) ) {
+			return false;
+		}
+		$server = $GLOBALS['wp_rest_server'] ?? null;
+		if ( ! $server instanceof Guarded_REST_Server ) {
+			return false;
+		}
+		foreach ( $server->get_routes()[ $route ] ?? array() as $handler ) {
+			if ( is_array( $handler ) && isset( $handler['methods']['POST'] ) && ( $handler['callback'] ?? null ) === array( 'Coagmentator\\Rest\\ReadController', $operation ) && ( $handler['permission_callback'] ?? null ) === array( 'Coagmentator\\Rest\\ReadController', 'authorize_guard_request' ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -281,6 +295,12 @@ final class Guard {
 
 	/** Deny non-REST service use before target callbacks. */
 	public function non_rest(): void {
+		$uri = $_SERVER['REQUEST_URI'] ?? '';
+		$potential_rest = is_string( $uri ) && ( str_starts_with( $uri, $this->prefix() . '/' ) || isset( $_GET['rest_route'] ) );
+		$xmlrpc = defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
+		if ( \Coagmentator_Guard_Loader::remote() && ! $potential_rest && ! $xmlrpc ) {
+			$this->failed = true;
+		}
 		if ( $this->restricted() && ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) ) {
 			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
 		}

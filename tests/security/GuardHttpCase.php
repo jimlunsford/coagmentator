@@ -30,6 +30,9 @@ abstract class GuardHttpCase extends TestCase {
 	protected function request( string $path, string $method = 'GET', string $auth = '', string $body = '', array $headers = array() ): array {
 		$client  = curl_init( 'https://wordpress.test' . $path );
 		$options = array( CURLOPT_RETURNTRANSFER => true, CURLOPT_CAINFO => C01_CA, CURLOPT_TIMEOUT => 10, CURLOPT_FOLLOWLOCATION => false, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_PATH_AS_IS => true );
+		if ( 'HEAD' === $method ) {
+			$options[ CURLOPT_NOBODY ] = true;
+		}
 		if ( str_ends_with( $auth, '-basic' ) ) {
 			$kind                        = substr( $auth, 0, -6 );
 			$options[ CURLOPT_USERPWD ]  = 'c02_' . $kind . ':' . $this->fixture[ $kind . '_secret' ];
