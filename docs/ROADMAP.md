@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. Gate 2 implementation is partial at C01 and is not accepted. Gate 2 remains `IN PROGRESS`, not `ACCEPTED`; C01 continuation is recorded below; C02 has not begun.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 is accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C02: Independent MU Guard is `NOT STARTED`.
 
 Preparation acceptance evidence:
 
@@ -92,11 +92,21 @@ Preparation acceptance evidence:
 - Pre-merge `main`: `31b9e9f0745ae48a3b61c060fbeb388431d837cd`, tree `873489e5343f610e14f775775147911a1a77817e`.
 - Merge commit and immediate resulting `main` checkpoint: `71d98d9366390c0a9d2c3acf78d7db95cf9aed66`, tree `01fa36b34c79b440462470c39e107f537d7c2560`, identical to the accepted preparation tree.
 - [Preparation closeout](work-notes/2026-10-05-gate-2-preparation-closeout.md) records verification and the final closeout checkpoint. The earlier [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) is historical evidence.
-- Next: **Begin Gate 2 implementation at C01: Package and Test Skeleton.** Then **C02: Independent MU Guard must be established and verified before any service Application Password is issued.** Neither checkpoint began during closeout.
+- At preparation closeout, the next checkpoint was C01. Its acceptance is recorded below. **C02: Independent MU Guard must be established and verified before any service Application Password is issued.**
 
-### C01 implementation checkpoint (internally verified, not accepted)
+### C01: Package and Test Skeleton, ACCEPTED
 
-The appended recovery section in the [Actions continuation handoff](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) records restored observable push execution and independent PR opened/synchronize execution. [PR #3](https://github.com/jimlunsford/coagmentator/pull/3) was opened as an explicitly authorized draft CI mechanism. Corrected HEAD `4cac2d6689a973d6c96596f2d31c981bb272df69`, tree `3ae31f56608b4e16d0e86c870f55cf4dd7bf690b`, passed all nine jobs in PR run `37332251616`: three unit/lint/unsupported-environment lanes, PHPStan, WPCS, both clean Composer audits, and six real WordPress integration plus HTTP/TLS lanes. [Recorded evidence](work-notes/2026-10-05-gate-2-c01-ci-recovery-evidence.json) includes verified artifact digests, exact identities, JUnit results and audit data. The final documentation checkpoint must also pass exact-HEAD CI before the PR is made ready; its identity and run are recorded in the PR. C01 awaits human acceptance and must not be merged without authorization. Main remains the accepted preparation checkpoint. Gate 2 remains IN PROGRESS; C02 has not begun and no production work is authorized by this status entry.
+Human-reviewed and accepted on 2026-10-05; merged unchanged using a merge commit.
+
+- Accepted PR: [#3](https://github.com/jimlunsford/coagmentator/pull/3), merged.
+- Accepted HEAD: `3995b88902a6fa6b26bd2ab777d05c6a403118d8`.
+- Accepted complete tree: `2e04fe9a9a03b7f2c61ceb2ff0f73e9721d4adad`.
+- Pre-merge main: `ab4ccb3362ca13b006ff3f2887d4743af06ba035`, tree `9e83480e09bf6f81882b897827866a46e256d2a1`.
+- Final workflow [37333044824](https://github.com/jimlunsford/coagmentator/actions/runs/37333044824): pull_request/synchronize, attempt 1, SUCCESS; all nine exact-candidate jobs SUCCESS. No rerun or workflow approval required.
+- Merge commit and immediate post-merge main: `5941f9e62865c160b33b40d0dfee02131a8f9265`, tree `2e04fe9a9a03b7f2c61ceb2ff0f73e9721d4adad`, identical to the accepted tree.
+- [C01 closeout](work-notes/2026-10-05-gate-2-c01-closeout.md) records jobs, pins, checks and the deterministic final documentation checkpoint.
+- Both [environment blocker](work-notes/2026-10-05-gate-2-c01-environment-blocker.md) and [Actions continuation](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) histories and the [CI recovery evidence JSON](work-notes/2026-10-05-gate-2-c01-ci-recovery-evidence.json) are preserved unchanged.
+- **C02: Independent MU Guard, NOT STARTED.** Exact next checkpoint, in a separately authorized execution. No guard, bridge REST route, service user or Application Password exists in the C01 package/test environment. No production access or deployment occurred.
 
 Goals:
 

@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is implemented and verified across the required matrix on its implementation branch, pending human acceptance. No guard, authentication, bridge handler or MCP implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is NOT STARTED. No guard, authentication, bridge handler or MCP implementation exists.
 
 ## Components and authority
 
