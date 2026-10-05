@@ -84,3 +84,29 @@ Human-review the exact preparation PR HEAD/tree. Accept the plan or request corr
 - Remote main was freshly reverified at its unchanged accepted SHA before publication. Final verification must recheck it and the final PR tip after this note-only follow-up.
 - This handoff-only follow-up changes no preparation design. The final PR description and session report pin its final HEAD/tree; retrieve the exact reviewed checkpoint there to avoid a self-referential hash in this note.
 - Final state remains Gate 2 IN PROGRESS, preparation ready for human review. No merge or implementation authorized by this publication.
+
+## Human-review correction: registry emergency recovery
+
+### Goal and starting state
+
+Bound the registry emergency design without merging PR #2 or starting implementation. Reviewed branch: `feature/gate-2-wordpress-read-foundation`; reviewed HEAD: `b85397da98ac617deb88814cac93cef271ad8599`; complete tree: `f777dc60d6aa156ab2b4a8d666b2dddb9107490f`. Fresh PR inspection matched these pins: open, ready, mergeable, unmerged, base `main` at `31b9e9f0745ae48a3b61c060fbeb388431d837cd`. GitHub file retrieval reconstructed the complete reviewed tree locally with the exact same Git tree hash.
+
+### Work completed and files changed
+
+- `docs/GATE-2-IMPLEMENTATION-PLAN.md`: replaced broad interactive lockout with unconditional bridge denial, all-user Application Password denial and necessary XML-RPC/alternate remote-auth denial. Normal human password/cookie wp-login/wp-admin recovery and ordinary public anonymous traffic remain available under normal WordPress authorization. A rejected credential cannot fall through as anonymous.
+- Planned a generated-and-discarded high-entropy ordinary service password and persistent non-authorizing user-level marker for denial-only recognition. Healthy configured protected IDs remain authoritative. Deliberate registry-plus-marker tampering remains WordPress compromise/operator tampering.
+- `docs/TEST-MATRIX.md`: eleven explicit emergency cases, separately covering missing/malformed registries across six lanes, assigned within the existing 26 families; provisioning/marker authority checks and restoration included.
+- `docs/GATE-2-READ-ROUTES.md`: clarified shared failure/recovery language only; all nine route rows, capability rules, projections and normalized error shapes unchanged.
+- This work note: correction scope, review evidence and publication checkpoint. README and ROADMAP already state preparation-only IN PROGRESS and require no change.
+
+### Consistency verification
+
+Complete preparation consistency review covers the plan, routes, test matrix, roadmap, accepted security/authentication/capability/contracts and threat ownership. The correction preserves Gate 1 service-only bridge admission, native/custom capability checks, UUID evidence, independent MU enforcement and no cookie/nonce bridge access. Emergency denial does not grant anonymous administration or introduce a repair endpoint.
+
+The nine route/capability rows and error table are unchanged. WordPress 7.1.2, PHP 8.3/8.4/8.5, MariaDB 10.11/MySQL 8.4 LTS, six mandatory lanes, split PHPUnit 12/9.6 runners, Compose, guarded REST lifecycle, raw source/privacy/cursors, 13 checkpoints, 26 test families and T01-T30 ownership remain intact. No write or get_mutation implementation, code, dependency, workflow, user, credential or deployment is introduced. Structural checks passed, including 14 local links and 12 consistently shaped tables across the four correction files; whitespace and added-content secret/private-reference scans passed; runtime tests remain unrun because this is documentation only.
+
+### Decisions, limits and next step
+
+This implements the owner's bounded preparation correction; it changes no accepted Gate 1 decision. Runtime enforcement remains unproved until authorized implementation. Host-managed registry repair still needs the existing trusted operator path; preserving wp-admin does not grant filesystem authority or promise a new repair UI. Gate 2 stays IN PROGRESS.
+
+Next: human-review the corrected exact PR candidate. Do not merge PR #2 or begin implementation in this execution. The correction commit/tree will be recorded in a note-only publication follow-up; the final PR description records the complete resulting HEAD/tree, since a Git note cannot embed its own resulting hash.
