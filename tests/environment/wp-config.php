@@ -5,6 +5,8 @@
  * @package Coagmentator
  */
 
+define( 'COAGMENTATOR_GUARD_REGISTRY', '/run/coagmentator/registry.json' );
+define( 'COAGMENTATOR_GUARD_FEATURE_POLICY', '/run/coagmentator/policy.json' );
 define( 'DB_NAME', 'wordpress' );
 define( 'DB_USER', 'c01' );
 define( 'DB_PASSWORD', trim( file_get_contents( '/run/secrets/database_password' ) ) );

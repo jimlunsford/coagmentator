@@ -11,6 +11,14 @@ for item in (root / 'evidence').glob('*'):
         secret = root / 'secrets' / name
         if secret.exists():
             assert secret.read_bytes() not in data, 'Disposable password in evidence'
+fixture = root / 'c02-fixtures.json'
+if fixture.exists():
+    values = json.loads(fixture.read_text())
+    for item in (root / 'evidence').glob('*'):
+        data = item.read_bytes()
+        for key, value in values.items():
+            if key.endswith(('_secret', '_password', '_cookie')) and isinstance(value, str):
+                assert value.encode() not in data, 'Disposable authentication material in evidence'
 manifest = json.loads(Path('tests/environment/manifest.json').read_text())
 manifest['candidate_sha'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
 manifest['candidate_tree'] = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip()

@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 is accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C02: Independent MU Guard is `NOT STARTED`.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 is accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C02: Independent MU Guard is `IN PROGRESS`, unaccepted.
 
 Preparation acceptance evidence:
 
@@ -107,6 +107,10 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a merge commit
 - [C01 closeout](work-notes/2026-10-05-gate-2-c01-closeout.md) records jobs, pins, checks and the deterministic final documentation checkpoint.
 - Both [environment blocker](work-notes/2026-10-05-gate-2-c01-environment-blocker.md) and [Actions continuation](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) histories and the [CI recovery evidence JSON](work-notes/2026-10-05-gate-2-c01-ci-recovery-evidence.json) are preserved unchanged.
 - **C02: Independent MU Guard, NOT STARTED.** Exact next checkpoint, in a separately authorized execution. No guard, bridge REST route, service user or Application Password exists in the C01 package/test environment. No production access or deployment occurred.
+
+### C02: Independent MU Guard, IN PROGRESS
+
+Implementation candidate and pending verification are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. C02 is not ready for acceptance until the complete exact-candidate matrix passes. C03 has not begun.
 
 Goals:
 

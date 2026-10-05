@@ -23,7 +23,7 @@ if [[ ${C01_MODE:-} == unit ]]; then
   exit 0
 fi
 compose=(docker compose --project-name "c01-${C01_PHP}-${C01_DATABASE}" --env-file .runtime/compose.env -f tests/environment/compose.yml)
-trap '"${compose[@]}" down --volumes --remove-orphans' EXIT
+trap 'python3 tests/environment/check-evidence.py; "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup; "${compose[@]}" down --volumes --remove-orphans' EXIT
 "${compose[@]}" up -d database php edge
 "${compose[@]}" exec -T edge nginx -v
 # Bounded readiness probe, without printing connection errors or passwords.
@@ -43,3 +43,35 @@ done
 network="c01-${C01_PHP}-${C01_DATABASE}_isolated"
 test "$(docker network inspect --format '{{.Internal}}' "$network")" = true
 printf 'Internal test network verified; no published host ports.\n'
+
+# C02 begins only after the original C01 smoke/control suite passes.
+cp tests/fixtures/c02-observe.php .runtime/wordpress/src/c02-observe.php
+cp tests/fixtures/c02-target.php .runtime/wordpress/src/c02-target.php
+cp tests/fixtures/c02-instrumentation.php .runtime/wordpress/src/wp-content/mu-plugins/zz-c02-fixture.php
+"${compose[@]}" exec -T php php tests/environment/c02-control.php setup
+"${compose[@]}" exec -T php php tests/environment/c02-control.php preflight
+for scenario in active deactivated absent deleted bad-policy missing-policy missing-registry malformed-registry promoted-unmarked missing-support restored; do
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"
+  if [[ $scenario == absent || $scenario == deleted ]]; then
+    mv .runtime/wordpress/src/wp-content/plugins/coagmentator .runtime/c02-plugin-held
+  fi
+  if [[ $scenario == missing-support ]]; then
+    mv .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard/src/class-guard.php .runtime/c02-guard-held.php
+  fi
+  "${compose[@]}" restart php
+  "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/phpunit.xml --log-junit ".runtime/evidence/c02-$scenario.xml"
+  if [[ -d .runtime/c02-plugin-held ]]; then
+    mv .runtime/c02-plugin-held .runtime/wordpress/src/wp-content/plugins/coagmentator
+  fi
+  if [[ -f .runtime/c02-guard-held.php ]]; then
+    mv .runtime/c02-guard-held.php .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard/src/class-guard.php
+  fi
+done
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario internal
+mkdir -p .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest
+cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-internal.xml
+python3 tests/environment/check-evidence.py
+"${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup

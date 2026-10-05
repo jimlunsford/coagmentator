@@ -14,6 +14,7 @@ services:
     image: coagmentator-c01-php
     volumes:
       - ../..:/workspace
+      - ../../.runtime/guard-config:/run/coagmentator:ro
     environment:
       C01_TEST_ENVIRONMENT: disposable
     secrets: [database_password]
@@ -33,6 +34,7 @@ services:
     command: ["true"]
     volumes:
       - ../..:/workspace
+      - ../../.runtime/guard-config:/run/coagmentator:ro
     environment:
       C01_TEST_ENVIRONMENT: disposable
     networks: [isolated]

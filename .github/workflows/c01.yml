@@ -1,7 +1,7 @@
-name: C01 package and test skeleton
+name: C02 independent MU guard
 on:
   push:
-    branches: [feature/gate-2-c01-package-test-skeleton]
+    branches: [feature/gate-2-c01-package-test-skeleton, feature/gate-2-c02-independent-mu-guard]
   pull_request:
     paths:
       - 'wordpress/**'
@@ -37,7 +37,10 @@ jobs:
           actual_sha=$(git rev-parse HEAD)
           printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
           test "$actual_sha" = "$EXPECTED_SHA"
-          git rev-parse 'HEAD^{tree}'
+          source_tree=$(git show -s --format=%T "$EXPECTED_SHA")
+          actual_tree=$(git rev-parse 'HEAD^{tree}')
+          test "$actual_tree" = "$source_tree"
+          printf 'Verified source tree: %s\n' "$actual_tree"
       - name: Unit, lint, negative load and quality
         env:
           C01_PHP: ${{ matrix.php }}
@@ -79,7 +82,10 @@ jobs:
           actual_sha=$(git rev-parse HEAD)
           printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
           test "$actual_sha" = "$EXPECTED_SHA"
-          git rev-parse 'HEAD^{tree}'
+          source_tree=$(git show -s --format=%T "$EXPECTED_SHA")
+          actual_tree=$(git rev-parse 'HEAD^{tree}')
+          test "$actual_tree" = "$source_tree"
+          printf 'Verified source tree: %s\n' "$actual_tree"
       - name: Real WordPress integration and verified TLS
         env:
           C01_PHP: ${{ matrix.php }}
