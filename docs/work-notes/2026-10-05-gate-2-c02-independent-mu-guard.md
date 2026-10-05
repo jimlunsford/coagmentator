@@ -2,7 +2,7 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 2, C02
-Status: IN PROGRESS, final candidate verification underway; not human-accepted
+Status: READY FOR HUMAN REVIEW, subject to final exact-head publication checks; not human-accepted
 
 ## Goal and starting state
 
@@ -48,7 +48,7 @@ No accepted architecture or support-policy change. C02 remains unaccepted. These
 
 ## Exact next step
 
-Execute and inspect the complete mandatory C02 matrix on this candidate, correct failures within C02, then publish exact-HEAD evidence and open an unmerged review PR only after every mandatory criterion is met. Do not start C03 or Gate 3.
+Human-review the exact tested head of the unmerged C02 PR. Decide C02 acceptance separately; do not merge without explicit authorization. Do not start C03 or Gate 3. The final documentation commit must itself obtain green exact-head CI before the PR is opened.
 
 ## First execution and corrections
 
@@ -73,3 +73,89 @@ Fifth candidate `cdea6c47d50267ef95cb6af75f72a3fdde16172d`, tree `19d5c3206282af
 Final hardening unifies early denial with the same loader-owned closed failure JSON, avoiding core's unavailable early XML-RPC encoder. Tests assert the canonical failure shape, add a valid batch payload, and deny marker-only cookies on non-REST targets. The complete matrix must rerun because these are source changes. Security test documentation now describes the actual C02 harness rather than the historical C01 boundary.
 
 Sixth candidate `34b72257f2fd99db623d0005c7ffc0c556bfe738`, tree `bcfd3f25c1e10f86f575fac2ba69164f5ad96650`, run `37342337818`: integration scenarios and closed-denial assertions pass; PHP 8.4 quality has one remaining WPCS blank-line formatting error in a test, corrected without changing behavior. PHPStan remains clean. Audit artifact `11359096906` was downloaded and verified against SHA-256 `9361c55818b84f54a1c8cb1286c40a0e0a18d5a80b123e45f4504b8af19c3e50`; its candidate SHA/tree match and both Composer audit payloads have empty advisories, abandoned and filter arrays. Final review also found the user digest omitted display-name/password fields; hash the full core user data object plus roles and credential UUID/hash tuples. No raw user data is returned or logged. This strengthens the required no-user-mutation assertion and requires the full matrix again.
+
+
+## Completed implementation evidence
+
+Runtime candidate HEAD `6f96ae2eeba65fa700deb5da0162006c39ef16ed`, tree `db26ebbcca3ba7e844a23782dccbffcf6f0c5504`. [Workflow run 37342913936](https://github.com/jimlunsford/coagmentator/actions/runs/37342913936) is SUCCESS. All nine job logs were inspected and each verifies that exact SHA/tree. No lane was substituted, skipped or waived.
+
+| Job | Job ID | Conclusion |
+| --- | --- | --- |
+| Unit and quality PHP 8.3 | 111874212192 | SUCCESS |
+| Unit and quality PHP 8.4 | 111874212727 | SUCCESS |
+| Unit and quality PHP 8.5 | 111874212609 | SUCCESS |
+| PHP 8.3 + MariaDB 10.11 | 111874212633 | SUCCESS |
+| PHP 8.3 + MySQL 8.4 | 111874212608 | SUCCESS |
+| PHP 8.4 + MariaDB 10.11 | 111874213086 | SUCCESS |
+| PHP 8.4 + MySQL 8.4 | 111874212793 | SUCCESS |
+| PHP 8.5 + MariaDB 10.11 | 111874212590 | SUCCESS |
+| PHP 8.5 + MySQL 8.4 | 111874212680 | SUCCESS |
+
+Each unit lane passes 7 tests/80 assertions, lints all 34 PHP files and passes the three C01 package-load controls. PHP 8.4 additionally passes PHPStan level 8, WPCS and both locked Composer audits. The MU filename exception is confined to one required filename and one naming-rule diagnostic; no code file or security sniff is excluded wholesale.
+
+Each integration lane passes these independently executed suites:
+
+| Phase | Tests | Assertions | Result |
+| --- | ---: | ---: | --- |
+| Preserved WordPress integration | 3 | 142 | PASS |
+| Preserved verified-TLS HTTP controls | 3 | 10 | PASS |
+| Empty-credential preflight, each of 3 states | 1 | 186 | PASS |
+| B02/G01/G02/G04, each of 8 healthy-registry scenarios | 7 | 762 | PASS |
+| B02/G01/G02/G04, each of 6 registry/support emergencies | 7 | 772 | PASS |
+| G03 plus native/normalization/non-REST controls with fixed synthetic handler loaded | 6 | 525 | PASS |
+| Fixed callback replacement | 1 | 7 | PASS |
+
+That is 108 C02 test executions/11,818 assertions per database lane, plus the six preserved C01 tests/152 assertions. The internal suite proves the admitted synthetic outer callback is reached in all three independent requests, including one deliberately thrown exception, while all eleven internal probes deny. It never returns bridge success. Every hostile-target test also checks callback counters and editorial/user/credential state. The final snapshot hashes the complete core user record, roles and credential UUID/hash tuples; it exposes no record contents.
+
+Every lane scans protected runtime values before destruction, explicitly revokes both users' Application Passwords, verifies zero remaining credentials, deletes all three disposable users and removes the secret file. The exit trap independently attempts scan, revocation and Compose volume/network teardown and propagates any failure. All six successful logs contain the explicit revocation-verification marker and three successful evidence scans. Earlier cleanup failures remain recorded above rather than rewritten as successes.
+
+No accepted pin, image digest, WordPress source commit, Composer manifest/lock or ordinary plugin file changed. The original C01 WordPress/HTTP controls and C01 historical notes are unchanged. Fresh main verification still yields starting HEAD `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`; it is the branch merge-base. No production access occurred and no production service user or credential was created. C03, Gate 3 and real bridge read handlers remain unstarted.
+
+## Final review identity and publication
+
+This final handoff/status edit is documentation-only relative to the green runtime candidate above. A commit cannot embed its own SHA/tree without changing them. Therefore the final review HEAD/tree are bound explicitly in the PR body and in every final job's checked source and `environment.json` artifact. Publication must verify the final documentation commit has all nine green jobs before opening the PR, and freshly compare its HEAD to the PR head. No merge, release, tag or deployment is part of this handoff. Working-tree cleanliness and unchanged main must be checked again at publication.
+
+## Complete candidate file inventory
+
+```text
+M	.github/workflows/c01.yml
+M	README.md
+M	docs/ARCHITECTURE.md
+M	docs/ROADMAP.md
+A	docs/work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md
+M	phpcs.xml.dist
+M	phpstan.neon.dist
+A	tests/bootstrap/security.php
+M	tests/bootstrap/unit.php
+M	tests/environment/README.md
+A	tests/environment/c02-control.php
+M	tests/environment/check-evidence.py
+M	tests/environment/compose.yml
+M	tests/environment/prepare.py
+M	tests/environment/run.sh
+M	tests/environment/wp-config.php
+A	tests/fixtures/c02-controller.php
+A	tests/fixtures/c02-instrumentation.php
+A	tests/fixtures/c02-observe.php
+A	tests/fixtures/c02-target.php
+A	tests/security/GuardHttpCase.php
+A	tests/security/GuardIndependenceTest.php
+A	tests/security/InternalDispatchTest.php
+A	tests/security/NativeRestBypassTest.php
+A	tests/security/NonRestBypassTest.php
+A	tests/security/PreflightTest.php
+M	tests/security/README.md
+A	tests/security/ReplacementTest.php
+A	tests/security/RouteNormalizationTest.php
+A	tests/security/internal.xml
+A	tests/security/phpunit.xml
+A	tests/security/preflight.xml
+A	tests/security/replacement.xml
+A	tests/unit/GuardBoundaryTest.php
+A	wordpress/mu-plugins/coagmentator-guard.php
+A	wordpress/mu-plugins/coagmentator-guard/src/class-dispatch-scope.php
+A	wordpress/mu-plugins/coagmentator-guard/src/class-guard-config.php
+A	wordpress/mu-plugins/coagmentator-guard/src/class-guard.php
+A	wordpress/mu-plugins/coagmentator-guard/src/class-guarded-rest-server.php
+A	wordpress/mu-plugins/coagmentator-guard/src/class-route-boundary.php
+```

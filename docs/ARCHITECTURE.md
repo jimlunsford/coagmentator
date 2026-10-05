@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is IN PROGRESS on its dedicated branch, pending mandatory verification and human review. No real bridge handler, C03 foundation or MCP implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is IN PROGRESS on its dedicated branch, implemented and verified across the mandatory matrix, pending human acceptance. No real bridge handler, C03 foundation or MCP implementation exists.
 
 ## Components and authority
 

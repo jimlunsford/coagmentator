@@ -110,7 +110,7 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a merge commit
 
 ### C02: Independent MU Guard, IN PROGRESS
 
-Implementation candidate and pending verification are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. C02 is not ready for acceptance until the complete exact-candidate matrix passes. C03 has not begun.
+Implementation and green nine-job verification are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. C02 is ready for human review after final exact-head publication checks; it is not accepted or merged. Review the unmerged C02 PR as the next action. C03 has not begun.
 
 Goals:
 
