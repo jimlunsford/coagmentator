@@ -36,7 +36,7 @@ Acceptance evidence:
 
 **Status: ACCEPTED**
 
-Human review accepted the exact revised candidate on 2026-10-05; merged unchanged. Gate 2 remains `NOT STARTED`.
+Human review accepted the exact revised candidate on 2026-10-05; merged unchanged. Gate 2 was `NOT STARTED` at that closeout; its current preparation status is below.
 
 Acceptance evidence:
 
@@ -80,7 +80,9 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 ## Gate 2: WordPress bridge read foundation
 
-**Status: NOT STARTED**
+**Status: IN PROGRESS**
+
+Preparation only, 2026-10-05. The documentation candidate on `feature/gate-2-wordpress-read-foundation` starts from accepted `main` `31b9e9f0745ae48a3b61c060fbeb388431d837cd` (tree `873489e5343f610e14f775775147911a1a77817e`). No Gate 2 implementation exists. The proposed [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) require human acceptance before implementation. The [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) records scope and evidence. Gate 2 is not accepted.
 
 Goals:
 

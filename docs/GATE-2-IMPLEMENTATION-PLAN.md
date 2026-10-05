@@ -1,0 +1,182 @@
+# Gate 2 Implementation Plan
+
+Prepared: 2026-10-05. **Proposed for human review. Documentation only; implementation is not authorized by this preparation candidate.** Gate 2 remains IN PROGRESS until its implemented candidate is separately accepted.
+
+## Authority and boundary
+
+Starting `main`: `31b9e9f0745ae48a3b61c060fbeb388431d837cd`; complete tree: `873489e5343f610e14f775775147911a1a77817e`. Gate 1 and D-009 through D-014 are accepted. PR #1 is merged. This plan implements, without superseding, [CONTRACTS](CONTRACTS.md), [CAPABILITIES](CAPABILITIES.md), [AUTHENTICATION](AUTHENTICATION.md), [ERRORS](ERRORS.md), and [SECURITY](SECURITY.md).
+
+Gate 2 will implement exactly nine read operations, specified in [GATE-2-READ-ROUTES](GATE-2-READ-ROUTES.md), using the existing POST envelopes. POST does not make these editorial mutations. No write route, mutation journal, approval UI, SEO renderer, upload processor, MCP server, OAuth implementation, deployment or production connection belongs here. `get_mutation` remains absent until Gate 3, including from discovery. No placeholder success handlers.
+
+The [TEST-MATRIX](TEST-MATRIX.md) owns the proposed support policy, tool choices, evidence requirements and test obligations. No runtime compatibility or security pass is claimed by these documents. No upstream behavior discovered in this research requires changing an accepted Gate 1 contract.
+
+## Proposed package structure
+
+These are future paths, not files created by preparation. Keep the accepted monorepo directories; do not create empty MCP packages in Gate 2.
+
+| Future path | Responsibility and packaging |
+| --- | --- |
+| `wordpress/mu-plugins/coagmentator-guard.php` | Root MU loader, minimal emergency denial, independent version/health declaration; WordPress auto-loads this top-level file |
+| `wordpress/mu-plugins/coagmentator-guard/src/` | `Guard`, `GuardConfig`, `AuthenticationEvidence`, `GuardedRestServer`, `RouteBoundary`, `EmergencyFailure`; no dependency on the normal plugin or its autoloader |
+| `wordpress/coagmentator/coagmentator.php` | Ordinary plugin header/bootstrap, environment gate, feature initialization and activation-time role provisioning support |
+| `wordpress/coagmentator/src/Bootstrap.php` | Validates guard API/version/configuration, registers exactly the implemented route objects; cannot enable itself without a healthy guard |
+| `wordpress/coagmentator/src/Auth/` | `BridgeIdentity`, `CapabilityPolicy`, `RoleProvisioner`, `MetadataReadPolicy`; all authority conjunctive |
+| `wordpress/coagmentator/src/Rest/` | `RouteRegistry`, `ReadController`, `EnvelopeValidator`, `JsonDecoder`, `ResponseFactory`, `ErrorMapper`; no generic external dispatcher |
+| `wordpress/coagmentator/src/Read/` | `SiteReader`, `ContentReader`, `TermReader`, `MediaReader`, `MetadataReader`, `RevisionReader`; narrow WordPress API adapters |
+| `wordpress/coagmentator/src/Projection/` | Explicit shape serializers, `VersionHasher`, restricted RFC 8785 canonicalizer, `CursorCodec`; source text never rendered |
+| `wordpress/coagmentator/src/Infrastructure/` | Bounded admission, deadline, audit and clock adapters; no editorial mutation repository |
+| `packages/contracts/` | Read-side closed JSON schemas and language-neutral conformance vectors only; future shared MCP consumption; do not implement deferred operation schemas merely to fill this directory |
+| `tests/unit/`, `tests/http/`, `tests/security/` | Modern PHPUnit tests for pure behavior, real HTTP authentication and bypasses; security tests can share the HTTP runner |
+| `tests/wordpress/` | Core `WP_UnitTestCase` integration tests with real capability mapping, factories, hooks and database |
+| `tests/bootstrap/` | Separate unit, core-library and HTTP bootstraps; MU loaded before ordinary plugin; no production URL defaults |
+| `tests/fixtures/` | Synthetic resources and instrumented test-only plugins; credentials generated later at runtime after guard verification, never fixtures in Git |
+| `tests/environment/` | Future Compose, PHP-FPM/Nginx/TLS configurations, pinned core download manifest, setup/teardown and isolated database configuration |
+| `tools/quality/`, `tools/wp-tests/` | Separate Composer manifests/locks for modern analysis/unit/HTTP tools and core-compatible PHPUnit 9 integration tools |
+| `docs/` | Operator prerequisites, accepted plans and implementation evidence; configuration examples use placeholders only |
+
+Shared PHP classes mean classes shared by the normal plugin's read handlers, not a dependency that the MU guard loads from a deactivatable plugin. The guard owns its minimal immutable route/method set and minimal failure encoder. The normal plugin owns full contract serializers. Tests compare these definitions against the nine-route specification to detect drift. Build artifacts eventually include a self-contained normal plugin plus the separate MU bundle. Composer is development tooling; neither installed package requires Composer or development vendors at runtime.
+
+Installing only the normal plugin must leave it unavailable. Deactivating/deleting it does not delete guard files, protected identity configuration, or restriction state. Its uninstall path must not remove the MU package or deregister service identities. Guard removal requires prior credential revocation through a trusted operator path, as Gate 1 already requires. A host operator deleting all guard code is outside this protection, not a safely scoped credential.
+
+## Configuration and provisioning order
+
+The host establishes an absolute, operator-controlled configuration location outside the web root/repository. No tool or REST input selects that path. Split the minimal protected service-ID registry from the richer bridge policy so a broken feature configuration cannot erase which identities need restriction. The registry remains a denial list even when no UUID is allowed. Guard files and registry are host-managed, not writable by ordinary bridge operations.
+
+The closed, bounded policy holds: configuration schema/version; enabled binding; site UUIDv4; actor ID; one active service user; the protected service-ID registry; approved Application Password UUIDs and any rotation expiry; canonical HTTPS home/bridge origin and path; trusted proxy addresses or direct-TLS mode; private-read flag; exact read tool enablement; policy version/profile; effective limits; cursor key reference; protected audit/admission storage location. It contains no reusable Application Password. Unknown fields, duplicate IDs, invalid types, missing identity, unsafe paths, unsupported environment, or inconsistent guard/feature versions deny bridge access. Allowed UUIDs are exact values, with at most the two-credential, 24-hour rotation overlap accepted in AUTHENTICATION.
+
+If the minimal ID registry itself is unavailable or malformed, the guard cannot safely identify protected accounts. Its emergency mode denies authenticated API access and new interactive authentication until the operator repairs it; it must not silently act as an empty registry. Public anonymous traffic remains available. This availability tradeoff must be visible in installation checks and tested. If only feature policy is invalid, restrict the known service identities and bridge routes while leaving ordinary human access intact. Missing support files must retain loader-level denial or terminate affected requests before authentication, never continue unguarded.
+
+Future disposable test provisioning must follow this order:
+
+1. Install and integrity-check the complete MU bundle and valid registry/policy with an empty credential allowlist. Load it independently, including with the feature package absent.
+2. Through local trusted setup only, provision the dedicated role and user with no working remote credential; pin the resulting user ID before proceeding. Verify restrictive hooks/server and ordinary public-traffic control tests. No Administrator/Editor shortcut.
+3. Load the normal plugin, verify registered callbacks and guard handshake. In the guard-only negative suite, keep handlers absent intentionally and expect denial.
+4. Only after the guard preflight passes, issue an ephemeral test Application Password locally. Capture its UUID, atomically update protected configuration, and pass the secret via a protected runtime file or memory. Do not print it or pass it in process arguments. Exercise the real Basic-auth path.
+5. Revoke test credentials, remove isolated users/data and destroy the disposable environment after testing. A failing guard preflight prevents credential issuance entirely.
+
+A public health/provisioning endpoint is not added. Production provisioning, current production inventory and upgrades remain separately authorized Gate 6 work.
+
+## Authentication and independent MU enforcement
+
+### Core facts that shape this design
+
+Core's [Application Password authentication](https://developer.wordpress.org/reference/functions/wp_authenticate_application_password/) provides a pre-success error hook with the matching credential record, followed by a success event with the user and record. Use those events, not the mere presence of Basic auth or an authenticated user. The credential record's `uuid` identifies the issued credential; `app_id` does not.
+
+Core [HTTP serving](https://developer.wordpress.org/reference/classes/wp_rest_server/serve_request/) checks authentication, whereas [internal requests](https://developer.wordpress.org/reference/functions/rest_do_request/) call `dispatch()` directly. [Dispatch](https://developer.wordpress.org/reference/classes/wp_rest_server/dispatch/) validates arguments before the route's permission callback. Therefore a permission callback alone cannot enforce early authentication or nested-dispatch isolation. These behaviors were checked against the 7.1.2 source as well as the reference documentation on 2026-10-05.
+
+### Enforcement owners
+
+| Hook/API or component | Planned enforcement |
+| --- | --- |
+| `wp_authenticate_application_password_errors` | For protected user IDs, reject XML-RPC/non-REST use, missing/broken guard policy, non-HTTPS transport, wrong or expired approved UUID and unavailable handlers before core records successful use. Register for the error/user/item arguments only; do not capture the plaintext password argument |
+| `application_password_did_authenticate` | Save request-local evidence containing only user ID and matched UUID; never the password/hash or entire credential record. Evidence is valid only within this request |
+| `application_password_failed_authentication` | Record a safe failed-auth flag; discard raw `WP_Error` messages/data |
+| `authenticate` (late filter) | Reject interactive/main-password or XML-RPC authentication for protected identities regardless of role; cannot let an earlier auth plugin's successful user bypass the guard |
+| `determine_current_user` (late filter) and `set_current_user` observation | Reject/mark service cookies and alternate identity injection. Preserve a denial flag rather than quietly falling back to anonymous access. Allow core's initial assignment of the user matching the success event; a subsequent change away from that user invalidates evidence without erasing service-request restrictions |
+| `init`, `admin_init`, `login_init` and XML-RPC authentication boundary | Enforce the persistent service denial outside REST before interactive/admin/Ajax callbacks; never leave a marked-but-still-privileged user available to an alternate handler. REST admission still needs its separate success event and dispatch fence |
+| `rest_authentication_errors` (after core auth checks) | Require real approved event, current user equality, active credential record, healthy guard/handlers, correct transport and BASE before detailed request validation; preserve earlier errors and never convert an unrelated error into success |
+| `wp_rest_server_class` | Select a minimal MU-owned `GuardedRestServer` using WordPress's documented [server selection](https://developer.wordpress.org/reference/functions/rest_get_server/). Delegate normal human/anonymous traffic to core; fence protected dispatch as described below |
+| `rest_pre_dispatch` | Defense in depth for every REST dispatch: deny protected identities outside the admitted external request, validate exact route/method and guard state; do not rely on this filter alone for nesting cleanup |
+| `rest_request_before_callbacks` and each route `permission_callback` | Verify the matched callback/permission callback identities, immutable operation, current auth evidence and native/custom permissions. A registered namespace string alone is insufficient |
+| `rest_post_dispatch` and guarded HTTP response finalization | Emit only closed success/failure envelopes; remove core error data, totals/links and unsafe headers; no-store; normalize authentication failures even when no callback ran |
+| Host edge plus guard input boundary | Enforce request byte ceiling before core's full raw-body buffering; reject request compression, query/JSONP/envelope flags and method overrides; enforce verified HTTPS and trusted-proxy rules |
+
+The guard does not impersonate a user, invent an authentication event, reauthenticate using the ordinary login password, or make `application_password_is_api_request` universally true. Core verifies the secret. Recheck that the matched UUID still exists via `WP_Application_Passwords::get_user_application_password()` at bridge admission; neither stored last-used data nor the role marker proves authentication. No credential-introspection REST route is needed.
+
+### External dispatch fence
+
+The MU server wrapper establishes an external-request scope only while core `serve_request()` processes the canonical HTTP request. It tracks admission, the single top-level dispatch object, dispatch depth and a consumed flag in private request-local state. It performs auth before core argument validation, and uses `try/finally` to clear temporary state on all returns/exceptions. A second `serve_request()` during an active protected scope is denied. Before allowing core's raw-body acquisition, inspect declared length and bounded-read the input stream up to the configured maximum plus one byte; reject oversize/chunked overflow without building an unbounded string. The edge must also bound body buffering and request time. Do not rely solely on Content-Length or a check after core has already buffered the body.
+
+For a protected principal, only one depth-zero dispatch under that authenticated external scope may proceed. Match both raw transport method/path and the actual `WP_REST_Request` method/route; bind the admitted object and operation. Reject every recursive or subsequent internal dispatch, including the same route, a cloned request, the original request object reused, direct `dispatch()`, `rest_do_request()` and a nested call after user switching. Once a request has been classified as a service request, clearing/swapping the current user cannot erase its restrictions. Deny direct internal bridge dispatch without the external scope, even when an integration test sets the service current user manually.
+
+Do not infer depth from `is_dispatching()` alone: it is a boolean and is already true for the top-level request inside dispatch hooks. The wrapper owns balanced depth and lifecycle state. The existing core nesting check is supplemental, not the entire guard. Refuse a competing REST server implementation or replaced handler on the service path unless explicitly reviewed and tested; no silent fallback. WordPress/plugins share a trusted PHP domain, so this is a request isolation control, not a sandbox against malicious installed PHP replacing hooks or invoking database APIs directly.
+
+The immutable Gate 2 route allowlist contains precisely the nine paths in GATE-2-READ-ROUTES, method POST. No prefix acceptance, regular expression supplied in config, generic method dispatch, wildcard namespace, GET/HEAD/OPTIONS fallback, `_method`, `X-HTTP-Method-Override`, batch, alternate `?rest_route=`, trailing slash alias, encoded separator, double decoding, dot segment or case-folded alias. Canonical pretty REST routing is an installation prerequisite. Configured site subdirectory prefixes are fixed out of band; WordPress's internally generated rewrite variable is not a caller query parameter.
+
+Native `/wp/v2` reads and writes, `/batch/v1`, Application Password self-management/introspection, user self-edit, plugin endpoints and Abilities routes are outside the allowlist. Reject them for protected identities even if the account is accidentally promoted or loses its marker. Also deny service use through interactive login, admin/admin-ajax/admin-post, XML-RPC and alternate authentication plugins. No XML-RPC methods are globally disabled for unrelated users. Both externally rejected routes and synthetic internal bypasses must prove target callbacks did not execute and editorial state did not change.
+
+### Failure cases and transport responsibility
+
+Anonymous, cookie-only, nonce-only, missing Authorization and missing success-event calls fail without resource validation. Invalid/revoked credentials and unapproved UUIDs have one generic authentication failure. A valid different WordPress user cannot access the bridge, including an administrator. Malformed config fails closed; incorrect site UUID yields `SITE_MISMATCH` only after authentication; unknown contract version yields `UNSUPPORTED_OPERATION`. Actor mismatch is a safe authorization denial. Exact errors are in the routes document.
+
+Use TLS 1.2+ with a valid chain/hostname at the client and trusted edge. WordPress can establish its server-side HTTPS/trusted-proxy condition; it cannot prove that a remote client verified its certificate. Gate 2's HTTP client must prove verification against good/bad test certificates; MCP must implement its own verification in Gate 4. Reject forged forwarding headers from untrusted peers. An allowed proxy must overwrite forwarding headers and preserve Authorization. Disabled core Application Password support is a failure, never a reason to enable an alternate login method.
+
+## Native capabilities and privacy
+
+Implement `BASE`, `READ` and `MEDIA` exactly as CAPABILITIES defines. Only `coagmentator_read` and the non-authorizing `coagmentator_service` marker are provisioned in this gate. Role name is never the permission check. Activation may register the role with `read`; trusted provisioning explicitly selects raw-reader primitives. Never grant write-family custom capabilities, approval authority, Administrator or Editor.
+
+Resolve `get_post_type_object('post'/'page')->cap` and `get_taxonomy('category'/'post_tag')->cap` at runtime. Require actual `current_user_can()` checks. Fail closed if expected registered objects/mappings are unavailable. Synthetic tests must remove individual primitives and alter mappings/filters to prove no role-name or hard-coded capability bypass. Never return a primitive capability list as an automatic grant during a request.
+
+For core defaults, the expected test cases are:
+
+| Status/ownership (repeat for posts and pages) | Required behavior |
+| --- | --- |
+| Own draft/pending | BASE plus both object `read_post` and `edit_post`; evaluate the type's edit primitive |
+| Other author's draft/pending | Additional native edit-others mapping; no inference from `edit_posts` alone |
+| Own published/future | Native edit-published mapping for raw access; publish permission is not itself required for a read |
+| Other author's published/future | Native edit-others and edit-published mapping; always both object checks |
+| Own or other's private | Default denial regardless of apparent core ownership shortcut; opt-in AND type's read-private/edit-private primitives AND both object checks; other authors also satisfy edit-others mapping |
+| Trash | Read-only; let current native mapping account for previous status metadata, then both object checks. Include own/other and previously draft/published/private fixtures |
+| Password-protected | Always concealed, even for a service user with all reader privileges |
+| Wrong type, unknown status, inaccessible object | Concealed NOT_FOUND; search excludes it |
+| Special privacy-policy page | Respect native extra authority; do not grant forbidden `manage_privacy_options` to make a read succeed |
+
+These expectations come from the [native mapper](https://developer.wordpress.org/reference/functions/map_meta_cap/) plus the explicitly stricter private/password policy. They must be tested on actual core, not mocked as evidence. Published/public visibility alone never permits raw source access.
+
+Term reads require the actual taxonomy's `assign_terms` capability. There is no need to grant `manage_categories` just to read; category/tag mappings may share a primitive. Attachment checks use both object capabilities, then READ on a nonzero supported parent. Parent missing, inaccessible, password-protected, or of another type excludes the media. Unattached attachments still need their own authority. Revision checks authorize the parent before any revision query and require an exact saved-revision relationship, excluding autosaves.
+
+Registered metadata read policy is an explicit bridge callback, evaluated after READ for each exact logical key. Do not invent a core `read_post_meta` capability, and do not assume `register_post_meta`'s write authorization callback protects `get_post_meta` reads. Register owned storage keys with types and deny write authorization in Gate 2; keep native REST exposure disabled. `metadata_exists()` distinguishes absent from an empty string. SEO remains disabled until Gate 3 implements and verifies the renderer/ownership requirements. Unknown keys cannot reach a metadata read, including aliases and storage-key names.
+
+## Shared read mechanics
+
+Use WordPress read APIs and raw post objects, never native REST controllers as a proxy and never `the_content`, `do_shortcode`, `render_block`, `do_blocks`, oEmbed or preview rendering. Code must not fetch output URLs. Fixed serializer field allowlists, rather than unsetting known secrets from a core response, define every result.
+
+Decode bounded UTF-8 JSON with duplicate-member detection, a 20-level ceiling, exact primitive types and unknown-key rejection. Core's usual parameter coercion and combined query/body parameters are insufficient. Authenticate and establish BASE before detailed schema/resource errors. Transport size rejection may occur earlier but contains no protected detail. Every read envelope is exactly the accepted five fields; mutation bookkeeping/policy arguments are invalid. Invalid/missing correlation IDs get a fresh server UUID for the internal failure envelope without reflecting input. Site identity may be null before a valid binding exists.
+
+Implement versions now because every read shape needs them. Hash exactly the existing domain and complete projections, including all enabled metadata, not just the requested metadata subset or returned search summary. Restricted canonicalization accepts only the contract's safe integers, booleans, strings, arrays, objects and null; sorts object keys by RFC 8785 UTF-16 order, preserves Unicode and set-array sorting, rejects invalid Unicode/NUL where specified, and uses SHA-256. Prove with independent golden vectors, including supplementary Unicode and reordered maps; plain recursive PHP key sorting is not sufficient. No new canonicalization/wire fields.
+
+For lists, query bounded batches of candidate IDs through `WP_Query`/`WP_Term_Query`, with explicitly scoped prepared keyset conditions and `no_found_rows` for posts. Do not run an unlimited `wp_get_post_revisions()` query. Any query filters are private to the intended query and removed in `finally`; no raw user SQL. Search is a literal substring, using escaped LIKE values and prepared parameters: content title/body/excerpt, attachment title, or term name respectively. Empty query adds no search predicate. Do not inherit native search's negation/phrase/operator syntax; percent/underscore/quotes/minus remain literal text. Database collation determines case/accent matching, without changing the supplied or returned source. Sort by the accepted keys. Scan at most 1,000 candidates, authorize each before projecting/returning it, stop at the page limit, and advance by the last consumed candidate, including denied ones. Never advance past an authorized item that has not been returned. At the scan cap, issue a continuation unless exhaustion is known, without a forbidden extra scan; a final empty continuation page is acceptable. Lists never expose totals, scan counts, next-link headers or denied IDs.
+
+Cursor payloads contain schema version, site/actor/operation, canonical filters and limit, last scanned key and 15-minute expiry. Use authenticated encryption (PHP Sodium), not cleartext base64 plus a MAC, to keep denied-resource sort keys opaque as well as tamper resistant. This authenticates the cursor as required by the contract without adding wire fields. Key lives outside the database/repository; reject expired, malformed, cross-binding or changed-filter cursors as VALIDATION_FAILED. Reauthorize each page and after capability changes; traversal is not a snapshot. Key rotation invalidates outstanding cursors.
+
+Use Sodium `secretbox` with a random nonce per cursor, a distinct 32-byte cursor key, bounded base64url encoding and authentication before decoding the inner JSON. Include every binding field inside the authenticated plaintext; never accept a caller-selected algorithm/key path. Failure returns the single safe invalid-cursor reason. This is a concrete implementation choice based on the [PHP Sodium authenticated-encryption API](https://www.php.net/manual/en/function.sodium-crypto-secretbox.php).
+
+Compute complete versions only after access checks. Search summaries still need complete projection hashes internally, but must contain no body/excerpt/metadata. Full-read and serialized-result limits apply after JSON escaping as well as to stored bytes. Do not return partial bodies, shorten fields, or silently omit an authorized object that cannot fit its required projection; return a safe limit/data failure. Corrupt/nonrepresentable stored values are a normalized WORDPRESS_INTERNAL_ERROR, not invented timestamps or normalized editorial source.
+
+Media paths never come from request arguments. For eligible attachments only, obtain core's managed file location, reject stream wrappers and resolved paths outside the uploads root (including symlink escape), and inspect a bounded regular local file to verify supported static raster type, dimensions and actual bytes. No image transformation, subsize generation, EXIF serialization or remote/offloaded fetch. Bound metadata inspection as well. Return only the Media shape; use a null digest when safe digest computation alone is unavailable within budget. If size/type/static eligibility cannot be safely established at all, treat the attachment as unsupported, not as trusted because of its extension or MIME database field. The exact visibility behavior for each route is in GATE-2-READ-ROUTES. Protected-file/offload plugins need later compatibility review.
+
+Use core's [MIME](https://developer.wordpress.org/reference/functions/wp_get_image_mime/) and [dimension](https://developer.wordpress.org/reference/functions/wp_getimagesize/) helpers only on that vetted local file. They are not animation or complete-file validators. Supplement them with bounded container-structure inspection: JPEG marker/end consistency, PNG chunk lengths/end marker and rejection of animation control chunks, WebP RIFF/chunk lengths and rejection of animation flags/chunks. Reject inconsistent/truncated/ambiguous structures. Limit reads to the contract's media byte/pixel/dimension ceilings and the remaining operation deadline. Do not claim this read-only eligibility inspection sanitizes an existing file or replaces Gate 3's independent decode/re-encode upload validation. No image/editor save method runs.
+
+Admission infrastructure must honor existing limits rather than leave them as constants: 2 MiB request/response, 1 MiB list, 15-second operation deadline, 60 reads/minute per binding/site, 4 concurrent requests, and 120 pre-auth requests/minute per IP. Proposed MVP storage is a fixed host-owned local runtime directory with bounded, locked counter files and four nonblocking `flock` slots for the one binding; hold each slot until request termination, including error paths, rather than expiring a lease under a still-running worker. Persist rate windows across PHP workers, key filenames using hashes of trusted binding or normalized peer identity, cap pre-auth bucket storage and deny new work when full. No arbitrary file-path input. This requires a single PHP host with reliable local locks; incompatible/shared/distributed storage fails setup. It is operational state, not a Gate 3 mutation journal. Infrastructure configuration must enforce byte/time limits before buffering/long blocking work. A clock/storage/audit error fails closed; no transient-only race-prone counter claim.
+
+Audit appends only SECURITY's allowlisted metadata to a protected bounded sink, with 90-day rotation/retention and capacity preflight. No bodies, raw errors, credentials, titles, filenames, media bytes, user emails or SQL. No security-relevant exception dump in WordPress debug output. Handler/projection exceptions become safe failures; uncatchable host failures may return a generic non-envelope response that Gate 4 must normalize. Do not claim PHP can reliably catch every out-of-memory/process termination.
+
+## Bounded implementation checkpoints
+
+Every checkpoint includes its tests in the same reviewable change. Work only after preparation acceptance and implementation authorization. All rows exclude mutations, `get_mutation`, MCP/OAuth, deployments and production activity.
+
+| Step | Components/files | Acceptance and required tests | Additional boundary |
+| --- | --- | --- | --- |
+| C01 Package and test skeleton | Future package loaders, `tests/bootstrap`, `tests/environment`, isolated Composer manifests/locks | Pin exact tools/core/images; prove empty unit/core/HTTP harness boots, three PHP lanes resolve and both DB engines run; negative unsupported-environment load test | No service password, route success or premature feature claim |
+| C02 Independent guard | MU loader/classes, guard/bootstrap/security tests | All absent-plugin/config/alternate-auth paths deny; lifecycle/server-class checks; public/human control cases pass; no target callback executes | Guard installed/verified before the first ephemeral credential; no reliance on ordinary plugin |
+| C03 Authentication/config/operations foundation | Auth, configuration, admission/audit adapters, HTTP setup | Authentic event/UUID, revocation, TLS/proxy/header, wrong user/site, role-removal, parallel admission and storage-failure tests | No OAuth passthrough or credential administration endpoint |
+| C04 Read capability framework | CapabilityPolicy, RoleProvisioner, MetadataReadPolicy | Author/status/private/password/media-parent/revision-parent matrix under actual WordPress; individual primitive removal and changed mappings | No native grants during requests; no write custom caps or SEO renderer |
+| C05 Shared envelope/error/projection layer | Rest, Projection, read schemas/vectors | Closed JSON, duplicate/type/depth limits, normalized errors/redaction, full hash vectors, encrypted cursor binding/expiry and serialization limits | No write receipts, journal or permissive arbitrary schema registry |
+| C06 Site information | SiteReader and exact route | Safe fields; truthful nine-tool maximum filtered by policy/capabilities; writes false; SEO disabled; no runtime/software inventory | No hidden 10th read or write registration |
+| C07 Content search/read | ContentReader, content serializers | All statuses and ownership, permission-before-results, bounded keyset traversal, complete raw source, render/network sentinels, version changes | No native core REST delegation or body truncation |
+| C08 Terms | TermReader/projection | Category/tag caps, hierarchy, query limits, cursor order, no counts; taxonomy injection denied | No term creation/assignment/update |
+| C09 Media | MediaReader/projection/local inspector | Attachment/parent policy, static raster eligibility, controlled local reads, path/EXIF/network exclusions, result limits | No uploading, sideloading, image processing or file writes |
+| C10 Metadata | MetadataReader, owned registrations | Exact logical keys, absent/empty semantics, policy denial, disabled SEO, complete parent version | No arbitrary meta enumeration, mutations or SEO output |
+| C11 Revisions | RevisionReader/projections | Parent check before query, exact relationship, autosave exclusion, bounded paging, complete raw source and hash | No restore, autosave writes or broad core restoration hooks |
+| C12 Full security/HTTP matrix | Tests and eventual Actions | All obligations in TEST-MATRIX pass on mandatory lanes; deactivation/bypass controls prove no callback/effect; secret scan passes | Do not weaken assertions to make a core/tool mismatch pass |
+| C13 Candidate verification | Evidence and work note/roadmap | Clean exact HEAD/tree, nine route inventory, no Gate 3 files, green mandatory CI, current source/pin recheck, reviewable PR | Gate 2 remains IN PROGRESS pending human acceptance; no self-merge |
+
+CI configuration is created in implementation, not preparation. A source contradiction, ineffective guard hook, unsupported core test runner, or inability to enforce a mandatory limit blocks the affected checkpoint. Stop and report it; do not widen a route, relax an accepted contract, or call skipped security tests a pass.
+
+## Remaining review decisions and limits
+
+The proposed choices to accept are the current-stable WordPress floor, PHP/database lanes, split PHPUnit runners, self-contained MU server fence, fail-closed registry emergency mode, local-lock deployment prerequisite and nine-route implementation sequence. These are implementation proposals, not newly accepted D-series decisions.
+
+Exact dependency patches, image digests, test-core source hashes and actual runtime behavior are C01/C12 deliverables; no dependency installation or execution occurred here. Current JimLunsford.com versions, SEO ownership and plugin/server compatibility are deliberately uninspected. PHP 8.3/MariaDB 10.11 coverage leaves a practical self-hosted path without asserting production readiness. A different target environment requires later inventory and review, not a production change in this gate.
+
+Next action: human-review this exact preparation candidate. After acceptance and explicit implementation authorization, begin C01 only, then establish C02 before issuing any test service credential.

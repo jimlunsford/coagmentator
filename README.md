@@ -45,9 +45,9 @@ The code directories will be created as implementation begins. Documentation is 
 
 ## Status
 
-**Gate 0 and Gate 1 are accepted. Gate 2 has not started.**
+**Gate 0 and Gate 1 are accepted. Gate 2 preparation is IN PROGRESS.**
 
-No implementation has begun.
+No implementation has begun. The [Gate 2 implementation plan](docs/GATE-2-IMPLEMENTATION-PLAN.md), [read route specifications](docs/GATE-2-READ-ROUTES.md) and [support/test matrix](docs/TEST-MATRIX.md) are proposed for human review before implementation.
 
 Read `AGENTS.md` and `docs/ROADMAP.md` before starting implementation.
 
