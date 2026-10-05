@@ -5,7 +5,9 @@
   "wordpress": {
     "version": "7.1.2",
     "repository": "https://github.com/WordPress/wordpress-develop.git",
-    "commit": "0a106cde38df869e196a83eb4975ba38a4e5837b"
+    "commit": "0a106cde38df869e196a83eb4975ba38a4e5837b",
+    "runtime_repository": "https://github.com/WordPress/WordPress.git",
+    "runtime_commit": "160387b7312c9407c7fe4b1d3dd2055206749a34"
   },
   "images": {
     "php83": {
@@ -39,10 +41,10 @@
       "version": "/usr/sbin/mysqld  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)"
     },
     "nginx": {
-      "discovery_tag": "nginx:stable-bookworm",
-      "image": "nginx@sha256:552e7481ca93ffccd046aa658dbbed22caefbc09c66fa7cd247cbb90b8a5c609",
-      "image_id": "sha256:34e04bb6b4bb37d45845842374be0cd181723daffb230849b1984aaeaa96faba",
-      "version": "nginx version: nginx/1.28.0"
+      "discovery_tag": "nginx:1.30.5-trixie",
+      "image": "nginx@sha256:b972f831f200b19ef0767938224f9711e74cd783718738cd7405d5cabf75c442",
+      "version": "nginx version: nginx/1.30.5",
+      "source": "https://hub.docker.com/v2/namespaces/library/repositories/nginx/tags/1.30.5-trixie"
     },
     "composer": {
       "discovery_tag": "composer:2",

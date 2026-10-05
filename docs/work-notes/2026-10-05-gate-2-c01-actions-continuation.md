@@ -32,7 +32,13 @@ Package and tests under `wordpress/coagmentator`, `tests`, isolated `tools/quali
 
 ## Verification and limits
 
-Implementation matrix is pending. Construction success is not C01 acceptance. Version/digest details are in `tests/environment/manifest.json`; both lockfiles contain the complete isolated dependency graphs. No runtime vendors ship with the plugin.
+First full run `37328161707` at `fe11dfe31930a0ff5b43c41b6bdc64aa6d7f74eb` reached terminal FAILURE, attempt 1. All three unit suites passed (4 tests/15 assertions each), all three lint/negative-load probes passed and PHPStan passed. Quality failed on WPCS formatting/PHPDoc and narrow test-fixture conventions. All six real core suites booted and created fixtures, but failed the exact runtime assertion: wordpress-develop contains `7.1.2-src`, not the release build. HTTP had not yet run. No failure is counted as passing.
+
+Corrections preserve the exact release assertion: use the matching immutable WordPress/WordPress release commit `160387b7312c9407c7fe4b1d3dd2055206749a34` for runtime and retain the separately pinned wordpress-develop test library. Also set WP_INSTALLING explicitly for disposable setup, make Compose secrets readable by their unprivileged container consumers while keeping the host secret directory private, and fix WPCS findings with narrow documented fixture annotations.
+
+Primary-source recheck found the old stable-bookworm Nginx alias was stale. Select current stable 1.30.5-trixie from the official image catalog and Docker Hub API, pinned by index digest. No accepted Nginx line was changed because preparation selected none. Do not reuse the old 1.28.0 result as final acceptance.
+
+Corrected implementation matrix is pending. Construction success is not C01 acceptance. Version/digest details are in `tests/environment/manifest.json`; both lockfiles contain the complete isolated dependency graphs. No runtime vendors ship with the plugin.
 
 Preflight used checkout v4.2.2 and produced a Node 20 migration warning; subsequent checkout uses immutable v5.0.0. Upload-artifact v4.6.2 produced upstream Node deprecation notices. Docker's deprecated stop flag was corrected. These are infrastructure notices, not suppressed PHP test warnings.
 

@@ -15,8 +15,9 @@ final class Environment {
 	 * @param string       $php_version PHP runtime version.
 	 * @param string       $wp_version WordPress version.
 	 * @param int          $integer_bytes Native integer size.
-	 * @param list<string> $extensions Loaded extension names.
+	 * @param string[]     $extensions Loaded extension names.
 	 * @param bool         $multisite Whether multisite is enabled.
+	 * @phpstan-param list<string> $extensions
 	 * @return list<string>
 	 */
 	public static function issues( string $php_version, string $wp_version, int $integer_bytes, array $extensions, bool $multisite ): array {

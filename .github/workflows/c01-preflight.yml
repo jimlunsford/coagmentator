@@ -43,7 +43,7 @@ jobs:
             curl --fail --silent --show-error --proto '=https' --max-time 45 --output /dev/null "$url"
             printf 'HTTPS source reachable: %s\n' "$url"
           done
-          for image in php:8.3-fpm-bookworm php:8.4-fpm-bookworm php:8.5-fpm-bookworm mariadb:10.11 mysql:8.4 nginx:stable-bookworm composer:2; do
+          for image in php:8.3-fpm-bookworm php:8.4-fpm-bookworm php:8.5-fpm-bookworm mariadb:10.11 mysql:8.4 nginx:1.30.5-trixie composer:2; do
             docker manifest inspect "$image" > /dev/null
             printf 'Public image manifest reachable: %s\n' "$image"
           done

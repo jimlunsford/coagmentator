@@ -8,7 +8,7 @@ for item in (root / 'evidence').glob('*'):
     assert item.suffix in ['.xml', '.json'], 'Unapproved artifact type'
     assert b'PRIVATE KEY' not in data, 'Private key in evidence'
     for name in ['database-password', 'root-password']:
-        secret = root / name
+        secret = root / 'secrets' / name
         if secret.exists():
             assert secret.read_bytes() not in data, 'Disposable password in evidence'
 manifest = json.loads(Path('tests/environment/manifest.json').read_text())

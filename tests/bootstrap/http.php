@@ -4,6 +4,7 @@
  *
  * @package Coagmentator
  */
+
 if ( 'disposable' !== getenv( 'C01_TEST_ENVIRONMENT' ) ) {
 	throw new RuntimeException( 'Disposable environment required.' );
 }

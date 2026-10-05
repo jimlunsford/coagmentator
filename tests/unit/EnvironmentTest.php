@@ -5,6 +5,7 @@
  * @package Coagmentator
  */
 
+
 use Coagmentator\Environment;
 use PHPUnit\Framework\TestCase;
 

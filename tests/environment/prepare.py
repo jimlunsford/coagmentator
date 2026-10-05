@@ -25,14 +25,22 @@ for graph in ['quality', 'wp-tests']:
 if os.environ.get('C01_MODE') == 'unit':
     raise SystemExit(0)
 wp = runtime / 'wordpress'
-subprocess.run(['git', 'init', str(wp)], check=True)
-subprocess.run(['git', '-C', str(wp), 'fetch', '--depth=1', man['wordpress']['repository'], man['wordpress']['commit']], check=True)
-subprocess.run(['git', '-C', str(wp), 'checkout', '--detach', 'FETCH_HEAD'], check=True)
-assert subprocess.check_output(['git', '-C', str(wp), 'rev-parse', 'HEAD'], text=True).strip() == man['wordpress']['commit']
+for destination, repository, revision in [
+    (runtime / 'wordpress-develop', man['wordpress']['repository'], man['wordpress']['commit']),
+    (wp / 'src', man['wordpress']['runtime_repository'], man['wordpress']['runtime_commit']),
+]:
+    subprocess.run(['git', 'init', str(destination)], check=True)
+    subprocess.run(['git', '-C', str(destination), 'fetch', '--depth=1', repository, revision], check=True)
+    subprocess.run(['git', '-C', str(destination), 'checkout', '--detach', 'FETCH_HEAD'], check=True)
+    assert subprocess.check_output(['git', '-C', str(destination), 'rev-parse', 'HEAD'], text=True).strip() == revision
+secret_directory = runtime / 'secrets'
+secret_directory.mkdir(mode=0o700)
 for name in ['database-password', 'root-password']:
-    p = runtime / name
+    p = secret_directory / name
     p.write_text(secrets.token_urlsafe(32))
-    p.chmod(0o600)
+    # Host directory is private. Compose mounts only the required file read-only,
+    # allowing the unprivileged database/FPM processes to read their own secret.
+    p.chmod(0o444)
 (runtime / 'database-init.sql').write_text("CREATE DATABASE wp_tests CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\nGRANT ALL ON wp_tests.* TO 'c01'@'%';\n")
 shutil.copyfile('tests/environment/wp-config.php', wp / 'src/wp-config.php')
 shutil.copyfile('tests/fixtures/http-probe.php', wp / 'src/c01-probe.php')

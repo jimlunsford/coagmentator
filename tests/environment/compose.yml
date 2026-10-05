@@ -38,9 +38,9 @@ services:
     networks: [isolated]
 secrets:
   database_password:
-    file: ../../.runtime/database-password
+    file: ../../.runtime/secrets/database-password
   root_password:
-    file: ../../.runtime/root-password
+    file: ../../.runtime/secrets/root-password
 networks:
   isolated:
     internal: true

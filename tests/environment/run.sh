@@ -25,6 +25,7 @@ fi
 compose=(docker compose --project-name "c01-${C01_PHP}-${C01_DATABASE}" --env-file .runtime/compose.env -f tests/environment/compose.yml)
 trap '"${compose[@]}" down --volumes --remove-orphans' EXIT
 "${compose[@]}" up -d database php edge
+"${compose[@]}" exec -T edge nginx -v
 # Bounded readiness probe, without printing connection errors or passwords.
 for attempt in $(seq 1 60); do
   if "${compose[@]}" exec -T php php -r 'mysqli_report(MYSQLI_REPORT_OFF); $db = @new mysqli("database", "c01", trim(file_get_contents("/run/secrets/database_password")), "wordpress"); exit($db->connect_errno ? 1 : 0);' 2>/dev/null; then

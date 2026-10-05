@@ -22,7 +22,7 @@ for key, tag, command in [
     ('php85', 'php:8.5-fpm-bookworm', ['php', '-r', 'echo PHP_VERSION;']),
     ('mariadb', 'mariadb:10.11', ['mariadbd', '--version']),
     ('mysql', 'mysql:8.4', ['mysqld', '--version']),
-    ('nginx', 'nginx:stable-bookworm', ['nginx', '-v']),
+    ('nginx', 'nginx:1.30.5-trixie', ['nginx', '-v']),
     ('composer', 'composer:2', ['composer', '--version', '--no-ansi']),
 ]:
     subprocess.run(['docker', 'pull', tag], check=True)

@@ -4,7 +4,6 @@ on:
     branches: [feature/gate-2-c01-package-test-skeleton]
     paths:
       - .github/workflows/c01-construction.yml
-      - tests/environment/resolve.py
 permissions:
   contents: read
 jobs:

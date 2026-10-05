@@ -4,9 +4,11 @@
  *
  * @package Coagmentator
  */
+
 if ( 'cli' !== PHP_SAPI || 'disposable' !== getenv( 'C01_TEST_ENVIRONMENT' ) ) {
 	exit( 1 );
 }
+define( 'WP_INSTALLING', true );
 require dirname( __DIR__, 2 ) . '/.runtime/wordpress/src/wp-load.php';
 add_filter( 'pre_wp_mail', '__return_true' );
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
