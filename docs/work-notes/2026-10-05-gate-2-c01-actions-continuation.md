@@ -84,3 +84,56 @@ Investigate/restore new-HEAD GitHub Actions triggering, then execute the complet
 - Construction: https://github.com/jimlunsford/coagmentator/actions/runs/37326910421
 - WordPress archive: https://wordpress.org/download/releases/
 - Implementation PR, release, tag, deployment: none. Main remains `ab4ccb3362ca13b006ff3f2887d4743af06ba035`.
+
+## Trigger recovery continuation, 2026-10-05
+
+This appended section preserves the historical observations above and supersedes their latest-state assumptions. C01 remains PARTIAL/BLOCKED and unaccepted pending a green exact-candidate run.
+
+### Reverified starting checkpoint and changed evidence
+
+Main remains `ab4ccb3362ca13b006ff3f2887d4743af06ba035`, tree `9e83480e09bf6f81882b897827866a46e256d2a1`. Starting branch HEAD was `4af70d64091dfc37a63422663dfa6f22330be1cd`, tree `036a1fa364c00aff98ad847bc1ab95cd10e68895`. Remote Git-data reads and local objects agree. No C01 PR existed before this session.
+
+All three exact-tip workflows were fetched and inspected. YAML and embedded shell syntax passed; GitHub's public workflow API reported all three active. The main C01 workflow retains its matching unfiltered push branch and existing pull_request path filters. All three commits after `fe11dfe31930a0ff5b43c41b6bdc64aa6d7f74eb` were inspected, without skip-CI annotations. The release-runtime/test-source split, WPCS changes, WP_INSTALLING, secret readability, Nginx 1.30.5 digest and HTTP setup corrections were present.
+
+The earlier absent executions are now visible:
+- `3a3cd5660914ac396491214ee0b82e9bffbe7f0a`: push matrix run `37329897651` FAILURE; preflight `37329897576` SUCCESS; construction `37329897639` SUCCESS, created at 15:05:03 UTC.
+- `23b6b2611195b2252f2503d7865b25a0b12b481f`: push matrix run `37329831311` FAILURE, created at 15:04:33 UTC.
+- `4af70d64091dfc37a63422663dfa6f22330be1cd`: push matrix run `37329860596` FAILURE, created at 15:04:46 UTC; suite `101110095326`.
+
+Strongest supported classification: delayed observable push execution, not a continuing absence of push execution. The underlying delay cause is UNPROVEN. No outage, disabled Actions, YAML, token-suppression, permission or runner root cause is claimed. All nine latest-tip push job logs were inspected: unit suites passed 4 tests/15 assertions each; lint/negative-load probes and PHPStan passed; remaining WPCS formatting findings blocked quality/audits. All six integration suites now pass 3 tests/142 assertions; HTTP reached 3 tests/8 assertions but errored twice on undefined `CURLE_PEER_FAILED_VERIFICATION`.
+
+### Independent PR event
+
+The owner authorized one draft PR solely for CI recovery despite the prior pre-green PR prohibition. [PR #3](https://github.com/jimlunsford/coagmentator/pull/3) was opened DRAFT at 15:16:35 UTC, base main and the existing C01 branch. Its title/body explicitly said partial/blocked, not ready, do not merge, C02 not begun and production untouched. No merge or human acceptance occurred.
+
+Checkout-only correction `c6c6bf54e05f39f1f112cad7d97a7e4014897a4d`, tree `f9975ca3416d03594ca191ab6166afb8848fc3ba`, makes both matrix jobs explicitly select `github.event.pull_request.head.sha` for PR events and `github.sha` for push. Every job prints event/activity, expected/actual SHA and tree, then fails on mismatch. No assertion, pin, permission or matrix change.
+
+First PR run: [37331691984](https://github.com/jimlunsford/coagmentator/actions/runs/37331691984), event `pull_request`, activity `opened`, attempt 1, created 15:18:02 UTC, terminal FAILURE. All nine logs verify the exact head/tree above, not synthetic merge commit `809ef0c7fbce823ac59e9da1315f8575cfb8669f`. No workflow approval was required or reported. Concurrent push run `37331474288` also executed that head; no reruns were requested.
+
+| First PR-run job | Job ID | Conclusion |
+| --- | --- | --- |
+| Unit and quality PHP 83 | 111836105477 | SUCCESS |
+| Unit and quality PHP 84 | 111836105704 | FAILURE |
+| Integration and HTTP PHP 83 mysql | 111836105773 | FAILURE |
+| Integration and HTTP PHP 84 mysql | 111836105849 | FAILURE |
+| Integration and HTTP PHP 84 mariadb | 111836105955 | FAILURE |
+| Integration and HTTP PHP 83 mariadb | 111836105963 | FAILURE |
+| Integration and HTTP PHP 85 mariadb | 111836105999 | FAILURE |
+| Unit and quality PHP 85 | 111836106003 | SUCCESS |
+| Integration and HTTP PHP 85 mysql | 111836106004 | FAILURE |
+
+All first PR-run job logs were inspected. Results match the newly visible push evidence: every unit suite 4/15 PASS; six WordPress suites 3/142 PASS; six HTTP suites error on the same missing PHP constant; PHP 8.4 WPCS fails nine formatting findings. These are actual test/quality failures, not approval-required or trigger failures.
+
+### C01-scoped corrections after the first PR run
+
+- Correct PHPDoc type alignment, duplicate blank lines, and add descriptive comments before two require statements. The pinned Squiz FileComment sniff treats a docblock immediately preceding require as that statement's documentation, so a separate descriptive comment distinguishes the existing file docblock. No sniff is disabled.
+- Use PHP's documented `CURLE_SSL_CACERT` name in both TLS negative assertions. Both still require curl_exec false and the exact certificate-verification error; trust/hostname validation remains enabled. No fallback accepting arbitrary errors.
+- All existing runtime/test-source/image/dependency pins and the six-lane matrix are unchanged.
+- Files: `wordpress/coagmentator/src/class-environment.php`, `tests/bootstrap/unit.php`, `tests/fixtures/http-probe.php`, `tests/unit/EnvironmentTest.php`, `tests/wordpress/BootstrapTest.php`, `tests/http/HttpTest.php`, this appended note. Earlier checkout change touched only `.github/workflows/c01.yml`.
+- Local diff/whitespace verification passed. Runtime evidence for this correction must come from its new PR synchronize run, not the older head.
+
+Sources: [PHP cURL constants](https://www.php.net/manual/en/curl.constants.php), [libcurl errors](https://curl.se/libcurl/c/libcurl-errors.html), pinned PHP_CodeSniffer 3.13.6 `Squiz/Sniffs/Commenting/FileCommentSniff.php`, and [checkout PR-head guidance](https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit).
+
+### Next step and boundaries
+
+Publish this bounded correction on the existing branch; verify the changed PR head and a new pull_request/synchronize run; inspect all terminal jobs and logs before declaring readiness. No C02, MU guard, bridge route, service user or Application Password was implemented or issued. Ordinary disposable WordPress control-admin fixtures remain test-only. Production was neither contacted nor modified. Main, releases and tags remain untouched.

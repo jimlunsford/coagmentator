@@ -5,6 +5,7 @@
  * @package Coagmentator
  */
 
+// Load only the disposable WordPress runtime beside this probe.
 require __DIR__ . '/wp-load.php';
 header( 'Content-Type: application/json' );
 echo wp_json_encode(

@@ -12,11 +12,11 @@ final class Environment {
 	/**
 	 * Return stable prerequisite failure identifiers.
 	 *
-	 * @param string       $php_version PHP runtime version.
-	 * @param string       $wp_version WordPress version.
-	 * @param int          $integer_bytes Native integer size.
-	 * @param string[]     $extensions Loaded extension names.
-	 * @param bool         $multisite Whether multisite is enabled.
+	 * @param string   $php_version PHP runtime version.
+	 * @param string   $wp_version WordPress version.
+	 * @param int      $integer_bytes Native integer size.
+	 * @param string[] $extensions Loaded extension names.
+	 * @param bool     $multisite Whether multisite is enabled.
 	 * @phpstan-param list<string> $extensions
 	 * @return list<string>
 	 */

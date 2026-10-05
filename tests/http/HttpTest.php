@@ -65,7 +65,8 @@ final class HttpTest extends TestCase {
 			)
 		);
 		self::assertFalse( curl_exec( $client ) );
-		self::assertSame( CURLE_PEER_FAILED_VERIFICATION, curl_errno( $client ) );
+		// PHP exposes libcurl's certificate verification error as CURLE_SSL_CACERT.
+		self::assertSame( CURLE_SSL_CACERT, curl_errno( $client ) );
 	}
 
 	/** A trusted CA does not waive hostname verification. */
@@ -80,6 +81,7 @@ final class HttpTest extends TestCase {
 			)
 		);
 		self::assertFalse( curl_exec( $client ) );
-		self::assertSame( CURLE_PEER_FAILED_VERIFICATION, curl_errno( $client ) );
+		// Keep the exact certificate error requirement, including hostname checks.
+		self::assertSame( CURLE_SSL_CACERT, curl_errno( $client ) );
 	}
 }

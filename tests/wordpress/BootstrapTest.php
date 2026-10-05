@@ -5,7 +5,6 @@
  * @package Coagmentator
  */
 
-
 /** Confirms core factories, isolated PHPUnit and dormant package loading. */
 final class BootstrapTest extends WP_UnitTestCase {
 	/** Real WordPress, Polyfills and the package load in the same process. */
