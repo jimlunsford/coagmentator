@@ -24,7 +24,7 @@ foreach ( get_users() as $user ) {
 	foreach ( WP_Application_Passwords::get_user_application_passwords( $user->ID ) as $item ) {
 		$credentials[] = array( $item['uuid'], $item['password'] );
 	}
-	$users[] = array( $user->ID, $user->user_login, $user->user_email, $user->roles, $credentials );
+	$users[] = array( $user->data, $user->roles, $credentials );
 }
 header( 'Content-Type: application/json' );
 echo wp_json_encode(

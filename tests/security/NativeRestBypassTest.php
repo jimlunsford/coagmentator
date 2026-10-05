@@ -32,6 +32,5 @@ final class NativeRestBypassTest extends GuardHttpCase {
 			$this->denied( '/wp-json' . $case[1], $case[0], 'service-basic', '{"title":"must-not-change","name":"must-not-create"}', array( 'Content-Type: application/json' ) );
 		}
 		$this->denied( '/wp-json/batch/v1', 'POST', 'service-basic', '{"requests":[{"method":"POST","path":"/wp/v2/posts","body":{"title":"must-not-create"}},{"method":"GET","path":"/c02/v1/target"}]}', array( 'Content-Type: application/json' ) );
-
 	}
 }
