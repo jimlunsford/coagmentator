@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset name="Coagmentator">
+  <description>WordPress standards for runtime code and disposable test infrastructure.</description>
+  <file>wordpress</file>
+  <file>tests</file>
+  <arg name="extensions" value="php"/>
+  <rule ref="WordPress"/>
+  <!-- PHPUnit class discovery uses *Test.php; these are never runtime plugin files. -->
+  <rule ref="WordPress.Files.FileName"><exclude-pattern>tests/*</exclude-pattern></rule>
+  <!-- Disposable CLI fixtures and probes intentionally read fixed local test files,
+       emit machine assertions, and inspect request headers. They are not handlers. -->
+  <rule ref="WordPress.Security.EscapeOutput"><exclude-pattern>tests/*</exclude-pattern></rule>
+  <rule ref="WordPress.Security.ValidatedSanitizedInput"><exclude-pattern>tests/*</exclude-pattern></rule>
+  <rule ref="WordPress.WP.AlternativeFunctions"><exclude-pattern>tests/*</exclude-pattern></rule>
+</ruleset>

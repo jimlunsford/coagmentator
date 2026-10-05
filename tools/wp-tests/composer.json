@@ -1,0 +1,17 @@
+{
+  "name": "coagmentator/wp-tests",
+  "description": "Isolated development-only C01 tooling",
+  "license": "AGPL-3.0-or-later",
+  "require-dev": {
+    "php": ">=8.3 <8.6",
+    "phpunit/phpunit": "9.6.38",
+    "yoast/phpunit-polyfills": "1.1.5"
+  },
+  "config": {
+    "platform": {
+      "php": "8.3.0"
+    },
+    "allow-plugins": false,
+    "sort-packages": true
+  }
+}

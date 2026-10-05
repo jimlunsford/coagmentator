@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="../bootstrap/http.php" colors="false" failOnWarning="true" failOnRisky="true" failOnDeprecation="true">
+  <testsuites><testsuite name="http"><directory suffix="Test.php">.</directory></testsuite></testsuites>
+</phpunit>
