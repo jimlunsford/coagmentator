@@ -81,7 +81,7 @@ The canonical full license text is committed at the repository root in `LICENSE`
 **Status:** Proposed for Gate 1 acceptance
 **Date:** 2026-10-05
 
-Adopt the 21-tool inventory in [MCP-TOOLS.md](MCP-TOOLS.md): ten reads and eleven writes. Unify post/page lookup, force creation to draft, separate publication and Trash, omit bulk/generic dispatch and support one site/operator/service identity per instance. Add a read-only mutation-status tool for uncertain outcomes. This finalizes the candidate inventory in the Gate 0 architecture without weakening D-006.
+Adopt the 21-tool inventory in [MCP-TOOLS.md](MCP-TOOLS.md): ten reads and eleven writes. Unify post/page lookup, force creation to draft, separate publication and Trash, omit bulk/generic dispatch and support one site/operator/service identity per instance. Add a read-only mutation-status tool for uncertain outcomes. Fixed site/actor identity and timestamps are injected by MCP; new mutation handles are generated and durably tracked by Coagmentator, then returned for explicit lookup/resumption. Model results contain useful verified evidence; internal receipt/trace/identity fields remain protected. This finalizes the candidate inventory in the Gate 0 architecture without weakening D-006.
 
 ## D-010: Separate OAuth and WordPress service credentials
 
@@ -97,19 +97,19 @@ Use an established OAuth authorization server with authorization code, PKCE S256
 
 Native WordPress capabilities remain the authority, with extra Coagmentator operation capabilities and configuration checks. A dedicated role holds only the needed primitives. Because those primitives can authorize native REST writes, a must-use guard blocks dedicated service users from all alternative REST/XML-RPC/self-management/authentication paths before credentials are issued. It grants no privileges and remains active without feature handlers. Revoke credentials before removal. Details: [CAPABILITIES.md](CAPABILITIES.md).
 
-## D-012: Exact-intent approval and honest mutation evidence
+## D-012: Explicit approval profiles and honest mutation evidence
 
 **Status:** Proposed for Gate 1 acceptance
 **Date:** 2026-10-05
 
-Writes start disabled. Require separate human WordPress approval for publication, Trash, uploads, term updates, revision restore and live/private edits. Approval binds complete intent and preconditions for ten minutes; MCP cannot approve. Every write uses a durable request key and readback receipt, with explicit partial/unknown outcomes and no blind retry after uncertain execution. Versions and locks prevent stale/parallel bridge writes but do not claim atomicity against native WordPress writers or exactly-once hook effects. Details: [CONTRACTS.md](CONTRACTS.md), [ERRORS.md](ERRORS.md).
+Human-review correction, 2026-10-05: support `strict` and `trusted_single_operator` policy profiles, with every write family initially disabled. Strict retains separate human WordPress approval for publication, Trash, uploads, term updates, revision restore and live/private edits, bound to complete intent/preconditions for ten minutes. Trusted is suitable for the reference workflow through explicitly enabled standing server authorization plus client confirmation behavior. Both enforce OAuth/scopes, fixed binding, Application Passwords, guard, native/custom capabilities, schemas, versions, deduplication and verification. Service identities cannot approve or change policy. Client confirmation is UX, not authorization or cryptographic intent proof; compromised MCP can exercise all enabled trusted-profile writes. Every write uses a durably tracked server-generated request key/timestamp and readback receipt, with explicit partial/unknown outcomes and no blind retry after uncertain execution. Versions and locks prevent stale/parallel bridge writes but do not claim atomicity against native WordPress writers or exactly-once hook effects. Details: [CONTRACTS.md](CONTRACTS.md), [ERRORS.md](ERRORS.md).
 
 ## D-013: Bounded raw content, media and metadata
 
 **Status:** Proposed for Gate 1 acceptance
 **Date:** 2026-10-05
 
-Read raw stored source without execution; constrain writes to safe static HTML/core blocks. Upload bounded raster bytes with decode/re-encode and metadata removal, never fetch caller URLs or paths. Expose only `editorial.note`, `seo.title` and `seo.description`; SEO uses an optional bridge-owned basic renderer with verified sole ownership, not guessed vendor internals. Third-party SEO integration and richer media handoff are explicit future compatibility work. Refuse Trash when core would permanently delete. Revision restore copies only selected editorial fields. Details and limitations: [CONTRACTS.md](CONTRACTS.md).
+Read raw stored source without execution; constrain writes to safe static HTML/core blocks. Human-review correction: expose supported ChatGPT top-level file parameters. MCP alone retrieves files through a reviewed source profile, strict SSRF/HTTPS/no-redirect/streaming-byte/decoder controls and computes the input digest. WordPress receives only the internal bounded byte contract, independently decodes/re-encodes and strips metadata. Arbitrary caller URLs/paths and bridge URL downloads remain prohibited; direct clients cannot bypass the file-source restrictions. Expose only `editorial.note`, `seo.title` and `seo.description`; SEO uses an optional bridge-owned basic renderer with verified sole ownership, not guessed vendor internals. Third-party SEO integration remains later compatibility work; actual ChatGPT file handoff requires Gate 5 evidence. Refuse Trash when core would permanently delete. Revision restore copies only selected editorial fields. Details and limitations: [CONTRACTS.md](CONTRACTS.md).
 
 ## D-014: Current MCP revision with explicit legacy adapter
 

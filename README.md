@@ -19,7 +19,7 @@ The project exists to provide a self-hosted, auditable alternative to metered th
 
 ## Initial architecture
 
-The MCP server authenticates AI clients with OAuth over HTTPS and calls a separate WordPress bridge using a dedicated service identity. WordPress enforces capabilities, verifies writes and returns receipts. A must-use guard limits the service identity to the documented operations. See [architecture and trust boundaries](docs/ARCHITECTURE.md).
+The MCP server authenticates AI clients with OAuth over HTTPS and calls a separate WordPress bridge using a dedicated service identity. It accepts supported client-file parameters, retrieves files under a restricted policy and sends only validated bytes to WordPress. WordPress enforces capabilities, verifies writes and returns receipts. A must-use guard limits the service identity to the documented operations. Strict and trusted single-operator approval profiles share the same server authorization; model results expose useful mutation evidence while protected records retain the audit details. See [architecture and trust boundaries](docs/ARCHITECTURE.md).
 
 ## Repository layout
 
@@ -45,7 +45,7 @@ The code directories will be created as implementation begins. Documentation is 
 
 ## Status
 
-**Gate 0 is accepted. Gate 1 is in progress, with its design candidate ready for human review. Gate 2 has not started.**
+**Gate 0 is accepted. Gate 1 is in progress, with its human-review corrections ready for another review. Gate 2 has not started.**
 
 No implementation has begun.
 

@@ -2,7 +2,9 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 1
-Status: COMPLETE (design preparation only; human acceptance pending)
+Status: COMPLETE (initial design and human-review correction preparation; revised candidate acceptance pending)
+
+The original preparation below is historical. The human-review correction section records the current revised design; Gate 1 remains `IN PROGRESS`.
 
 ## Goal
 
@@ -79,11 +81,50 @@ Primary sources only, checked 2026-10-05 and linked in the permanent documents:
 ## Risks / unresolved items
 
 - No unresolved security-critical architecture question blocks design review.
-- Human acceptance is outstanding, including the user-visible approval flow and documented MVP limits.
+- Human acceptance of the revised candidate is outstanding, including both approval profiles, trusted-profile compromised-MCP exposure, file-source restrictions and documented MVP limits.
 - OAuth provider product, maintained WordPress/PHP/SDK version pins and actual platform callback values require evidence at their named implementation/deployment gates, within the fixed contract.
-- Actual ChatGPT interoperability and image-byte handoff have not been tested. They are Gate 5 requirements.
+- Actual ChatGPT interoperability, file-parameter handoff and reviewed download-source configuration have not been tested. They are Gate 5 requirements.
 - Existing JimLunsford.com content/SEO compatibility is uninspected and cannot be claimed. Vendor SEO support is outside the MVP basic renderer.
 - WordPress-native concurrent edits can race bridge writes; external hook effects cannot be made exactly-once; compromised WordPress can forge receipts. These are disclosed design limits requiring human review.
+
+## Human-review correction pass, 2026-10-05
+
+### Goal and verified starting state
+
+Apply the three requested human-review corrections to the existing Gate 1 branch and PR. Publication is authorized; merging and Gate 2 are explicitly prohibited.
+
+- Reviewed starting HEAD: `5a1e1451798fff58e3953e453f8a628f15db6fdf`.
+- Reviewed starting tree: `277414d04bcb4c7ef066875b8374b15860ff8886`.
+- Branch: `docs/gate-1-contracts-threat-model`; PR #1 open, ready for review, mergeable and unmerged at start.
+- Remote `main` independently verified at `810727bbbd00e672ecb81cd22c285650ee45f357`; no changes authorized there.
+- Used a clean isolated local copy of the reviewed Git history. Read the mandatory repository context and current affected files before editing. No stale file version was substituted.
+
+### Corrections completed
+
+1. External media now uses a top-level `ClientFile` with `openai/fileParams`, the four declared properties and only `download_url`/`file_id` required. MCP owns controlled retrieval, pre-buffer/streaming limits, HTTPS/public-address pinning, no redirects, source-profile enforcement, decoder validation and input digest. Direct callers cannot turn the field into an arbitrary downloader. WordPress accepts only the authenticated internal byte envelope and independently re-encodes/strips metadata. No source-host list or live integration is invented.
+2. MCP injects site/actor identity and owns new durable mutation handles/timestamps. Added explicit lost-client-response fingerprint admission, immutable replay payloads/timestamps, expiry/tombstone handling and fail-closed recovery of missing tracking state. Preserved bridge reservation ownership, honest partial/unknown results and no blind retries. Model evidence retains the request handle, target, outcome, versions/status, changed fields and verification; internal receipt/identity/trace details remain in protected audit records.
+3. Added `strict` and `trusted_single_operator` policy profiles, with write families disabled initially and the complete authorization/capability/version/deduplication/verification stack in both. Strict approvals remain independent and cannot be service-approved. Trusted reference use relies on standing server authority and client confirmation UX, with all-enabled-write exposure under MCP compromise explicitly documented. Each of the 21 tools now has individual annotation values and a behavior-based justification.
+
+Updated all 13 files listed in this note, including README and ERRORS in addition to the requested permanent documents. Retained the 21-tool surface, OAuth provider direction, current/compatibility MCP profiles, mandatory guard, WordPress authority, content/SEO limitations and native-editor concurrency disclosure. Added T29/T30 within the existing threat-table structure, bringing it to 30 scenarios.
+
+### Consistency and source verification
+
+The correction review covers the complete Gate 1 checklist, not runtime implementation acceptance:
+
+- Official OpenAI reference and tool-planning pages were searched and opened on 2026-10-05, including the actual file-input and annotation sections. Confirmed top-level metadata, all four declared file properties and exact required set. Sources are linked in MCP-TOOLS, CONTRACTS and AUTHENTICATION.
+- Reviewed all 21 tool input/output/resource/error rows against the 21 OAuth/native/custom mappings and all 21 individual annotation rows. Bounded reads are closed-world; additive draft/media/term creation are not blanket destructive; public effects are open-world. Idempotence reflects actual repeat behavior and never permits blind retry.
+- Traced arbitrary/forged/expired client URLs, redirect and private-address/DNS rebinding cases, pre-buffer limits, decoder/MIME/dimension checks, digest ownership and internal byte-only WordPress validation. These are specified controls with Gate 4/5 tests assigned, not attacks tested against nonexistent code.
+- Reviewed every model schema/projection for fixed site-ID requirements, caller timestamps, fresh caller-chosen IDs and unnecessary tracing fields. Checked successful, failed, approval and mutation-lookup projections against protected audit retention.
+- Walked client-response loss, bridge-response loss, concurrent repeats, approval resumption, changed payloads, stale versions, original timestamps, expired records, lost tracking state and uncertain reservations. No automatic mutation POST retry, fresh-ID workaround or lease stealing is permitted.
+- Checked both approval profiles against every authorization layer, strict non-service approver/CSRF/exact-intent enforcement, policy-downgrade denial and trusted-profile residual risk. Confirmed all eleven mutations retain readback and honest partial/unknown evidence.
+- Rechecked the remaining Gate 1 boundaries: raw-source reads, static write policy, native capability mapping/guard, metadata/SEO ownership, publication/Trash/restore restrictions, rate/storage ceilings, privacy/redaction, version/concurrency limits and unchanged protocol compatibility choices.
+- Structural verification passed: 21 tools, 21 capability mappings, 21 annotation rows, 30 threats, 57 local links, 18 aligned Markdown tables, 3 parsed JSON examples, eight accepted/six proposed decisions, and all gate states preserved. `git diff --check` and added-content secret-pattern checks passed. Exactly 13 Markdown files changed; zero implementation, dependency, workflow or test files were added. Exact publication identifiers are recorded with the published correction checkpoint below. No runtime tests/CI are applicable: the repository still contains documentation/license only.
+
+### Decisions, limitations and next action
+
+D-001 through D-008 remain accepted. D-009 through D-014 remain proposed, with the requested corrections recorded in their relevant entries; this is not Gate 1 acceptance. Actual file-source origins and platform/provider behavior require later non-production evidence. No production deployment, credentials, tags, releases or Gate 2 scaffolding were added.
+
+Next action: human-review the exact revised PR #1 HEAD/tree. Keep Gate 1 `IN PROGRESS` and Gate 2 `NOT STARTED`. Do not merge this PR during this execution.
 
 ## Exact next step
 
