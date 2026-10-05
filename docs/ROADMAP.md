@@ -6,7 +6,7 @@ Status values: `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `ACCEPTED`.
 
 ## Gate 0: Project foundation
 
-**Status: IN PROGRESS**
+**Status: ACCEPTED**
 
 Goals:
 
@@ -23,6 +23,14 @@ Acceptance criteria:
 - foundational docs are committed to the default branch
 - `AGENTS.md` requires work-note handoffs
 - latest roadmap state is unambiguous
+
+Acceptance evidence:
+
+- public repository: `jimlunsford/coagmentator`
+- default branch: `main`
+- full AGPL-3.0 license text committed
+- foundational project, architecture, security, roadmap, decision and work-chat documentation committed
+- work-note template and initial handoff notes established
 
 ## Gate 1: Contracts and threat model
 
