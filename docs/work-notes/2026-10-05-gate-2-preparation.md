@@ -110,3 +110,13 @@ The nine route/capability rows and error table are unchanged. WordPress 7.1.2, P
 This implements the owner's bounded preparation correction; it changes no accepted Gate 1 decision. Runtime enforcement remains unproved until authorized implementation. Host-managed registry repair still needs the existing trusted operator path; preserving wp-admin does not grant filesystem authority or promise a new repair UI. Gate 2 stays IN PROGRESS.
 
 Next: human-review the corrected exact PR candidate. Do not merge PR #2 or begin implementation in this execution. The correction commit/tree will be recorded in a note-only publication follow-up; the final PR description records the complete resulting HEAD/tree, since a Git note cannot embed its own resulting hash.
+
+### Corrected preparation publication checkpoint
+
+- Correction HEAD: `ba81b0f3382494ec807288fd0a31fc719eb40f14`.
+- Correction complete tree: `aed3d1e1f22fd5a92a0899157a63a05742f0530a`, independently reproduced from the locally reviewed complete file inventory.
+- Correction parent: `b85397da98ac617deb88814cac93cef271ad8599`, the exact human-reviewed candidate.
+- Exactly four Markdown files differ from that parent; every other blob is preserved. All nine route rows and error mappings remain byte-identical, as do accepted Gate 1 documents.
+- This publication-checkpoint follow-up changes only this work note. Its own final HEAD/tree are recorded in PR #2's description and the session report, avoiding impossible self-referential commit hashes.
+- Main remains pinned to `31b9e9f0745ae48a3b61c060fbeb388431d837cd`; final publication verification must confirm that pin and the open, unmerged PR tip.
+- Human review is next. Gate 2 remains IN PROGRESS; no merge, implementation or runtime-test pass is claimed.
