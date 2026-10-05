@@ -104,7 +104,8 @@ if ( 'setup' === $c02_mode ) {
 } elseif ( 'preflight' === $c02_mode ) {
 	$data = json_decode( file_get_contents( $c02_fixture_path ), true, 512, JSON_THROW_ON_ERROR );
 	if ( ! rest_get_server() instanceof Coagmentator\Guard\Guarded_REST_Server || ! Coagmentator\Guard\Guard::instance()->protected_id( $data['service'] ) ) {
-		throw new RuntimeException( 'Guard preflight failed; credential issuance prohibited.' );
+		fwrite( STDERR, "Guard preflight failed; credential issuance prohibited.\n" );
+		exit( 1 );
 	}
 	foreach ( get_users() as $user ) {
 		if ( array() !== WP_Application_Passwords::get_user_application_passwords( $user->ID ) ) {

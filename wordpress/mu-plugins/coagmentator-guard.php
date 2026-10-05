@@ -8,8 +8,6 @@
  * @package Coagmentator
  */
 
-// phpcs:disable WordPress.Files.FileName.InvalidClassFileName -- Required self-contained MU entry point retains its fallback class.
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -213,23 +211,23 @@ final class Coagmentator_Guard_Loader {
 		return self::$denied || self::remote() ? self::error() : $result;
 	}
 
-	/**
-	 * Fail before non-REST target callbacks.
-	 */
+	/** Emit a safe denial before any non-REST target, including early XML-RPC. */
+	public static function deny_http(): void {
+		status_header( 403 );
+		header( 'Content-Type: application/json; charset=UTF-8' );
+		header( 'Cache-Control: no-store' );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Closed JSON, no reflected input.
+		echo wp_json_encode( self::failure_data() );
+		exit;
+	}
+
+	/** Fail before non-REST target callbacks. */
 	public static function non_rest(): void {
-		if ( self::$denied || self::remote() || self::marked( get_current_user_id() ) ) {
-			$prefix = defined( 'COAGMENTATOR_GUARD_REST_PREFIX' ) && is_string( COAGMENTATOR_GUARD_REST_PREFIX ) ? COAGMENTATOR_GUARD_REST_PREFIX : '/wp-json';
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw path selects denial encoding only.
-			if ( str_starts_with( $_SERVER['REQUEST_URI'] ?? '', $prefix . '/coagmentator/' ) ) {
-				status_header( 403 );
-				header( 'Content-Type: application/json; charset=UTF-8' );
-				header( 'Cache-Control: no-store' );
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Closed JSON, no reflected input.
-				echo wp_json_encode( self::failure_data() );
-				exit;
-			}
-			status_header( 403 );
-			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
+		$prefix = defined( 'COAGMENTATOR_GUARD_REST_PREFIX' ) && is_string( COAGMENTATOR_GUARD_REST_PREFIX ) ? COAGMENTATOR_GUARD_REST_PREFIX : '/wp-json';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw path adds denial only, with no normalization or input reflection.
+		$bridge_path = str_starts_with( $_SERVER['REQUEST_URI'] ?? '', $prefix . '/coagmentator/' );
+		if ( self::$denied || self::remote() || $bridge_path || self::marked( get_current_user_id() ) ) {
+			self::deny_http();
 		}
 	}
 

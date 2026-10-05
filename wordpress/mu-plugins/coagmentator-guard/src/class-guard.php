@@ -380,8 +380,7 @@ final class Guard {
 			$this->failed = true;
 		}
 		if ( $this->restricted() && ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) ) {
-			status_header( 403 );
-			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
+			\Coagmentator_Guard_Loader::deny_http();
 		}
 	}
 

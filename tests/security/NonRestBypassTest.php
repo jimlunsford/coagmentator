@@ -15,6 +15,7 @@ final class NonRestBypassTest extends GuardHttpCase {
 	public function test_non_rest(): void {
 		foreach ( array( '/wp-admin/', '/wp-admin/admin-ajax.php?action=c02_target', '/wp-admin/admin-post.php?action=c02_target', '/wp-login.php', '/c02-target.php' ) as $path ) {
 			$this->denied( $path, 'GET', 'service-cookie' );
+			$this->denied( $path, 'GET', 'marker-cookie' );
 			$this->denied( $path, 'GET', 'service-basic' );
 			$this->denied( $path, 'GET', '', '', array( 'X-C02-User: service' ) );
 		}

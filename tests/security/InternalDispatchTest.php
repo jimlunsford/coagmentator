@@ -17,6 +17,7 @@ final class InternalDispatchTest extends GuardHttpCase {
 			$before = $this->snapshot();
 			$result = $this->request( '/wp-json/coagmentator/v1/site_info', 'POST', 'service-basic', $body );
 			self::assertSame( 403, $result['status'] );
+			$this->closed_failure( $result['body'] );
 			$after = $this->snapshot();
 			self::assertSame( $before['outer'] + 1, $after['outer'], 'The real authentication path must reach the synthetic outer callback.' );
 			self::assertCount( 11, $after['checks'] );

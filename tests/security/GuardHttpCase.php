@@ -114,7 +114,26 @@ abstract class GuardHttpCase extends TestCase {
 		$result = $this->request( $path, $method, $auth, $body, $headers );
 		self::assertContains( $result['status'], array( 400, 401, 403, 404, 405 ), 'Hostile request must be denied.' );
 		self::assertSame( $before, $this->snapshot(), 'Denied request executed a callback or changed protected state.' );
+		if ( '/wp-json/coagmentator/v1/site_info' === $path && 'POST' === $method && '' === $body && array() === $headers ) {
+			$this->closed_failure( $result['body'] );
+		}
 	}
+	/**
+	 * Minimal MU failure encoder must not leak the incoming core error.
+	 *
+	 * @param string $body JSON response.
+	 */
+	protected function closed_failure( string $body ): void {
+		$data = json_decode( $body, true, 512, JSON_THROW_ON_ERROR );
+		self::assertSame( array( 'ok', 'contract_version', 'correlation_id', 'site_id', 'error', 'receipt' ), array_keys( $data ) );
+		self::assertFalse( $data['ok'] );
+		self::assertNull( $data['site_id'] );
+		self::assertNull( $data['receipt'] );
+		self::assertSame( 'not_applied', $data['error']['write_state'] );
+		self::assertSame( array( 'code', 'message', 'origin', 'retryable', 'retry_after_seconds', 'write_state', 'details' ), array_keys( $data['error'] ) );
+		self::assertSame( 'AUTHORIZATION_DENIED', $data['error']['code'] );
+	}
+
 	/**
 	 * Verify new and existing real human sessions, plus public traffic.
 	 */

@@ -29,3 +29,7 @@ Normal WordPress setup creates an ordinary disposable control administrator with
 C01 contains no MU guard, bridge route, capability provisioning, read handler or mutation behavior. The normal package only checks prerequisites and remains dormant. Unit facts cover unsupported PHP, WordPress, integer width, missing required extensions and multisite; fresh processes additionally prove actual unsupported package loads return false without vendors.
 
 Only allowlisted JUnit/JSON evidence passes the disclosure check for upload. Runtime files, raw server logs, secret files and private keys are excluded. Compose teardown runs on test failures. GitHub job cancellation also destroys the hosted runner; this is not a production cleanup mechanism.
+
+## C02 extension
+
+The C01 descriptions above identify the preserved foundation. The current runner installs the independent MU guard only after those unchanged controls. C02 then adds disposable service, marker-only and human fixtures, empty-UUID HTTP preflight, conditional ephemeral Application Password issuance, guard scenarios and verified revocation. All C02 acceptance runs use the existing GitHub-hosted matrix. See [security verification](../security/README.md) and the [C02 work note](../../docs/work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). This does not authorize production provisioning or later checkpoints.
