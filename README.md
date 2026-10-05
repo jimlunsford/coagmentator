@@ -60,12 +60,14 @@ The code directories will be created as implementation begins. Documentation is 
 
 ## Status
 
-**Project inception. No implementation has begun.**
+**Gate 0: Project foundation is accepted. Gate 1: Contracts and threat model has not started.**
+
+No implementation has begun.
 
 Read `AGENTS.md` and `docs/ROADMAP.md` before starting implementation.
 
 ## License
 
-Planned license: **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**.
+Coagmentator is licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**.
 
-The full license text must be added before the first public code release.
+See `LICENSE` for the full license text.
