@@ -16,56 +16,79 @@ $c02_fixture_path = $root . '/.runtime/c02-fixtures.json';
 $reg              = $root . '/.runtime/guard-config/registry.json';
 if ( 'setup' === $c02_mode ) {
 	$service_password = bin2hex( random_bytes( 48 ) );
-	$service          = wp_insert_user( array(
-		'user_login' => 'c02_service',
-		'user_pass' => $service_password,
-		'role' => 'subscriber',
-	) );
+	$service          = wp_insert_user(
+		array(
+			'user_login' => 'c02_service',
+			'user_pass'  => $service_password,
+			'role'       => 'subscriber',
+		)
+	);
 	if ( ! is_int( $service ) ) {
 		throw new RuntimeException( 'Disposable service fixture creation failed.' );
 	}
 	update_user_meta( $service, 'coagmentator_service', '1' );
 	$human_password = bin2hex( random_bytes( 32 ) );
-	$human          = wp_insert_user( array(
-		'user_login' => 'c02_human',
-		'user_pass' => $human_password,
-		'role' => 'administrator',
-	) );
+	$human          = wp_insert_user(
+		array(
+			'user_login' => 'c02_human',
+			'user_pass'  => $human_password,
+			'role'       => 'administrator',
+		)
+	);
 	update_option( 'c02_service', $service );
 	update_option( 'c02_human', $human );
 	update_option( 'permalink_structure', '/%postname%/' );
 	flush_rewrite_rules( false );
+	$marker = wp_insert_user(
+		array(
+			'user_login' => 'c02_marker',
+			'user_pass'  => bin2hex( random_bytes( 48 ) ),
+			'role'       => 'subscriber',
+		)
+	);
+	update_user_meta( $marker, 'coagmentator_service', '1' );
 	$data = array(
-		'service' => $service,
-		'human' => $human,
+		'service'        => $service,
+		'marker'         => $marker,
+		'human'          => $human,
 		'human_password' => $human_password,
 	);
-	foreach ( array( 'service', 'human' ) as $kind ) {
+	foreach ( array( 'service', 'human', 'marker' ) as $kind ) {
 		$c02_user_id               = $data[ $kind ];
 		$data[ $kind . '_cookie' ] = SECURE_AUTH_COOKIE . '=' . wp_generate_auth_cookie( $c02_user_id, time() + 3600, 'secure_auth' ) . '; ' . LOGGED_IN_COOKIE . '=' . wp_generate_auth_cookie( $c02_user_id, time() + 3600, 'logged_in' );
 	}
-	file_put_contents( $reg, json_encode( array(
-		'version' => 1,
-		'protected_user_ids' => array( $service ),
-		'credential_uuids' => array(),
-	) ) );
+	file_put_contents(
+		$reg,
+		json_encode(
+			array(
+				'version'            => 1,
+				'protected_user_ids' => array( $service ),
+				'credential_uuids'   => array(),
+			)
+		)
+	);
 	file_put_contents( $c02_fixture_path, json_encode( $data ) );
 	chmod( $c02_fixture_path, 0600 );
 	chown( $c02_fixture_path, fileowner( $root ) );
 	// Exercise real interactive service login while the high-entropy password is
 	// only in memory. It is discarded before any Application Password is issued.
 	$login_client = curl_init( 'https://wordpress.test/wp-login.php' );
-	curl_setopt_array( $login_client, array(
-		CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_CAINFO => $root . '/.runtime/tls/ca.crt',
-		CURLOPT_TIMEOUT => 10,
-		CURLOPT_POST => true,
-		CURLOPT_POSTFIELDS => http_build_query( array(
-			'log' => 'c02_service',
-			'pwd' => $service_password,
-		) ),
-		CURLOPT_COOKIEFILE => '',
-	) );
+	curl_setopt_array(
+		$login_client,
+		array(
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_CAINFO         => $root . '/.runtime/tls/ca.crt',
+			CURLOPT_TIMEOUT        => 10,
+			CURLOPT_POST           => true,
+			CURLOPT_POSTFIELDS     => http_build_query(
+				array(
+					'log' => 'c02_service',
+					'pwd' => $service_password,
+				)
+			),
+			CURLOPT_COOKIEFILE     => '',
+		)
+	);
 	$login_body = curl_exec( $login_client );
 	unset( $service_password );
 	if ( 0 !== curl_errno( $login_client ) || 200 !== curl_getinfo( $login_client, CURLINFO_RESPONSE_CODE ) || ! is_string( $login_body ) || ! str_contains( $login_body, 'login_error' ) ) {
@@ -107,11 +130,13 @@ if ( 'setup' === $c02_mode ) {
 } elseif ( 'scenario' === $c02_mode ) {
 	$data     = json_decode( file_get_contents( $c02_fixture_path ), true, 512, JSON_THROW_ON_ERROR );
 	$scenario = $argv[2];
-	$registry = json_encode( array(
-		'version' => 1,
-		'protected_user_ids' => array( $data['service'] ),
-		'credential_uuids' => isset( $data['service_uuid'] ) ? array( $data['service_uuid'] ) : array(),
-	) );
+	$registry = json_encode(
+		array(
+			'version'            => 1,
+			'protected_user_ids' => array( $data['service'] ),
+			'credential_uuids'   => isset( $data['service_uuid'] ) ? array( $data['service_uuid'] ) : array(),
+		)
+	);
 	if ( is_file( $reg ) ) {
 		chmod( $reg, 0644 );
 	}
@@ -139,6 +164,7 @@ if ( 'setup' === $c02_mode ) {
 	if ( str_ends_with( $scenario, '-active' ) ) {
 		update_option( 'active_plugins', array( 'coagmentator/coagmentator.php' ) );
 	}
+	update_option( 'c02_replacement', 'replacement' === $scenario );
 	update_option( 'c02_targets', 0 );
 	update_option( 'c02_outer', 0 );
 	update_option( 'c02_internal_checks', array() );
@@ -147,7 +173,7 @@ if ( 'setup' === $c02_mode ) {
 	echo "Disposable scenario configured.\n";
 } elseif ( 'cleanup' === $c02_mode && is_file( $c02_fixture_path ) ) {
 	$data = json_decode( file_get_contents( $c02_fixture_path ), true, 512, JSON_THROW_ON_ERROR );
-	foreach ( array( 'service', 'human' ) as $kind ) {
+	foreach ( array( 'service', 'human', 'marker' ) as $kind ) {
 		WP_Application_Passwords::delete_all_application_passwords( $data[ $kind ] );
 		if ( array() !== WP_Application_Passwords::get_user_application_passwords( $data[ $kind ] ) ) {
 			throw new RuntimeException( 'Disposable credential revocation failed.' );

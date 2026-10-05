@@ -5,9 +5,13 @@
  * @package Coagmentator
  */
 
-/** Runs with an empty UUID allowlist and no Application Passwords. */
+/**
+ * Runs with an empty UUID allowlist and no Application Passwords.
+ */
 final class PreflightTest extends GuardHttpCase {
-	/** Independent guard denial and human recovery precede issuance. */
+	/**
+	 * Independent guard denial and human recovery precede issuance.
+	 */
 	public function test_guard_before_credentials(): void {
 		self::assertArrayNotHasKey( 'service_secret', $this->fixture );
 		self::assertArrayNotHasKey( 'human_secret', $this->fixture );

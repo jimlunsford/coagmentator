@@ -7,51 +7,63 @@
 
 namespace Coagmentator\Guard;
 
-/** Never obtains a password argument or retains a complete credential record. */
+/**
+ * Never obtains a password argument or retains a complete credential record.
+ */
 final class Guard {
-	/** Request singleton.
+	/**
+	 * Request singleton.
 	 *
 	 * @var self|null Request singleton.
 	 */
 	private static ?self $instance = null;
-	/** Protected registry.
+	/**
+	 * Protected registry.
 	 *
 	 * @var Guard_Config Protected registry.
 	 */
 	private Guard_Config $config;
-	/** Sticky service classification.
+	/**
+	 * Sticky service classification.
 	 *
 	 * @var bool Sticky service classification.
 	 */
 	private bool $service = false;
-	/** Sticky authentication failure.
+	/**
+	 * Sticky authentication failure.
 	 *
 	 * @var bool Sticky authentication failure.
 	 */
 	private bool $failed = false;
-	/** Current-user observation recursion.
+	/**
+	 * Current-user observation recursion.
 	 *
 	 * @var bool Current-user observation recursion.
 	 */
 	private bool $observing = false;
-	/** Authenticated user only.
+	/**
+	 * Authenticated user only.
 	 *
 	 * @var int Authenticated user only.
 	 */
 	private int $user = 0;
-	/** Matched UUID only.
+	/**
+	 * Matched UUID only.
 	 *
 	 * @var string Matched UUID only.
 	 */
 	private string $uuid = '';
 
-	/** Load operator configuration without REST-selected paths. */
+	/**
+	 * Load operator configuration without REST-selected paths.
+	 */
 	private function __construct() {
 		$path         = defined( 'COAGMENTATOR_GUARD_REGISTRY' ) ? COAGMENTATOR_GUARD_REGISTRY : '';
 		$this->config = new Guard_Config( is_string( $path ) ? $path : '' );
 	}
 
-	/** Current request guard.
+	/**
+	 * Current request guard.
 	 *
 	 * @return self Current request guard.
 	 */
@@ -62,7 +74,9 @@ final class Guard {
 		return self::$instance;
 	}
 
-	/** Install guard hooks once. */
+	/**
+	 * Install guard hooks once.
+	 */
 	public static function boot(): void {
 		$guard = self::instance();
 		if ( ! $guard->config->healthy() ) {
@@ -96,7 +110,8 @@ final class Guard {
 		return $this->config->protects( $id ) || \Coagmentator_Guard_Loader::marked( $id );
 	}
 
-	/** Sticky restrictions survive clearing/switching users.
+	/**
+	 * Sticky restrictions survive clearing/switching users.
 	 *
 	 * @return bool Sticky restrictions survive clearing/switching users.
 	 */
@@ -107,7 +122,8 @@ final class Guard {
 		return $this->service || $this->failed;
 	}
 
-	/** Fixed host pretty REST prefix.
+	/**
+	 * Fixed host pretty REST prefix.
 	 *
 	 * @return string Fixed host pretty REST prefix.
 	 */
@@ -194,7 +210,9 @@ final class Guard {
 		}
 	}
 
-	/** Discard raw WordPress error details. */
+	/**
+	 * Discard raw WordPress error details.
+	 */
 	public function failed(): void {
 		$this->failed = true;
 	}
@@ -233,7 +251,9 @@ final class Guard {
 		return $this->failed ? 0 : $id;
 	}
 
-	/** Observe and invalidate changed identities without dropping the service latch. */
+	/**
+	 * Observe and invalidate changed identities without dropping the service latch.
+	 */
 	public function observe(): void {
 		if ( $this->observing ) {
 			return;
@@ -260,7 +280,7 @@ final class Guard {
 	 * @return bool Guard-only admission.
 	 */
 	public function admits( string $route ): bool {
-		return ! $this->failed && $this->service && 0 < $this->user && $this->user === get_current_user_id() && $this->config->protects( $this->user ) && $this->config->lists( $this->uuid ) && null !== \WP_Application_Passwords::get_user_application_password( $this->user, $this->uuid ) && $this->handler_ready( $route );
+		return ! $this->failed && $this->service && 0 < $this->user && get_current_user_id() === $this->user && $this->config->protects( $this->user ) && $this->config->lists( $this->uuid ) && null !== \WP_Application_Passwords::get_user_application_password( $this->user, $this->uuid ) && $this->handler_ready( $route );
 	}
 
 	/**
@@ -338,8 +358,8 @@ final class Guard {
 	/**
 	 * C02 has no successful bridge response; discard raw core/plugin errors.
 	 *
-	 * @param mixed $response Prior response.
-	 * @param \WP_REST_Server $server Server.
+	 * @param mixed            $response Prior response.
+	 * @param \WP_REST_Server  $server Server.
 	 * @param \WP_REST_Request $request Request.
 	 * @return mixed Original human response or closed C02 denial.
 	 */
@@ -347,7 +367,9 @@ final class Guard {
 		return $this->restricted() || str_starts_with( $request->get_route(), '/coagmentator/' ) ? Guarded_REST_Server::denial() : $response;
 	}
 
-	/** Deny non-REST service use before target callbacks. */
+	/**
+	 * Deny non-REST service use before target callbacks.
+	 */
 	public function non_rest(): void {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw bytes select denial timing only, never authorization.
 		$uri = $_SERVER['REQUEST_URI'] ?? '';
@@ -358,11 +380,14 @@ final class Guard {
 			$this->failed = true;
 		}
 		if ( $this->restricted() && ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) ) {
+			status_header( 403 );
 			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
 		}
 	}
 
-	/** External lifecycle owner clears only when its complete cycle has ended. */
+	/**
+	 * External lifecycle owner clears only when its complete cycle has ended.
+	 */
 	public function finish(): void {
 		$this->user = 0;
 		$this->uuid = '';

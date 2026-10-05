@@ -8,7 +8,7 @@
  * @package Coagmentator
  */
 
-// phpcs:ignoreFile WordPress.Files.FileName.InvalidClassFileName -- Required self-contained MU entry point retains its fallback class.
+// phpcs:disable WordPress.Files.FileName.InvalidClassFileName -- Required self-contained MU entry point retains its fallback class.
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,18 +19,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It never grants bridge authority. Installed PHP remains a trusted execution domain.
  */
 final class Coagmentator_Guard_Loader {
-	/** Sticky denial for this PHP request.
+	/**
+	 * Sticky denial for this PHP request.
 	 *
 	 * @var bool Sticky denial for this PHP request.
 	 */
 	private static bool $denied = false;
-	/** Observation recursion guard.
+	/**
+	 * Observation recursion guard.
 	 *
 	 * @var bool Observation recursion guard.
 	 */
 	private static bool $observing = false;
 
-	/** Safe denial, without incoming error data.
+	/**
+	 * Safe denial, without incoming error data.
 	 *
 	 * @return WP_Error Safe denial, without incoming error data.
 	 */
@@ -45,32 +48,32 @@ final class Coagmentator_Guard_Loader {
 	 */
 	public static function failure_data(): array {
 		return array(
-			'ok' => false,
+			'ok'               => false,
 			'contract_version' => '1.0',
-			'correlation_id' => wp_generate_uuid4(),
-			'site_id' => null,
-			'error' => array(
-				'code' => 'AUTHORIZATION_DENIED',
-				'message' => 'This request is not permitted.',
-				'origin' => 'bridge',
-				'retryable' => false,
+			'correlation_id'   => wp_generate_uuid4(),
+			'site_id'          => null,
+			'error'            => array(
+				'code'                => 'AUTHORIZATION_DENIED',
+				'message'             => 'This request is not permitted.',
+				'origin'              => 'bridge',
+				'retryable'           => false,
 				'retry_after_seconds' => null,
-				'write_state' => 'not_applied',
-				'details' => array(
-					'fields' => array(),
-					'reason' => null,
+				'write_state'         => 'not_applied',
+				'details'             => array(
+					'fields'   => array(),
+					'reason'   => null,
 					'approval' => null,
 				),
 			),
-			'receipt' => null,
+			'receipt'          => null,
 		);
 	}
 
 	/**
 	 * Normalize emergency REST responses even if authentication stopped dispatch.
 	 *
-	 * @param mixed $response Prior response.
-	 * @param WP_REST_Server $server Server.
+	 * @param mixed           $response Prior response.
+	 * @param WP_REST_Server  $server Server.
 	 * @param WP_REST_Request $request Request.
 	 * @return mixed Original or closed denial.
 	 */
@@ -91,7 +94,8 @@ final class Coagmentator_Guard_Loader {
 		return $id > 0 && '' !== get_user_meta( $id, 'coagmentator_service', true );
 	}
 
-	/** A supplied remote credential must not fall through anonymously.
+	/**
+	 * A supplied remote credential must not fall through anonymously.
 	 *
 	 * @return bool A supplied remote credential must not fall through anonymously.
 	 */
@@ -165,7 +169,9 @@ final class Coagmentator_Guard_Loader {
 		return $id;
 	}
 
-	/** Observe direct wp_set_current_user injection without retaining privilege. */
+	/**
+	 * Observe direct wp_set_current_user injection without retaining privilege.
+	 */
 	public static function observe(): void {
 		if ( self::$observing ) {
 			return;
@@ -207,7 +213,9 @@ final class Coagmentator_Guard_Loader {
 		return self::$denied || self::remote() ? self::error() : $result;
 	}
 
-	/** Fail before non-REST target callbacks. */
+	/**
+	 * Fail before non-REST target callbacks.
+	 */
 	public static function non_rest(): void {
 		if ( self::$denied || self::remote() || self::marked( get_current_user_id() ) ) {
 			$prefix = defined( 'COAGMENTATOR_GUARD_REST_PREFIX' ) && is_string( COAGMENTATOR_GUARD_REST_PREFIX ) ? COAGMENTATOR_GUARD_REST_PREFIX : '/wp-json';
@@ -220,11 +228,14 @@ final class Coagmentator_Guard_Loader {
 				echo wp_json_encode( self::failure_data() );
 				exit;
 			}
+			status_header( 403 );
 			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
 		}
 	}
 
-	/** Install emergency controls without the support directory or vendor tree. */
+	/**
+	 * Install emergency controls without the support directory or vendor tree.
+	 */
 	public static function emergency(): void {
 		add_action( 'wp_authenticate_application_password_errors', array( self::class, 'application_error' ), PHP_INT_MAX, 1 );
 		add_filter( 'authenticate', array( self::class, 'authenticate' ), PHP_INT_MAX, 1 );

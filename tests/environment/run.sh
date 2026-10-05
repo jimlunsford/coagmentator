@@ -102,5 +102,8 @@ cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/c
 printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
 "${compose[@]}" restart php
 "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-internal.xml
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario replacement
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/replacement.xml --log-junit .runtime/evidence/c02-replacement.xml
 python3 tests/environment/check-evidence.py
 "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup

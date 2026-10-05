@@ -7,30 +7,37 @@
 
 namespace Coagmentator\Guard;
 
-/** One admitted object per external scope, never an internal request. */
+/**
+ * One admitted object per external scope, never an internal request.
+ */
 final class Dispatch_Scope {
-	/** External cycle.
+	/**
+	 * External cycle.
 	 *
 	 * @var bool External cycle.
 	 */
 	private bool $active = false;
-	/** Admission consumed.
+	/**
+	 * Admission consumed.
 	 *
 	 * @var bool Admission consumed.
 	 */
 	private bool $consumed = false;
-	/** Current dispatch depth.
+	/**
+	 * Current dispatch depth.
 	 *
 	 * @var int Current dispatch depth.
 	 */
 	private int $depth = 0;
-	/** Original admitted object.
+	/**
+	 * Original admitted object.
 	 *
 	 * @var object|null Original admitted object.
 	 */
 	private ?object $request = null;
 
-	/** A new external cycle may start.
+	/**
+	 * A new external cycle may start.
 	 *
 	 * @return bool A new external cycle may start.
 	 */
@@ -68,12 +75,16 @@ final class Dispatch_Scope {
 		return $this->active && 1 === $this->depth && $request === $this->request;
 	}
 
-	/** Balance the single successful enter in finally. */
+	/**
+	 * Balance the single successful enter in finally.
+	 */
 	public function leave(): void {
 		$this->depth = 0;
 	}
 
-	/** Clear all request-local state in the external owner's finally. */
+	/**
+	 * Clear all request-local state in the external owner's finally.
+	 */
 	public function finish(): void {
 		$this->active   = false;
 		$this->consumed = false;

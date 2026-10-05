@@ -7,9 +7,12 @@
 
 namespace Coagmentator\Guard;
 
-/** Compares raw transport and REST request identity without normalization. */
+/**
+ * Compares raw transport and REST request identity without normalization.
+ */
 final class Route_Boundary {
-	/** Fixed operations.
+	/**
+	 * Fixed operations.
 	 *
 	 * @var list<string> Fixed operations.
 	 */

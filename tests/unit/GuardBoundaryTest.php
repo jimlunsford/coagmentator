@@ -10,9 +10,13 @@ use Coagmentator\Guard\Guard_Config;
 use Coagmentator\Guard\Route_Boundary;
 use PHPUnit\Framework\TestCase;
 
-/** Registry corruption cannot become an empty denial list. */
+/**
+ * Registry corruption cannot become an empty denial list.
+ */
 final class GuardBoundaryTest extends TestCase {
-	/** Every invalid representation stays explicitly unhealthy. */
+	/**
+	 * Every invalid representation stays explicitly unhealthy.
+	 */
 	public function test_registry_validation(): void {
 		$path = tempnam( sys_get_temp_dir(), 'c02-registry-' );
 		try {
@@ -65,7 +69,9 @@ final class GuardBoundaryTest extends TestCase {
 		self::assertTrue( $scope->enter( new stdClass() ) );
 	}
 
-	/** Independent literal table and raw transport aliases. */
+	/**
+	 * Independent literal table and raw transport aliases.
+	 */
 	public function test_immutable_routes(): void {
 		$operations = array( 'site_info', 'search_content', 'get_content', 'list_terms', 'search_media', 'get_media', 'get_metadata', 'list_revisions', 'get_revision' );
 		self::assertSame( $operations, Route_Boundary::OPERATIONS );
@@ -73,7 +79,7 @@ final class GuardBoundaryTest extends TestCase {
 			$route  = '/coagmentator/v1/' . $operation;
 			$server = array(
 				'REQUEST_METHOD' => 'POST',
-				'REQUEST_URI' => '/wp-json' . $route,
+				'REQUEST_URI'    => '/wp-json' . $route,
 			);
 			self::assertTrue( Route_Boundary::canonical( $route, 'POST', $server, '/wp-json' ) );
 			self::assertFalse( Route_Boundary::canonical( $route . '/', 'POST', $server, '/wp-json' ) );

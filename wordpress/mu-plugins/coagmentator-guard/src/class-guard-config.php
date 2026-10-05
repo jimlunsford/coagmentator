@@ -7,19 +7,24 @@
 
 namespace Coagmentator\Guard;
 
-/** Strict, bounded, canonical JSON registry, independent of feature policy. */
+/**
+ * Strict, bounded, canonical JSON registry, independent of feature policy.
+ */
 final class Guard_Config {
-	/** Protected IDs.
+	/**
+	 * Protected IDs.
 	 *
 	 * @var list<int> Protected IDs.
 	 */
 	private array $ids = array();
-	/** Approved credential UUIDs.
+	/**
+	 * Approved credential UUIDs.
 	 *
 	 * @var list<string> Approved credential UUIDs.
 	 */
 	private array $uuids = array();
-	/** Valid registry.
+	/**
+	 * Valid registry.
 	 *
 	 * @var bool Valid registry.
 	 */
@@ -62,7 +67,8 @@ final class Guard_Config {
 		$this->healthy = true;
 	}
 
-	/** Whether the registry is trustworthy.
+	/**
+	 * Whether the registry is trustworthy.
 	 *
 	 * @return bool Whether the registry is trustworthy.
 	 */

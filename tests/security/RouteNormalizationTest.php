@@ -5,9 +5,13 @@
  * @package Coagmentator
  */
 
-/** Exact route bytes and POST are the only future surface. */
+/**
+ * Exact route bytes and POST are the only future surface.
+ */
 final class RouteNormalizationTest extends GuardHttpCase {
-	/** Aliases cannot reach a callback, even if Nginx/core normalize them. */
+	/**
+	 * Aliases cannot reach a callback, even if Nginx/core normalize them.
+	 */
 	public function test_aliases(): void {
 		$path = '/wp-json/coagmentator/v1/site_info';
 		foreach ( array( 'GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE', 'PATCH' ) as $method ) {
@@ -34,6 +38,7 @@ final class RouteNormalizationTest extends GuardHttpCase {
 		) as $alias ) {
 			$this->denied( $alias, 'POST' );
 		}
+		$this->denied( $path, 'POST', 'service-basic', '_method=POST', array( 'Content-Type: application/x-www-form-urlencoded' ) );
 		foreach ( array( 'X-HTTP-Method-Override: POST', 'X-Method-Override: POST', 'X-HTTP-Method: POST' ) as $header ) {
 			$this->denied( $path, 'POST', 'service-basic', '', array( $header ) );
 		}

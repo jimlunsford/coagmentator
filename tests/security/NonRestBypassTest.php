@@ -5,9 +5,13 @@
  * @package Coagmentator
  */
 
-/** Human recovery must work in every emergency scenario. */
+/**
+ * Human recovery must work in every emergency scenario.
+ */
 final class NonRestBypassTest extends GuardHttpCase {
-	/** Service cookies, remote credentials and alternate identity injection deny. */
+	/**
+	 * Service cookies, remote credentials and alternate identity injection deny.
+	 */
 	public function test_non_rest(): void {
 		foreach ( array( '/wp-admin/', '/wp-admin/admin-ajax.php?action=c02_target', '/wp-admin/admin-post.php?action=c02_target', '/wp-login.php', '/c02-target.php' ) as $path ) {
 			$this->denied( $path, 'GET', 'service-cookie' );
@@ -33,10 +37,11 @@ final class NonRestBypassTest extends GuardHttpCase {
 			self::assertTrue( $result['status'] >= 400 || str_contains( $result['body'], 'faultCode' ), 'XML-RPC authentication must deny.' );
 			self::assertSame( $before, $this->snapshot() );
 		}
-
 	}
 
-	/** Emergency XML-RPC must reject ordinary human passwords as well. */
+	/**
+	 * Emergency XML-RPC must reject ordinary human passwords as well.
+	 */
 	public function test_xmlrpc_human_control(): void {
 		if ( in_array( $this->fixture['scenario'], array( 'missing-registry', 'malformed-registry', 'missing-registry-active', 'malformed-registry-active', 'unreadable-registry', 'missing-support' ), true ) ) {
 			$this->xmlrpc_denied( 'c02_human', $this->fixture['human_password'] );
@@ -48,7 +53,9 @@ final class NonRestBypassTest extends GuardHttpCase {
 		}
 	}
 
-	/** Real password login plus authorized human admin and cookie/nonce recovery. */
+	/**
+	 * Real password login plus authorized human admin and cookie/nonce recovery.
+	 */
 	public function test_human_recovery_and_public(): void {
 		$this->human_recovery();
 	}

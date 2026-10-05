@@ -5,9 +5,13 @@
  * @package Coagmentator
  */
 
-/** Executed separately with the synthetic, fixed-identity denial callback. */
+/**
+ * Executed separately with the synthetic, fixed-identity denial callback.
+ */
 final class InternalDispatchTest extends GuardHttpCase {
-	/** Nested objects, batch, rest_do_request and switched users never reach targets. */
+	/**
+	 * Nested objects, batch, rest_do_request and switched users never reach targets.
+	 */
 	public function test_internal_dispatch_and_independent_requests(): void {
 		foreach ( array( '', 'exception', '' ) as $body ) {
 			$before = $this->snapshot();

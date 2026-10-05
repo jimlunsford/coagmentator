@@ -7,9 +7,12 @@
 
 namespace Coagmentator\Rest;
 
-/** Exercise an admitted outer callback whose sole result is a safe test failure. */
+/**
+ * Exercise an admitted outer callback whose sole result is a safe test failure.
+ */
 final class ReadController {
-	/** Test fixture permission only, never production authorization.
+	/**
+	 * Test fixture permission only, never production authorization.
 	 *
 	 * @return bool Test fixture permission only, never production authorization.
 	 */
@@ -47,10 +50,14 @@ final class ReadController {
 add_action(
 	'rest_api_init',
 	static function (): void {
-		register_rest_route( 'coagmentator/v1', '/site_info', array(
-			'methods' => 'POST',
-			'callback' => array( ReadController::class, 'site_info' ),
-			'permission_callback' => array( ReadController::class, 'authorize_guard_request' ),
-		) );
+		register_rest_route(
+			'coagmentator/v1',
+			'/site_info',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( ReadController::class, 'site_info' ),
+				'permission_callback' => array( ReadController::class, 'authorize_guard_request' ),
+			)
+		);
 	}
 );

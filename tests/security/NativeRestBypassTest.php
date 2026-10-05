@@ -5,9 +5,13 @@
  * @package Coagmentator
  */
 
-/** Promotion never grants a protected identity native API reach. */
+/**
+ * Promotion never grants a protected identity native API reach.
+ */
 final class NativeRestBypassTest extends GuardHttpCase {
-	/** Every HTTP case checks callback and editorial/user/credential sentinels. */
+	/**
+	 * Every HTTP case checks callback and editorial/user/credential sentinels.
+	 */
 	public function test_native_bypasses(): void {
 		$id = $this->fixture['service'];
 		foreach ( array(

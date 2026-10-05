@@ -7,20 +7,26 @@
 
 namespace Coagmentator\Guard;
 
-/** Service requests cannot recursively enter core dispatch. */
+/**
+ * Service requests cannot recursively enter core dispatch.
+ */
 final class Guarded_REST_Server extends \WP_REST_Server {
-	/** Balanced lifecycle.
+	/**
+	 * Balanced lifecycle.
 	 *
 	 * @var Dispatch_Scope Balanced lifecycle.
 	 */
 	private Dispatch_Scope $scope;
-	/** External serve cycle is active.
+	/**
+	 * External serve cycle is active.
 	 *
 	 * @var bool External serve cycle is active.
 	 */
 	private bool $serving = false;
 
-	/** Construct without a normal-plugin dependency. */
+	/**
+	 * Construct without a normal-plugin dependency.
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->scope = new Dispatch_Scope();
@@ -77,7 +83,8 @@ final class Guarded_REST_Server extends \WP_REST_Server {
 		}
 	}
 
-	/** Safely emitted failure without JSONP/envelope handling.
+	/**
+	 * Safely emitted failure without JSONP/envelope handling.
 	 *
 	 * @return false Safely emitted failure without JSONP/envelope handling.
 	 */
