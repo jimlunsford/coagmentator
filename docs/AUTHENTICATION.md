@@ -1,6 +1,6 @@
 # Authentication and Client Compatibility
 
-Gate 1 design candidate. Research checked **2026-10-05** against the primary sources below. These are design requirements, not evidence of a working connection. No credentials, users, deployments or live MCP connections were created.
+Accepted Gate 1 design. Research checked **2026-10-05** against the primary sources below. These are design requirements, not evidence of a working connection. No credentials, users, deployments or live MCP connections were created.
 
 ## Selected direction
 

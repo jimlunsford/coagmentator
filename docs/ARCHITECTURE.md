@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is a review candidate until human acceptance. No implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. No implementation exists.
 
 ## Components and authority
 

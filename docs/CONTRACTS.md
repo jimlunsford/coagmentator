@@ -1,6 +1,6 @@
 # Shared Contracts, Version 1.0
 
-Gate 1 design candidate, 2026-10-05. Normative design for the MCP server and WordPress bridge, not an implemented API. Human Gate 1 acceptance is pending. Tool inventory: [MCP-TOOLS.md](MCP-TOOLS.md). Authorization: [CAPABILITIES.md](CAPABILITIES.md). Failures: [ERRORS.md](ERRORS.md).
+Accepted Gate 1 design, 2026-10-05. Normative design for the MCP server and WordPress bridge, not an implemented API. Tool inventory: [MCP-TOOLS.md](MCP-TOOLS.md). Authorization: [CAPABILITIES.md](CAPABILITIES.md). Failures: [ERRORS.md](ERRORS.md).
 
 ## Wire boundary
 

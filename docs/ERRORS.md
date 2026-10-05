@@ -1,6 +1,6 @@
 # Normalized Errors
 
-Gate 1 design candidate, 2026-10-05. This contract is shared by the bridge and MCP server. A failure code states the operation's outcome, not merely the HTTP transport result.
+Accepted Gate 1 design, 2026-10-05. This contract is shared by the bridge and MCP server. A failure code states the operation's outcome, not merely the HTTP transport result.
 
 ## Internal bridge envelope
 

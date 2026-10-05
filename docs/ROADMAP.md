@@ -34,9 +34,17 @@ Acceptance evidence:
 
 ## Gate 1: Contracts and threat model
 
-**Status: IN PROGRESS**
+**Status: ACCEPTED**
 
-Human-review correction candidate ready for another human review. Not accepted or merged; Gate 2 remains `NOT STARTED`.
+Human review accepted the exact revised candidate on 2026-10-05; merged unchanged. Gate 2 remains `NOT STARTED`.
+
+Acceptance evidence:
+
+- Accepted PR: [#1](https://github.com/jimlunsford/coagmentator/pull/1).
+- Accepted candidate HEAD: `3a0979faf3156a94173c73b89e8861e3d8816594`.
+- Accepted complete tree: `bf7db607bf913f727b5e24de9972bc06c0e7f6c5`.
+- Merge commit and immediate post-merge `main` checkpoint: `4a99e61fc920983da86c53a0b2b47f5a9b5a7c2d`, with the identical accepted tree.
+- D-009 through D-014 accepted without substantive design changes; [closeout handoff](work-notes/2026-10-05-gate-1-closeout.md) records verification and the Gate 2 preparation boundary.
 
 Goals:
 
@@ -63,8 +71,8 @@ Objective acceptance criteria:
 - [x] Architecture, security, project scope and decision log agree with the focused documents. No security-critical mechanism is left for Gate 2 to invent.
 - [x] Current official OpenAI file parameters, controlled retrieval with no arbitrary URL path, per-tool annotations, model/audit separation and both approval profiles have explicit contracts and consistency evidence. Strict self-approval remains prohibited; trusted compromised-MCP exposure is documented.
 - [x] Documentation-only scope and internal-consistency checks are recorded in the [Gate 1 work note](work-notes/2026-10-05-gate-1-contracts-threat-model.md).
-- [ ] Human reviewer accepts the exact candidate and its explicit limits, or requests corrections. Acceptance must identify a commit/PR.
-- [ ] Authorized closeout records acceptance and merge evidence, promotes proposed D-009 through D-014 as appropriate, and sets Gate 1 to `ACCEPTED`. Do not infer acceptance from opening a PR.
+- [x] Human reviewer accepted the exact candidate and its explicit limits, identified above.
+- [x] Authorized closeout records acceptance and merge evidence, promotes D-009 through D-014 to accepted, and sets Gate 1 to `ACCEPTED`.
 
 Review specifically: strict versus trusted approval policy and residual compromised-MCP exposure; must-use guard installation; native-editor concurrency risk; external file parameters versus internal byte-only bridge input; trusted request-handle ownership/lost-result recovery; compact model evidence versus protected audit records; individual annotations; static content subset; and optional basic SEO without third-party vendor compatibility. These are known design limits, not hidden "TBD" mechanisms. A change to any requires corresponding contract/capability/threat updates.
 

@@ -1,6 +1,6 @@
 # MVP Tool Inventory
 
-Gate 1 design candidate, 2026-10-05. This inventory becomes accepted only with human acceptance of Gate 1. There are exactly **21 tools: 10 reads and 11 mutations**. No tools exist yet.
+Accepted Gate 1 design, 2026-10-05. There are exactly **21 tools: 10 reads and 11 mutations**. No tools exist yet.
 
 ## Reading the inventory
 

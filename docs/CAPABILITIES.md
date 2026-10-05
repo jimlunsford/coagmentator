@@ -1,6 +1,6 @@
 # Authorization and Service Identity
 
-Gate 1 design candidate, 2026-10-05. All checks are conjunctive. OAuth scope, operator enablement, selected bridge approval policy, custom WordPress capability and native WordPress capability must all allow a call. An AI instruction, receipt, client ID, role name, nonce or approval cannot replace these checks.
+Accepted Gate 1 design, 2026-10-05. All checks are conjunctive. OAuth scope, operator enablement, selected bridge approval policy, custom WordPress capability and native WordPress capability must all allow a call. An AI instruction, receipt, client ID, role name, nonce or approval cannot replace these checks.
 
 ## Native authority plus custom narrowing
 

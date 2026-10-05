@@ -27,9 +27,9 @@ Typical desired interactions include:
 
 The product should make these operations feel natural from an AI client while keeping every operation constrained by the bridge's explicit tool contract.
 
-## Gate 1 MVP scope candidate
+## Accepted Gate 1 MVP scope
 
-Pending human Gate 1 acceptance, [MCP-TOOLS.md](MCP-TOOLS.md) fixes the surface at 21 operations. The first deployment model has one site, one OAuth operator and one dedicated WordPress service user. All writes start disabled. Two explicit server-side approval profiles are supported: `strict` retains independent exact-intent WordPress approval for designated public/destructive operations; `trusted_single_operator` permits individually enabled write families under standing authorization plus MCP client confirmation behavior. The latter is intended for the JimLunsford.com reference workflow, subject to later deployment authorization. Both preserve OAuth/scopes, binding, Application Passwords, the must-use guard, native/custom capabilities, versions, deduplication and verified receipts. Client confirmation is a UX safeguard, not server authorization or proof against a compromised MCP host.
+[MCP-TOOLS.md](MCP-TOOLS.md) fixes the surface at 21 operations. The first deployment model has one site, one OAuth operator and one dedicated WordPress service user. All writes start disabled. Two explicit server-side approval profiles are supported: `strict` retains independent exact-intent WordPress approval for designated public/destructive operations; `trusted_single_operator` permits individually enabled write families under standing authorization plus MCP client confirmation behavior. The latter is intended for the JimLunsford.com reference workflow, subject to later deployment authorization. Both preserve OAuth/scopes, binding, Application Passwords, the must-use guard, native/custom capabilities, versions, deduplication and verified receipts. Client confirmation is a UX safeguard, not server authorization or proof against a compromised MCP host.
 
 Post/page reads return complete stored source within documented bounds. Creation is draft-only, publishing is separate, and delete means recoverable Trash with an explicit check that Trash is enabled. There are no bulk operations, scheduling, multisite, custom post types or generic REST/Abilities tools.
 

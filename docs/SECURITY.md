@@ -1,6 +1,6 @@
 # Security Model
 
-Coagmentator translates natural-language requests into privileged WordPress actions. Treat malformed input, stolen credentials, hostile content and mistaken requests as normal threat conditions. Detailed Gate 1 controls are a human-review candidate, not implemented protections.
+Coagmentator translates natural-language requests into privileged WordPress actions. Treat malformed input, stolen credentials, hostile content and mistaken requests as normal threat conditions. Detailed Gate 1 controls are accepted design requirements, not implemented protections.
 
 ## Invariants
 
