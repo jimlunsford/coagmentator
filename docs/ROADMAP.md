@@ -82,7 +82,17 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-Preparation only, 2026-10-05. The documentation candidate on `feature/gate-2-wordpress-read-foundation` starts from accepted `main` `31b9e9f0745ae48a3b61c060fbeb388431d837cd` (tree `873489e5343f610e14f775775147911a1a77817e`). No Gate 2 implementation exists. The proposed [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) require human acceptance before implementation. The [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) records scope and evidence. Gate 2 is not accepted.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. Gate 2 implementation is not complete and has not begun. Gate 2 remains `IN PROGRESS`, not `ACCEPTED`; implementation begins at C01 in a separately authorized execution.
+
+Preparation acceptance evidence:
+
+- Accepted PR: [#2](https://github.com/jimlunsford/coagmentator/pull/2).
+- Accepted preparation HEAD: `38bb913129703bed7fad6b511264e4542fbd49ac`.
+- Accepted preparation tree: `01fa36b34c79b440462470c39e107f537d7c2560`.
+- Pre-merge `main`: `31b9e9f0745ae48a3b61c060fbeb388431d837cd`, tree `873489e5343f610e14f775775147911a1a77817e`.
+- Merge commit and immediate resulting `main` checkpoint: `71d98d9366390c0a9d2c3acf78d7db95cf9aed66`, tree `01fa36b34c79b440462470c39e107f537d7c2560`, identical to the accepted preparation tree.
+- [Preparation closeout](work-notes/2026-10-05-gate-2-preparation-closeout.md) records verification and the final closeout checkpoint. The earlier [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) is historical evidence.
+- Next: **Begin Gate 2 implementation at C01: Package and Test Skeleton.** Then **C02: Independent MU Guard must be established and verified before any service Application Password is issued.** Neither checkpoint began during closeout.
 
 Goals:
 

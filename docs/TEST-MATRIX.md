@@ -1,10 +1,10 @@
 # Gate 2 Support and Test Matrix
 
-Research date: **2026-10-05**. Status: **proposed for human review; no packages installed and no implementation tests run**. This document selects the future environment and acceptance strategy for [GATE-2-IMPLEMENTATION-PLAN](GATE-2-IMPLEMENTATION-PLAN.md) and [GATE-2-READ-ROUTES](GATE-2-READ-ROUTES.md).
+Research date: **2026-10-05**. Status: **preparation human-reviewed and accepted on 2026-10-05 at PR #2; no packages installed and no implementation tests run**. This document selects the future environment and acceptance strategy for [GATE-2-IMPLEMENTATION-PLAN](GATE-2-IMPLEMENTATION-PLAN.md) and [GATE-2-READ-ROUTES](GATE-2-READ-ROUTES.md).
 
 ## Upstream requirements versus project support
 
-| Subject | Current primary-source evidence | Proposed Coagmentator choice |
+| Subject | Current primary-source evidence | Accepted preparation choice |
 | --- | --- | --- |
 | Current WordPress | Release archive identifies **7.1.2**, released **2026-09-22**, as latest; it identifies the latest 7.1 patch as actively maintained [S01] | Minimum supported WordPress **7.1.2**, current acceptance version **7.1.2**. Same floor/current version is intentional for a new security-sensitive project |
 | Core PHP minimum | The 7.1.2 source declares PHP **7.4** and required `json`/`hash`; the WordPress compatibility table includes PHP 8.3, 8.4 and 8.5 [S02, S03] | Minimum PHP language/runtime line **8.3**, test **8.3, 8.4, 8.5** with current security patches. Core's older compatibility floor is not this project's support promise |
@@ -19,7 +19,7 @@ Research date: **2026-10-05**. Status: **proposed for human review; no packages 
 
 Initially, the supported WordPress acceptance target is the exact latest stable patch above, not an unbounded promise about all future versions. Advance security patches promptly through review and repeat the affected matrix; never leave CI floating at `latest`. Supporting an older WordPress branch requires an explicit reason and review. Future core/PHP prereleases may later get a nonblocking reconnaissance job, but they are not part of this Gate 2 acceptance matrix. No extra nightly job is required to accept this preparation.
 
-PHP patch releases and database image patch/digest pins are resolved from maintained upstream sources at implementation C01 and recorded in a committed environment manifest. This proposal selects the supported lines, not fictitious exact patches or unexecuted binary compatibility. Recheck the WordPress latest stable and PHP lifetimes before implementation; material changes return for plan review rather than silently changing the reviewed support floor. JimLunsford.com's actual WordPress/plugins/SEO/proxy versions remain unknown in this execution. Target inventory and any production upgrade need later authorization.
+PHP patch releases and database image patch/digest pins are resolved from maintained upstream sources at implementation C01 and recorded in a committed environment manifest. This accepted plan selects the supported lines, not fictitious exact patches or unexecuted binary compatibility. Recheck the WordPress latest stable and PHP lifetimes before implementation; material changes return for plan review rather than silently changing the reviewed support floor. JimLunsford.com's actual WordPress/plugins/SEO/proxy versions remain unknown in this execution. Target inventory and any production upgrade need later authorization.
 
 ## Mandatory implementation matrix
 

@@ -1,6 +1,6 @@
 # Gate 2 Read Route Specification
 
-Prepared: 2026-10-05. **Proposed implementation mapping, not an implemented API or a contract revision.** Read with [CONTRACTS](CONTRACTS.md), [CAPABILITIES](CAPABILITIES.md), [ERRORS](ERRORS.md), [GATE-2-IMPLEMENTATION-PLAN](GATE-2-IMPLEMENTATION-PLAN.md) and [TEST-MATRIX](TEST-MATRIX.md).
+Prepared: 2026-10-05. **Implementation mapping accepted with the preparation plan on 2026-10-05 at PR #2, not an implemented API or a contract revision.** Read with [CONTRACTS](CONTRACTS.md), [CAPABILITIES](CAPABILITIES.md), [ERRORS](ERRORS.md), [GATE-2-IMPLEMENTATION-PLAN](GATE-2-IMPLEMENTATION-PLAN.md) and [TEST-MATRIX](TEST-MATRIX.md).
 
 ## Rules inherited by every row
 
@@ -89,4 +89,4 @@ Gate 2 does not emit VERSION_CONFLICT, STATE_CONFLICT, IDEMPOTENCY_CONFLICT, app
 
 ## Review check
 
-Nine paths, all POST, nine CAPABILITIES mappings and nine typed projections are specified above. Every common rule is mandatory for every route. No write endpoint is planned here; `get_mutation` is deferred. Functional and hostile-input coverage owners are named in TEST-MATRIX. This specification must be accepted with the preparation plan before implementation begins.
+Nine paths, all POST, nine CAPABILITIES mappings and nine typed projections are specified above. Every common rule is mandatory for every route. No write endpoint is planned here; `get_mutation` is deferred. Functional and hostile-input coverage owners are named in TEST-MATRIX. This specification was accepted with the preparation plan; implementation has not begun and requires separate authorization.

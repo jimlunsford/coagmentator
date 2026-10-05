@@ -1,6 +1,6 @@
 # Gate 2 Implementation Plan
 
-Prepared: 2026-10-05. **Proposed for human review. Documentation only; implementation is not authorized by this preparation candidate.** Gate 2 remains IN PROGRESS until its implemented candidate is separately accepted.
+Prepared: 2026-10-05. **Preparation plan human-reviewed and accepted on 2026-10-05 at PR #2. Documentation only; this acceptance does not accept or begin implementation.** Gate 2 remains IN PROGRESS until its implemented candidate is separately accepted.
 
 ## Authority and boundary
 
@@ -8,9 +8,9 @@ Starting `main`: `31b9e9f0745ae48a3b61c060fbeb388431d837cd`; complete tree: `873
 
 Gate 2 will implement exactly nine read operations, specified in [GATE-2-READ-ROUTES](GATE-2-READ-ROUTES.md), using the existing POST envelopes. POST does not make these editorial mutations. No write route, mutation journal, approval UI, SEO renderer, upload processor, MCP server, OAuth implementation, deployment or production connection belongs here. `get_mutation` remains absent until Gate 3, including from discovery. No placeholder success handlers.
 
-The [TEST-MATRIX](TEST-MATRIX.md) owns the proposed support policy, tool choices, evidence requirements and test obligations. No runtime compatibility or security pass is claimed by these documents. No upstream behavior discovered in this research requires changing an accepted Gate 1 contract.
+The [TEST-MATRIX](TEST-MATRIX.md) owns the accepted preparation support policy, tool choices, evidence requirements and test obligations. No runtime compatibility or security pass is claimed by these documents. No upstream behavior discovered in this research requires changing an accepted Gate 1 contract.
 
-## Proposed package structure
+## Planned package structure
 
 These are future paths, not files created by preparation. Keep the accepted monorepo directories; do not create empty MCP packages in Gate 2.
 
@@ -159,7 +159,7 @@ Media paths never come from request arguments. For eligible attachments only, ob
 
 Use core's [MIME](https://developer.wordpress.org/reference/functions/wp_get_image_mime/) and [dimension](https://developer.wordpress.org/reference/functions/wp_getimagesize/) helpers only on that vetted local file. They are not animation or complete-file validators. Supplement them with bounded container-structure inspection: JPEG marker/end consistency, PNG chunk lengths/end marker and rejection of animation control chunks, WebP RIFF/chunk lengths and rejection of animation flags/chunks. Reject inconsistent/truncated/ambiguous structures. Limit reads to the contract's media byte/pixel/dimension ceilings and the remaining operation deadline. Do not claim this read-only eligibility inspection sanitizes an existing file or replaces Gate 3's independent decode/re-encode upload validation. No image/editor save method runs.
 
-Admission infrastructure must honor existing limits rather than leave them as constants: 2 MiB request/response, 1 MiB list, 15-second operation deadline, 60 reads/minute per binding/site, 4 concurrent requests, and 120 pre-auth requests/minute per IP. Proposed MVP storage is a fixed host-owned local runtime directory with bounded, locked counter files and four nonblocking `flock` slots for the one binding; hold each slot until request termination, including error paths, rather than expiring a lease under a still-running worker. Persist rate windows across PHP workers, key filenames using hashes of trusted binding or normalized peer identity, cap pre-auth bucket storage and deny new work when full. No arbitrary file-path input. This requires a single PHP host with reliable local locks; incompatible/shared/distributed storage fails setup. It is operational state, not a Gate 3 mutation journal. Infrastructure configuration must enforce byte/time limits before buffering/long blocking work. A clock/storage/audit error fails closed; no transient-only race-prone counter claim.
+Admission infrastructure must honor existing limits rather than leave them as constants: 2 MiB request/response, 1 MiB list, 15-second operation deadline, 60 reads/minute per binding/site, 4 concurrent requests, and 120 pre-auth requests/minute per IP. Planned MVP storage is a fixed host-owned local runtime directory with bounded, locked counter files and four nonblocking `flock` slots for the one binding; hold each slot until request termination, including error paths, rather than expiring a lease under a still-running worker. Persist rate windows across PHP workers, key filenames using hashes of trusted binding or normalized peer identity, cap pre-auth bucket storage and deny new work when full. No arbitrary file-path input. This requires a single PHP host with reliable local locks; incompatible/shared/distributed storage fails setup. It is operational state, not a Gate 3 mutation journal. Infrastructure configuration must enforce byte/time limits before buffering/long blocking work. A clock/storage/audit error fails closed; no transient-only race-prone counter claim.
 
 Audit appends only SECURITY's allowlisted metadata to a protected bounded sink, with 90-day rotation/retention and capacity preflight. No bodies, raw errors, credentials, titles, filenames, media bytes, user emails or SQL. No security-relevant exception dump in WordPress debug output. Handler/projection exceptions become safe failures; uncatchable host failures may return a generic non-envelope response that Gate 4 must normalize. Do not claim PHP can reliably catch every out-of-memory/process termination.
 
@@ -185,10 +185,10 @@ Every checkpoint includes its tests in the same reviewable change. Work only aft
 
 CI configuration is created in implementation, not preparation. A source contradiction, ineffective guard hook, unsupported core test runner, or inability to enforce a mandatory limit blocks the affected checkpoint. Stop and report it; do not widen a route, relax an accepted contract, or call skipped security tests a pass.
 
-## Remaining review decisions and limits
+## Accepted preparation choices and remaining limits
 
-The proposed choices to accept are the current-stable WordPress floor, PHP/database lanes, split PHPUnit runners, self-contained MU server fence, fail-closed registry emergency mode, local-lock deployment prerequisite and nine-route implementation sequence. These are implementation proposals, not newly accepted D-series decisions.
+The accepted preparation choices are the current-stable WordPress floor, PHP/database lanes, split PHPUnit runners, self-contained MU server fence, fail-closed registry emergency mode, local-lock deployment prerequisite and nine-route implementation sequence. These are accepted implementation plans, not newly accepted D-series decisions or evidence of working implementation.
 
 Exact dependency patches, image digests, test-core source hashes and actual runtime behavior are C01/C12 deliverables; no dependency installation or execution occurred here. Current JimLunsford.com versions, SEO ownership and plugin/server compatibility are deliberately uninspected. PHP 8.3/MariaDB 10.11 coverage leaves a practical self-hosted path without asserting production readiness. A different target environment requires later inventory and review, not a production change in this gate.
 
-Next action: human-review this exact preparation candidate. After acceptance and explicit implementation authorization, begin C01 only, then establish C02 before issuing any test service credential.
+Next action in a separately authorized execution: **Begin Gate 2 implementation at C01: Package and Test Skeleton.** Then **C02: Independent MU Guard must be established and verified before any service Application Password is issued.** Neither checkpoint began during preparation closeout.
