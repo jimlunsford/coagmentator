@@ -2,7 +2,7 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 2, C02
-Status: READY FOR HUMAN REVIEW, subject to final exact-head publication checks; not human-accepted
+Status: PARTIAL, bounded custom-server human-review correction pending its one permitted CI run; not human-accepted
 
 ## Goal and starting state
 
@@ -159,3 +159,18 @@ A	wordpress/mu-plugins/coagmentator-guard/src/class-guard.php
 A	wordpress/mu-plugins/coagmentator-guard/src/class-guarded-rest-server.php
 A	wordpress/mu-plugins/coagmentator-guard/src/class-route-boundary.php
 ```
+
+
+## Bounded human-review correction: competing REST server
+
+Date: 2026-10-05. Starting PR #4 HEAD `5833c19b66e42236e0d7cf7e3220f9838286439d`, tree `aab1cce23e4ede304107ff914e53c394b2879cb2`. Fresh remote PR/ref reads and Git agree; PR is open, ready, mergeable and unmerged. Main remains `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`. This correction supersedes the earlier ready-for-review status; C02 and Gate 2 remain IN PROGRESS and unaccepted.
+
+Goal: preserve an ordinary custom REST server while rejecting its use as Coagmentator service authority. `Guard::server_class()` now returns an unsupported competing selection without setting the request-wide authentication-failure latch. The existing actual-server checks in handler readiness, preflight and dispatch still reject bridge/service access. Default selection continues to install the final guarded server. No registry, route, UUID, marker, callback, emergency or dispatch-scope design changes.
+
+Added disposable `C02_Custom_REST_Server`, selected through `wp_rest_server_class`. The new HTTP suite asserts the actual selected class and credential count, denies bridge/native service and marker-cookie requests, retains target/state sentinels, and verifies public native REST plus an identified legitimate human cookie/nonce request. The fixed synthetic controller is loaded during both conflict phases. The first phase follows an actual rejected issuance preflight and requires zero Application Passwords; the second exercises already-issued credentials. Removing the fixture restores successful normal preflight/issuance and reruns the original internal-dispatch/native/normalization/non-REST suite unchanged.
+
+Files: guard class; test-only custom server, observer and CustomServerTest/XML suite; disposable preflight and run orchestration; security harness README; architecture; this handoff; one workflow trigger line. Only the duplicate C02 branch push trigger is removed, leaving the existing exact-head PR trigger and every job/lane/control/pin/lock unchanged. This enforces the owner's one-full-execution limit for the open PR. A later evidence-only documentation update will not launch another matrix, because documentation is outside the existing PR paths filter.
+
+Local verification before publication: shell syntax and Git whitespace checks. No local PHP/container runtime is available; runtime, lint and quality evidence must come from the single complete exact-correction-head CI execution. No CI pass is claimed here. One implementation pass and one CI execution are authorized; on failure inspect the failing step, append its evidence and stop without source fixes or reruns. Any post-run handoff commit is documentation-only and must distinguish the tested correction SHA/tree from the final documentation SHA/tree rather than claim that the latter was separately run.
+
+Decision: honor the accepted availability boundary without trusting another server. No C03 or production work. Next action: publish this correction to PR #4, inspect its one nine-job/six-lane exact-head run, record the outcome, and stop for human review (or report the remaining failure). Final identities/run/job evidence belong in the result appendix and PR description after they exist.

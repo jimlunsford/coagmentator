@@ -72,6 +72,22 @@ for scenario in restored missing-registry malformed-registry; do
   "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/preflight.xml --log-junit ".runtime/evidence/c02-preflight-$scenario.xml"
 done
 "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+# A real competing server must fail issuance without disabling public/human REST.
+# Load the fixed synthetic handler so its absence cannot explain bridge denial.
+mkdir -p .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest
+cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
+cp tests/fixtures/c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+if "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight; then
+  printf 'Credential issuance did not stop on competing REST server.\n' >&2
+  exit 1
+fi
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/custom-server.xml --log-junit .runtime/evidence/c02-custom-server-preflight.xml
+printf 'Custom REST server preserved; failed preflight has zero credentials; public and human REST controls passed.\n'
+rm .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+"${compose[@]}" restart php
 mv .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard.php .runtime/c02-loader-held.php
 if "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight; then
   printf 'Credential issuance did not stop on absent guard.\n' >&2
@@ -102,6 +118,13 @@ cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/c
 printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
 "${compose[@]}" restart php
 "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-internal.xml
+cp tests/fixtures/c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/custom-server.xml --log-junit .runtime/evidence/c02-custom-server-existing-credentials.xml
+rm .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-custom-server-restored.xml
+printf 'Competing server removed; normal guarded authentication and internal-dispatch controls restored.\n'
 "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario replacement
 "${compose[@]}" restart php
 "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/replacement.xml --log-junit .runtime/evidence/c02-replacement.xml

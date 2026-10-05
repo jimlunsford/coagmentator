@@ -298,11 +298,14 @@ final class Guard {
 	 * Refuse competing server authority for the service path.
 	 *
 	 * @param string $server_class Existing selection.
-	 * @return string MU server.
+	 * @return string MU server or the preserved unsupported custom selection.
 	 */
 	public function server_class( string $server_class ): string {
 		if ( 'WP_REST_Server' !== $server_class && Guarded_REST_Server::class !== $server_class ) {
-			$this->failed = true;
+			// This is a guard-preflight conflict, not an authentication failure for
+			// unrelated traffic. Readiness and dispatch require our actual server;
+			// preserving this selection cannot grant bridge or service authority.
+			return $server_class;
 		}
 		return Guarded_REST_Server::class;
 	}

@@ -1,7 +1,7 @@
 name: C02 independent MU guard
 on:
   push:
-    branches: [feature/gate-2-c01-package-test-skeleton, feature/gate-2-c02-independent-mu-guard]
+    branches: [feature/gate-2-c01-package-test-skeleton]
   pull_request:
     paths:
       - 'wordpress/**'

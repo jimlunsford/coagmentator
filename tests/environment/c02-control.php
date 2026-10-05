@@ -103,14 +103,14 @@ if ( 'setup' === $c02_mode ) {
 	echo "Disposable identities created with no Application Passwords; ordinary service password discarded.\n";
 } elseif ( 'preflight' === $c02_mode ) {
 	$data = json_decode( file_get_contents( $c02_fixture_path ), true, 512, JSON_THROW_ON_ERROR );
-	if ( ! rest_get_server() instanceof Coagmentator\Guard\Guarded_REST_Server || ! Coagmentator\Guard\Guard::instance()->protected_id( $data['service'] ) ) {
-		fwrite( STDERR, "Guard preflight failed; credential issuance prohibited.\n" );
-		exit( 1 );
-	}
 	foreach ( get_users() as $user ) {
 		if ( array() !== WP_Application_Passwords::get_user_application_passwords( $user->ID ) ) {
 			throw new RuntimeException( 'Credential exists before preflight.' );
 		}
+	}
+	if ( ! rest_get_server() instanceof Coagmentator\Guard\Guarded_REST_Server || ! Coagmentator\Guard\Guard::instance()->protected_id( $data['service'] ) ) {
+		fwrite( STDERR, "Guard preflight failed; zero Application Passwords verified; credential issuance prohibited.\n" );
+		exit( 1 );
 	}
 	wp_set_current_user( $data['service'] );
 	if ( 403 !== rest_do_request( new WP_REST_Request( 'GET', '/c02/v1/target' ) )->get_status() || get_option( 'c02_targets', 0 ) ) {
