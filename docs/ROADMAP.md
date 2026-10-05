@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. Gate 2 implementation is not complete and has not begun. Gate 2 remains `IN PROGRESS`, not `ACCEPTED`; implementation begins at C01 in a separately authorized execution.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. Gate 2 implementation is partial at C01 and is not accepted. Gate 2 remains `IN PROGRESS`, not `ACCEPTED`; C01 continuation is recorded below; C02 has not begun.
 
 Preparation acceptance evidence:
 
@@ -93,6 +93,10 @@ Preparation acceptance evidence:
 - Merge commit and immediate resulting `main` checkpoint: `71d98d9366390c0a9d2c3acf78d7db95cf9aed66`, tree `01fa36b34c79b440462470c39e107f537d7c2560`, identical to the accepted preparation tree.
 - [Preparation closeout](work-notes/2026-10-05-gate-2-preparation-closeout.md) records verification and the final closeout checkpoint. The earlier [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) is historical evidence.
 - Next: **Begin Gate 2 implementation at C01: Package and Test Skeleton.** Then **C02: Independent MU Guard must be established and verified before any service Application Password is issued.** Neither checkpoint began during closeout.
+
+### C01 implementation checkpoint (partial, not accepted)
+
+The [Actions continuation handoff](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) records a successful hosted preflight and dependency construction, followed by failed initial full-matrix acceptance. Corrections are published, but subsequent branch HEADs have no observable workflow run/check suite. C01 remains blocked on execution of the corrected candidate and resolution of any remaining failures. No implementation PR is open. Main remains the accepted preparation checkpoint. No C02 or production work is authorized by this status entry.
 
 Goals:
 

@@ -2,7 +2,7 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 2, C01 Package and Test Skeleton
-Status: PARTIAL (candidate being exercised; not accepted)
+Status: BLOCKED / PARTIAL (corrected candidate awaits new CI execution; not accepted)
 
 ## Goal
 
@@ -38,7 +38,29 @@ Corrections preserve the exact release assertion: use the matching immutable Wor
 
 Primary-source recheck found the old stable-bookworm Nginx alias was stale. Select current stable 1.30.5-trixie from the official image catalog and Docker Hub API, pinned by index digest. No accepted Nginx line was changed because preparation selected none. Do not reuse the old 1.28.0 result as final acceptance.
 
-Corrected implementation matrix is pending. Construction success is not C01 acceptance. Version/digest details are in `tests/environment/manifest.json`; both lockfiles contain the complete isolated dependency graphs. No runtime vendors ship with the plugin.
+Corrected implementation matrix is NOT RUN. Correction commit `3a3cd5660914ac396491214ee0b82e9bffbe7f0a` has tree `023371f43d3af3c006bd8f6e70e169b349686046`. Environment README follow-up `23b6b2611195b2252f2503d7865b25a0b12b481f` has tree `c78d598a65f28bef9b07ce0b199ff74c7f3e89fd`.
+
+Repeated branch/run/check-suite queries after both publications returned no new execution. Remote ref and independent Git fetch confirm publication. Public workflow metadata still reports all three workflows active. No GitHub rejection or disabled-Actions cause was returned, so the cause is UNDETERMINED, not asserted to be a permissions or runner failure. The connector can inspect/rerun old jobs but exposes no dispatch for a new exact candidate; rerunning the failed old HEAD cannot verify these corrections. No PR was opened as a trigger workaround because the owner requires completion before opening it.
+
+Latest actual full-run evidence (run 37328161707, attempt 1, terminal FAILURE):
+
+| Job | ID | Conclusion / actual evidence |
+| --- | --- | --- |
+| Unit/quality PHP 8.3 | 111824110475 | SUCCESS; 4 tests, 15 assertions; lint and positive/negative vendor-free package probes passed |
+| Unit/quality PHP 8.4 | 111824110071 | FAILURE at WPCS; unit 4/15, lint, probes and PHPStan passed; final audits not reached |
+| Unit/quality PHP 8.5 | 111824110400 | SUCCESS; 4/15, lint and probes passed |
+| PHP 8.3 + MariaDB 10.11 | 111824110568 | FAILURE; 3 integration tests, 139 assertions, 1 exact release-version failure; HTTP not reached |
+| PHP 8.3 + MySQL 8.4 | 111824110342 | Same failure and counts; HTTP not reached |
+| PHP 8.4 + MariaDB 10.11 | 111824110351 | Same failure and counts; HTTP not reached |
+| PHP 8.4 + MySQL 8.4 | 111824110291 | Same failure and counts; HTTP not reached |
+| PHP 8.5 + MariaDB 10.11 | 111824110397 | Same failure and counts; HTTP not reached |
+| PHP 8.5 + MySQL 8.4 | 111824110502 | Same failure and counts; HTTP not reached |
+
+All nine job logs were inspected. No job was retried. Core's messages excluding its own ajax/ms-files/external-http groups are upstream bootstrap notices; the project ran its three defined integration tests, not the entire WordPress core suite. No assertion was removed to conceal a failure.
+
+The final continuation publication changes only status/handoff documentation after the correction and environment README. Its exact HEAD/tree are recorded in the session report; resolve the introducing commit normally. No corrected implementation pass is claimed.
+
+Additional local verification: JSON manifests/locks parse, XML test/quality configs parse, shell syntax and whitespace checks pass. These are static checks, not a substitute for Actions runtime evidence. Construction success is not C01 acceptance. Version/digest details are in `tests/environment/manifest.json`; both lockfiles contain the complete isolated dependency graphs. No runtime vendors ship with the plugin.
 
 Preflight used checkout v4.2.2 and produced a Node 20 migration warning; subsequent checkout uses immutable v5.0.0. Upload-artifact v4.6.2 produced upstream Node deprecation notices. Docker's deprecated stop flag was corrected. These are infrastructure notices, not suppressed PHP test warnings.
 
@@ -50,15 +72,15 @@ No support-policy or architectural changes. GitHub-hosted Actions is the owner-s
 
 ## Risks / unresolved items
 
-All actual runtime acceptance evidence must pass before a PR is opened. No representative-lane substitution, guard claim, deployment or production readiness claim.
+New exact-candidate Actions execution is currently unavailable through the observed push path. All actual runtime acceptance evidence must pass before a PR is opened. No representative-lane substitution, guard claim, deployment or production readiness claim.
 
 ## Exact next step
 
-Run the complete candidate in Actions, inspect terminal jobs and actual logs, correct only C01 defects, and publish an exact green candidate for human review. Stop on an accepted architecture/support contradiction. Do not merge or begin C02.
+Investigate/restore new-HEAD GitHub Actions triggering, then execute the complete corrected candidate in all nine jobs. Inspect terminal jobs/logs, correct remaining C01 defects, and only after exact green evidence open the implementation PR for human review. Stop on an accepted architecture/support contradiction. Do not merge or begin C02.
 
 ## References
 
 - Preflight: https://github.com/jimlunsford/coagmentator/actions/runs/37326523446
 - Construction: https://github.com/jimlunsford/coagmentator/actions/runs/37326910421
 - WordPress archive: https://wordpress.org/download/releases/
-- Implementation PR, release, tag, deployment: none.
+- Implementation PR, release, tag, deployment: none. Main remains `ab4ccb3362ca13b006ff3f2887d4743af06ba035`.

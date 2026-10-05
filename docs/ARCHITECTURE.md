@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is accepted. No implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is partial and unaccepted on its implementation branch. No guard, authentication, bridge handler or MCP implementation exists.
 
 ## Components and authority
 
