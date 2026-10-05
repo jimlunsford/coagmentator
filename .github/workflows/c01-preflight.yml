@@ -1,0 +1,60 @@
+name: C01 execution preflight
+
+on:
+  push:
+    branches:
+      - feature/gate-2-c01-package-test-skeleton
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify runner and checkout
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+          RUNNER_KIND: ${{ runner.environment }}
+          RUNNER_SYSTEM: ${{ runner.os }}
+          RUNNER_CPU: ${{ runner.arch }}
+        run: |
+          set -euo pipefail
+          test "$RUNNER_KIND" = github-hosted
+          test "$RUNNER_SYSTEM" = Linux
+          printf 'Runner: %s %s %s\n' "$RUNNER_KIND" "$RUNNER_SYSTEM" "$RUNNER_CPU"
+          cat /etc/os-release
+          uname -srmo
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          git rev-parse HEAD 'HEAD^{tree}'
+          docker version
+          docker compose version
+      - name: Verify public construction sources
+        run: |
+          set -euo pipefail
+          for url in https://wordpress.org/download/releases/ https://repo.packagist.org/packages.json https://getcomposer.org/versions; do
+            curl --fail --silent --show-error --proto '=https' --max-time 45 --output /dev/null "$url"
+            printf 'HTTPS source reachable: %s\n' "$url"
+          done
+          for image in php:8.3-fpm-bookworm php:8.4-fpm-bookworm php:8.5-fpm-bookworm mariadb:10.11 mysql:8.4 nginx:stable-bookworm composer:2; do
+            docker manifest inspect "$image" > /dev/null
+            printf 'Public image manifest reachable: %s\n' "$image"
+          done
+      - name: Start and stop disposable container
+        run: |
+          set -euo pipefail
+          # Preflight-only image. C01 acceptance images must be pinned separately.
+          docker pull alpine:3.22.1
+          docker image inspect alpine:3.22.1 --format '{{json .RepoDigests}}'
+          trap 'docker rm -f coagmentator-c01-preflight >/dev/null 2>&1 || true' EXIT
+          docker run --detach --name coagmentator-c01-preflight --network none alpine:3.22.1 sleep 120
+          test "$(docker inspect --format '{{.State.Running}}' coagmentator-c01-preflight)" = true
+          docker exec coagmentator-c01-preflight /bin/true
+          docker stop --time 5 coagmentator-c01-preflight
+          test "$(docker inspect --format '{{.State.Running}}' coagmentator-c01-preflight)" = false
+          printf 'Disposable container lifecycle passed; no repository or production secrets used.\n'
