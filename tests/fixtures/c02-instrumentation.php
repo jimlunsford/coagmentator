@@ -22,12 +22,23 @@ add_filter(
 add_action(
 	'rest_api_init',
 	static function (): void {
-		register_rest_route( 'c02/v1', '/target', array( 'methods' => 'GET,POST,DELETE,PATCH', 'callback' => 'c02_target', 'permission_callback' => '__return_true' ) );
+		register_rest_route( 'c02/v1', '/target', array(
+			'methods' => 'GET,POST,DELETE,PATCH',
+			'callback' => 'c02_target',
+			'permission_callback' => '__return_true',
+		) );
 		// Same namespace is deliberately insufficient authority.
-		register_rest_route( 'coagmentator/v1', '/get_content', array( 'methods' => 'POST', 'callback' => 'c02_target', 'permission_callback' => '__return_true' ) );
+		register_rest_route( 'coagmentator/v1', '/get_content', array(
+			'methods' => 'POST',
+			'callback' => 'c02_target',
+			'permission_callback' => '__return_true',
+		) );
 	}
 );
-/** @return array<string, bool> Target invocation is an immediate test failure. */
+/** bool> Target invocation is an immediate test failure.
+	 *
+	 * @return array<string, bool> Target invocation is an immediate test failure.
+	 */
 function c02_target(): array {
 	update_option( 'c02_targets', (int) get_option( 'c02_targets', 0 ) + 1 );
 	return array( 'target' => true );

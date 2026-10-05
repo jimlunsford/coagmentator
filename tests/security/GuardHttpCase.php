@@ -9,9 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 /** Shared runner, without any public provisioning endpoint. */
 abstract class GuardHttpCase extends TestCase {
-	/** @var array<string, mixed> Runtime-only fixture. */
+	/** mixed> Runtime-only fixture.
+	 *
+	 * @var array<string, mixed> Runtime-only fixture.
+	 */
 	protected array $fixture;
-	/** @var string Newly issued human session, memory only. */
+	/** Newly issued human session, memory only.
+	 *
+	 * @var string Newly issued human session, memory only.
+	 */
 	protected string $fresh_cookie = '';
 
 	/** Read the protected local fixture, never output its contents. */
@@ -26,12 +32,20 @@ abstract class GuardHttpCase extends TestCase {
 	 * @param string       $method HTTP method.
 	 * @param string       $auth Runtime credential selector.
 	 * @param string       $body Test payload.
-	 * @param list<string> $headers Extra test headers.
+	 * @param array        $headers Extra test headers.
 	 * @return array{status:int,body:string}
 	 */
 	protected function request( string $path, string $method = 'GET', string $auth = '', string $body = '', array $headers = array() ): array {
 		$client  = curl_init( 'https://wordpress.test' . $path );
-		$options = array( CURLOPT_RETURNTRANSFER => true, CURLOPT_CAINFO => C01_CA, CURLOPT_TIMEOUT => 10, CURLOPT_FOLLOWLOCATION => false, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_PATH_AS_IS => true, CURLOPT_COOKIEFILE => '' );
+		$options = array(
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_CAINFO => C01_CA,
+			CURLOPT_TIMEOUT => 10,
+			CURLOPT_FOLLOWLOCATION => false,
+			CURLOPT_CUSTOMREQUEST => $method,
+			CURLOPT_PATH_AS_IS => true,
+			CURLOPT_COOKIEFILE => '',
+		);
 		if ( 'HEAD' === $method ) {
 			$options[ CURLOPT_NOBODY ] = true;
 		}
@@ -61,10 +75,16 @@ abstract class GuardHttpCase extends TestCase {
 			$this->fresh_cookie = implode( '; ', $cookies );
 		}
 		self::assertSame( 0, curl_errno( $client ), 'Verified test transport failed.' );
-		return array( 'status' => curl_getinfo( $client, CURLINFO_RESPONSE_CODE ), 'body' => is_string( $response ) ? $response : '' );
+		return array(
+			'status' => curl_getinfo( $client, CURLINFO_RESPONSE_CODE ),
+			'body' => is_string( $response ) ? $response : '',
+		);
 	}
 
-	/** @return array<string, mixed> Safe hashes and callback counters. */
+	/** mixed> Safe hashes and callback counters.
+	 *
+	 * @return array<string, mixed> Safe hashes and callback counters.
+	 */
 	protected function snapshot(): array {
 		$response = $this->request( '/c02-observe.php' );
 		self::assertSame( 200, $response['status'] );
@@ -80,12 +100,38 @@ abstract class GuardHttpCase extends TestCase {
 	 * @param string       $method Method.
 	 * @param string       $auth Credential selector.
 	 * @param string       $body Payload.
-	 * @param list<string> $headers Headers.
+	 * @param array        $headers Headers.
 	 */
 	protected function denied( string $path, string $method = 'GET', string $auth = 'service-basic', string $body = '', array $headers = array() ): void {
 		$before = $this->snapshot();
 		$result = $this->request( $path, $method, $auth, $body, $headers );
 		self::assertContains( $result['status'], array( 400, 401, 403, 404, 405 ), 'Hostile request must be denied.' );
 		self::assertSame( $before, $this->snapshot(), 'Denied request executed a callback or changed protected state.' );
+	}
+	/** Verify new and existing real human sessions, plus public traffic. */
+	protected function human_recovery(): void {
+		$result = $this->request( '/wp-login.php' );
+		self::assertSame( 200, $result['status'] );
+		self::assertStringContainsString( 'loginform', $result['body'] );
+		$result = $this->request( '/wp-login.php', 'POST', '', http_build_query( array(
+			'log' => 'c02_human',
+			'pwd' => $this->fixture['human_password'],
+			'redirect_to' => 'https://wordpress.test/wp-admin/',
+			'testcookie' => '1',
+		) ), array( 'Content-Type: application/x-www-form-urlencoded', 'Cookie: wordpress_test_cookie=WP%20Cookie%20check' ) );
+		self::assertSame( 302, $result['status'], 'Human password authentication must create a session.' );
+		self::assertNotSame( '', $this->fresh_cookie, 'Password login must issue a real session cookie.' );
+		$result = $this->request( '/wp-admin/', 'GET', 'fresh-human-cookie' );
+		self::assertSame( 200, $result['status'] );
+		self::assertStringContainsString( 'id="wpbody"', $result['body'] );
+		self::assertStringNotContainsString( 'id="loginform"', $result['body'] );
+		$probe = $this->request( '/c02-observe.php', 'GET', 'human-cookie' );
+		$nonce = json_decode( $probe['body'], true, 512, JSON_THROW_ON_ERROR )['nonce'];
+		self::assertNotSame( '', $nonce );
+		$result = $this->request( '/wp-json/wp/v2/users/me', 'GET', 'human-cookie', '', array( 'X-WP-Nonce: ' . $nonce ) );
+		self::assertSame( 200, $result['status'] );
+		$this->denied( '/wp-json/coagmentator/v1/site_info', 'POST', 'human-cookie', '', array( 'X-WP-Nonce: ' . $nonce ) );
+		$result = $this->request( '/' );
+		self::assertSame( 200, $result['status'] );
 	}
 }

@@ -14,33 +14,42 @@ final class NonRestBypassTest extends GuardHttpCase {
 			$this->denied( $path, 'GET', 'service-basic' );
 			$this->denied( $path, 'GET', '', '', array( 'X-C02-User: service' ) );
 		}
-		foreach ( array( 'wp.getUsersBlogs', 'system.multicall' ) as $method ) {
+		$this->xmlrpc_denied( 'c02_service', $this->fixture['service_secret'] );
+	}
+
+	/**
+	 * Valid XML-RPC single and nested multicall authentication requests.
+	 *
+	 * @param string $login Fixture login.
+	 * @param string $password Memory-only credential.
+	 */
+	private function xmlrpc_denied( string $login, string $password ): void {
+		$params = '<value><string>' . $login . '</string></value><value><string>' . $password . '</string></value>';
+		$single = '<methodName>wp.getUsersBlogs</methodName><params><param>' . str_replace( '</value><value>', '</value></param><param><value>', $params ) . '</param></params>';
+		$multi  = '<methodName>system.multicall</methodName><params><param><value><array><data><value><struct><member><name>methodName</name><value><string>wp.getUsersBlogs</string></value></member><member><name>params</name><value><array><data>' . $params . '</data></array></value></member></struct></value></data></array></value></param></params>';
+		foreach ( array( $single, $multi ) as $call ) {
 			$before = $this->snapshot();
-			$result = $this->request( '/xmlrpc.php', 'POST', 'service-basic', '<?xml version="1.0"?><methodCall><methodName>' . $method . '</methodName><params><param><value><string>c02_service</string></value></param><param><value><string>' . $this->fixture['service_secret'] . '</string></value></param></params></methodCall>', array( 'Content-Type: text/xml' ) );
-			self::assertTrue( $result['status'] >= 400 || str_contains( $result['body'], '<fault>' ) );
+			$result = $this->request( '/xmlrpc.php', 'POST', '', '<?xml version="1.0"?><methodCall>' . $call . '</methodCall>', array( 'Content-Type: text/xml' ) );
+			self::assertTrue( $result['status'] >= 400 || str_contains( $result['body'], 'faultCode' ), 'XML-RPC authentication must deny.' );
 			self::assertSame( $before, $this->snapshot() );
+		}
+
+	}
+
+	/** Emergency XML-RPC must reject ordinary human passwords as well. */
+	public function test_xmlrpc_human_control(): void {
+		if ( in_array( $this->fixture['scenario'], array( 'missing-registry', 'malformed-registry', 'missing-registry-active', 'malformed-registry-active', 'unreadable-registry', 'missing-support' ), true ) ) {
+			$this->xmlrpc_denied( 'c02_human', $this->fixture['human_password'] );
+		} else {
+			$result = $this->request( '/xmlrpc.php', 'POST', '', '<?xml version="1.0"?><methodCall><methodName>wp.getUsersBlogs</methodName><params><param><value><string>c02_human</string></value></param><param><value><string>' . $this->fixture['human_password'] . '</string></value></param></params></methodCall>', array( 'Content-Type: text/xml' ) );
+			self::assertSame( 200, $result['status'] );
+			self::assertStringContainsString( '<name>blogid</name>', $result['body'] );
+			self::assertStringNotContainsString( 'faultCode', $result['body'] );
 		}
 	}
 
 	/** Real password login plus authorized human admin and cookie/nonce recovery. */
 	public function test_human_recovery_and_public(): void {
-		$result = $this->request( '/wp-login.php' );
-		self::assertSame( 200, $result['status'] );
-		self::assertStringContainsString( 'loginform', $result['body'] );
-		$result = $this->request( '/wp-login.php', 'POST', '', http_build_query( array( 'log' => 'c02_human', 'pwd' => $this->fixture['human_password'], 'redirect_to' => 'https://wordpress.test/wp-admin/', 'testcookie' => '1' ) ), array( 'Content-Type: application/x-www-form-urlencoded', 'Cookie: wordpress_test_cookie=WP%20Cookie%20check' ) );
-		self::assertSame( 302, $result['status'], 'Human password authentication must create a session.' );
-		self::assertNotSame( '', $this->fresh_cookie, 'Password login must issue a real session cookie.' );
-		$result = $this->request( '/wp-admin/', 'GET', 'fresh-human-cookie' );
-		self::assertSame( 200, $result['status'] );
-		self::assertStringContainsString( 'id="wpbody"', $result['body'] );
-		self::assertStringNotContainsString( 'id="loginform"', $result['body'] );
-		$probe = $this->request( '/c02-observe.php', 'GET', 'human-cookie' );
-		$nonce = json_decode( $probe['body'], true, 512, JSON_THROW_ON_ERROR )['nonce'];
-		self::assertNotSame( '', $nonce );
-		$result = $this->request( '/wp-json/wp/v2/users/me', 'GET', 'human-cookie', '', array( 'X-WP-Nonce: ' . $nonce ) );
-		self::assertSame( 200, $result['status'] );
-		$this->denied( '/wp-json/coagmentator/v1/site_info', 'POST', 'human-cookie', '', array( 'X-WP-Nonce: ' . $nonce ) );
-		$result = $this->request( '/' );
-		self::assertSame( 200, $result['status'] );
+		$this->human_recovery();
 	}
 }

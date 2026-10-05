@@ -8,6 +8,8 @@
  * @package Coagmentator
  */
 
+// phpcs:ignoreFile WordPress.Files.FileName.InvalidClassFileName -- Required self-contained MU entry point retains its fallback class.
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -17,14 +19,66 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It never grants bridge authority. Installed PHP remains a trusted execution domain.
  */
 final class Coagmentator_Guard_Loader {
-	/** @var bool Sticky denial for this PHP request. */
+	/** Sticky denial for this PHP request.
+	 *
+	 * @var bool Sticky denial for this PHP request.
+	 */
 	private static bool $denied = false;
-	/** @var bool Observation recursion guard. */
+	/** Observation recursion guard.
+	 *
+	 * @var bool Observation recursion guard.
+	 */
 	private static bool $observing = false;
 
-	/** @return WP_Error Safe denial, without incoming error data. */
+	/** Safe denial, without incoming error data.
+	 *
+	 * @return WP_Error Safe denial, without incoming error data.
+	 */
 	public static function error(): WP_Error {
 		return new WP_Error( 'coagmentator_guard_denied', 'Authentication is unavailable for this request.', array( 'status' => 403 ) );
+	}
+
+	/**
+	 * Minimal independent failure encoder. No source response data is copied.
+	 *
+	 * @return array<string, mixed> Closed C02 denial.
+	 */
+	public static function failure_data(): array {
+		return array(
+			'ok' => false,
+			'contract_version' => '1.0',
+			'correlation_id' => wp_generate_uuid4(),
+			'site_id' => null,
+			'error' => array(
+				'code' => 'AUTHORIZATION_DENIED',
+				'message' => 'This request is not permitted.',
+				'origin' => 'bridge',
+				'retryable' => false,
+				'retry_after_seconds' => null,
+				'write_state' => 'not_applied',
+				'details' => array(
+					'fields' => array(),
+					'reason' => null,
+					'approval' => null,
+				),
+			),
+			'receipt' => null,
+		);
+	}
+
+	/**
+	 * Normalize emergency REST responses even if authentication stopped dispatch.
+	 *
+	 * @param mixed $response Prior response.
+	 * @param WP_REST_Server $server Server.
+	 * @param WP_REST_Request $request Request.
+	 * @return mixed Original or closed denial.
+	 */
+	public static function finalize( $response, $server, $request ) {
+		if ( self::$denied || self::remote() || str_starts_with( $request->get_route(), '/coagmentator/' ) ) {
+			return new WP_REST_Response( self::failure_data(), 403, array( 'Cache-Control' => 'no-store' ) );
+		}
+		return $response;
 	}
 
 	/**
@@ -37,9 +91,17 @@ final class Coagmentator_Guard_Loader {
 		return $id > 0 && '' !== get_user_meta( $id, 'coagmentator_service', true );
 	}
 
-	/** @return bool A supplied remote credential must not fall through anonymously. */
+	/** A supplied remote credential must not fall through anonymously.
+	 *
+	 * @return bool A supplied remote credential must not fall through anonymously.
+	 */
 	public static function remote(): bool {
-		return isset( $_SERVER['HTTP_AUTHORIZATION'] ) || isset( $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ) || isset( $_SERVER['PHP_AUTH_USER'] ) || isset( $_SERVER['PHP_AUTH_PW'] ) || ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST );
+		foreach ( array( 'HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION', 'PHP_AUTH_USER', 'PHP_AUTH_PW' ) as $key ) {
+			if ( isset( $_SERVER[ $key ] ) && '' !== $_SERVER[ $key ] ) {
+				return true;
+			}
+		}
+		return defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
 	}
 
 	/**
@@ -53,7 +115,7 @@ final class Coagmentator_Guard_Loader {
 			return false;
 		}
 		foreach ( array( 'auth', 'secure_auth', 'logged_in' ) as $scheme ) {
-			if ( $id === wp_validate_auth_cookie( '', $scheme ) ) {
+			if ( wp_validate_auth_cookie( '', $scheme ) === $id ) {
 				return true;
 			}
 		}
@@ -148,6 +210,16 @@ final class Coagmentator_Guard_Loader {
 	/** Fail before non-REST target callbacks. */
 	public static function non_rest(): void {
 		if ( self::$denied || self::remote() || self::marked( get_current_user_id() ) ) {
+			$prefix = defined( 'COAGMENTATOR_GUARD_REST_PREFIX' ) && is_string( COAGMENTATOR_GUARD_REST_PREFIX ) ? COAGMENTATOR_GUARD_REST_PREFIX : '/wp-json';
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw path selects denial encoding only.
+			if ( str_starts_with( $_SERVER['REQUEST_URI'] ?? '', $prefix . '/coagmentator/' ) ) {
+				status_header( 403 );
+				header( 'Content-Type: application/json; charset=UTF-8' );
+				header( 'Cache-Control: no-store' );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Closed JSON, no reflected input.
+				echo wp_json_encode( self::failure_data() );
+				exit;
+			}
 			wp_die( 'Authentication is unavailable for this request.', '', array( 'response' => 403 ) );
 		}
 	}
@@ -160,6 +232,7 @@ final class Coagmentator_Guard_Loader {
 		add_action( 'set_current_user', array( self::class, 'observe' ), PHP_INT_MAX );
 		add_filter( 'rest_authentication_errors', array( self::class, 'rest_auth' ), PHP_INT_MAX );
 		add_filter( 'rest_pre_dispatch', array( self::class, 'dispatch' ), PHP_INT_MAX, 3 );
+		add_filter( 'rest_post_dispatch', array( self::class, 'finalize' ), PHP_INT_MAX, 3 );
 		foreach ( array( 'init', 'admin_init', 'login_init' ) as $hook ) {
 			add_action( $hook, array( self::class, 'non_rest' ), -PHP_INT_MAX );
 		}

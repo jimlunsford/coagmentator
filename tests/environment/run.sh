@@ -66,6 +66,18 @@ cp tests/fixtures/c02-observe.php .runtime/wordpress/src/c02-observe.php
 cp tests/fixtures/c02-target.php .runtime/wordpress/src/c02-target.php
 cp tests/fixtures/c02-instrumentation.php .runtime/wordpress/src/wp-content/mu-plugins/zz-c02-fixture.php
 "${compose[@]}" exec -T php php tests/environment/c02-control.php setup
+for scenario in restored missing-registry malformed-registry; do
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"
+  "${compose[@]}" restart php
+  "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/preflight.xml --log-junit ".runtime/evidence/c02-preflight-$scenario.xml"
+done
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+mv .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard.php .runtime/c02-loader-held.php
+if "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight; then
+  printf 'Credential issuance did not stop on absent guard.\n' >&2
+  exit 1
+fi
+mv .runtime/c02-loader-held.php .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard.php
 "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight
 for scenario in active deactivated absent deleted bad-policy missing-policy missing-registry malformed-registry missing-registry-active malformed-registry-active unreadable-registry promoted-unmarked missing-support restored; do
   "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"

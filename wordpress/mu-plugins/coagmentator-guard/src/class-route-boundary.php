@@ -9,7 +9,10 @@ namespace Coagmentator\Guard;
 
 /** Compares raw transport and REST request identity without normalization. */
 final class Route_Boundary {
-	/** @var list<string> Fixed operations. */
+	/** Fixed operations.
+	 *
+	 * @var list<string> Fixed operations.
+	 */
 	public const OPERATIONS = array( 'site_info', 'search_content', 'get_content', 'list_terms', 'search_media', 'get_media', 'get_metadata', 'list_revisions', 'get_revision' );
 
 	/**

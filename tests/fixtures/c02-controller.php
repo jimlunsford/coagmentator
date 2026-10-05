@@ -9,7 +9,10 @@ namespace Coagmentator\Rest;
 
 /** Exercise an admitted outer callback whose sole result is a safe test failure. */
 final class ReadController {
-	/** @return bool Test fixture permission only, never production authorization. */
+	/** Test fixture permission only, never production authorization.
+	 *
+	 * @return bool Test fixture permission only, never production authorization.
+	 */
 	public static function authorize_guard_request(): bool {
 		return 'disposable' === getenv( 'C01_TEST_ENVIRONMENT' );
 	}
@@ -19,6 +22,7 @@ final class ReadController {
 	 *
 	 * @param \WP_REST_Request $request Outer object.
 	 * @return \WP_Error Always denies, never a real bridge operation.
+	 * @throws \RuntimeException Deliberate exception cleanup probe.
 	 */
 	public static function site_info( \WP_REST_Request $request ): \WP_Error {
 		update_option( 'c02_outer', (int) get_option( 'c02_outer', 0 ) + 1 );
@@ -43,6 +47,10 @@ final class ReadController {
 add_action(
 	'rest_api_init',
 	static function (): void {
-		register_rest_route( 'coagmentator/v1', '/site_info', array( 'methods' => 'POST', 'callback' => array( ReadController::class, 'site_info' ), 'permission_callback' => array( ReadController::class, 'authorize_guard_request' ) ) );
+		register_rest_route( 'coagmentator/v1', '/site_info', array(
+			'methods' => 'POST',
+			'callback' => array( ReadController::class, 'site_info' ),
+			'permission_callback' => array( ReadController::class, 'authorize_guard_request' ),
+		) );
 	}
 );

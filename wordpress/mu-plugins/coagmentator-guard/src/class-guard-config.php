@@ -9,11 +9,20 @@ namespace Coagmentator\Guard;
 
 /** Strict, bounded, canonical JSON registry, independent of feature policy. */
 final class Guard_Config {
-	/** @var list<int> Protected IDs. */
+	/** Protected IDs.
+	 *
+	 * @var list<int> Protected IDs.
+	 */
 	private array $ids = array();
-	/** @var list<string> Approved credential UUIDs. */
+	/** Approved credential UUIDs.
+	 *
+	 * @var list<string> Approved credential UUIDs.
+	 */
 	private array $uuids = array();
-	/** @var bool Valid registry. */
+	/** Valid registry.
+	 *
+	 * @var bool Valid registry.
+	 */
 	private bool $healthy = false;
 
 	/**
@@ -34,6 +43,7 @@ final class Guard_Config {
 		if ( ! is_array( $data ) || array_keys( $data ) !== array( 'version', 'protected_user_ids', 'credential_uuids' ) || 1 !== $data['version'] || ! is_array( $data['protected_user_ids'] ) || ! is_array( $data['credential_uuids'] ) ) {
 			return;
 		}
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Canonical strict bytes without WordPress normalization or dependency.
 		if ( json_encode( $data, JSON_UNESCAPED_SLASHES ) !== trim( $bytes ) || ! array_is_list( $data['protected_user_ids'] ) || ! array_is_list( $data['credential_uuids'] ) || count( $data['protected_user_ids'] ) > 32 || count( $data['credential_uuids'] ) > 2 ) {
 			return;
 		}
@@ -52,7 +62,10 @@ final class Guard_Config {
 		$this->healthy = true;
 	}
 
-	/** @return bool Whether the registry is trustworthy. */
+	/** Whether the registry is trustworthy.
+	 *
+	 * @return bool Whether the registry is trustworthy.
+	 */
 	public function healthy(): bool {
 		return $this->healthy;
 	}

@@ -9,19 +9,40 @@ namespace Coagmentator\Guard;
 
 /** Never obtains a password argument or retains a complete credential record. */
 final class Guard {
-	/** @var self|null Request singleton. */
+	/** Request singleton.
+	 *
+	 * @var self|null Request singleton.
+	 */
 	private static ?self $instance = null;
-	/** @var Guard_Config Protected registry. */
+	/** Protected registry.
+	 *
+	 * @var Guard_Config Protected registry.
+	 */
 	private Guard_Config $config;
-	/** @var bool Sticky service classification. */
+	/** Sticky service classification.
+	 *
+	 * @var bool Sticky service classification.
+	 */
 	private bool $service = false;
-	/** @var bool Sticky authentication failure. */
+	/** Sticky authentication failure.
+	 *
+	 * @var bool Sticky authentication failure.
+	 */
 	private bool $failed = false;
-	/** @var bool Current-user observation recursion. */
+	/** Current-user observation recursion.
+	 *
+	 * @var bool Current-user observation recursion.
+	 */
 	private bool $observing = false;
-	/** @var int Authenticated user only. */
+	/** Authenticated user only.
+	 *
+	 * @var int Authenticated user only.
+	 */
 	private int $user = 0;
-	/** @var string Matched UUID only. */
+	/** Matched UUID only.
+	 *
+	 * @var string Matched UUID only.
+	 */
 	private string $uuid = '';
 
 	/** Load operator configuration without REST-selected paths. */
@@ -30,7 +51,10 @@ final class Guard {
 		$this->config = new Guard_Config( is_string( $path ) ? $path : '' );
 	}
 
-	/** @return self Current request guard. */
+	/** Current request guard.
+	 *
+	 * @return self Current request guard.
+	 */
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -54,6 +78,7 @@ final class Guard {
 		add_filter( 'wp_rest_server_class', array( $guard, 'server_class' ), PHP_INT_MAX );
 		add_filter( 'rest_pre_dispatch', array( $guard, 'pre_dispatch' ), PHP_INT_MAX, 3 );
 		add_filter( 'rest_request_before_callbacks', array( $guard, 'before_callbacks' ), PHP_INT_MAX, 3 );
+		add_filter( 'rest_post_dispatch', array( $guard, 'finalize' ), PHP_INT_MAX, 3 );
 		add_filter( 'rest_dispatch_request', array( $guard, 'last_callback_fence' ), PHP_INT_MAX, 4 );
 		foreach ( array( 'init', 'admin_init', 'login_init' ) as $hook ) {
 			add_action( $hook, array( $guard, 'non_rest' ), -PHP_INT_MAX );
@@ -71,7 +96,10 @@ final class Guard {
 		return $this->config->protects( $id ) || \Coagmentator_Guard_Loader::marked( $id );
 	}
 
-	/** @return bool Sticky restrictions survive clearing/switching users. */
+	/** Sticky restrictions survive clearing/switching users.
+	 *
+	 * @return bool Sticky restrictions survive clearing/switching users.
+	 */
 	public function restricted(): bool {
 		if ( $this->protected_id( (int) ( $GLOBALS['current_user']->ID ?? 0 ) ) ) {
 			$this->service = true;
@@ -79,7 +107,10 @@ final class Guard {
 		return $this->service || $this->failed;
 	}
 
-	/** @return string Fixed host pretty REST prefix. */
+	/** Fixed host pretty REST prefix.
+	 *
+	 * @return string Fixed host pretty REST prefix.
+	 */
 	public function prefix(): string {
 		return defined( 'COAGMENTATOR_GUARD_REST_PREFIX' ) && is_string( COAGMENTATOR_GUARD_REST_PREFIX ) ? COAGMENTATOR_GUARD_REST_PREFIX : '/wp-json';
 	}
@@ -96,15 +127,14 @@ final class Guard {
 			return false;
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Bounded, operator-owned readiness file, not C03's feature policy.
-		$policy = file_get_contents( COAGMENTATOR_GUARD_FEATURE_POLICY, false, null, 0, 129 );
+		$policy        = file_get_contents( COAGMENTATOR_GUARD_FEATURE_POLICY, false, null, 0, 129 );
 		$handler_class = 'Coagmentator\\Rest\\ReadController';
 		if ( '{"version":1,"guard_api":1}' !== trim( false === $policy ? '' : $policy ) || ! class_exists( $handler_class, false ) || ! defined( 'WP_PLUGIN_DIR' ) || ! is_string( WP_PLUGIN_DIR ) ) {
 			return false;
 		}
-		/** @var class-string $handler_class Runtime existence was checked without autoload. */
-		$class = new \ReflectionClass( $handler_class );
+		$class     = $this->reflect_handler( $handler_class );
 		$operation = substr( $route, strlen( '/coagmentator/v1/' ) );
-		if ( ! $class->isFinal() || $class->getFileName() !== realpath( WP_PLUGIN_DIR . '/coagmentator/src/Rest/ReadController.php' ) || ! $class->hasMethod( $operation ) || ! $class->hasMethod( 'authorize_guard_request' ) ) {
+		if ( null === $class || ! $class->isFinal() || $class->getFileName() !== realpath( WP_PLUGIN_DIR . '/coagmentator/src/Rest/ReadController.php' ) || ! $class->hasMethod( $operation ) || ! $class->hasMethod( 'authorize_guard_request' ) ) {
 			return false;
 		}
 		$server = $GLOBALS['wp_rest_server'] ?? null;
@@ -120,6 +150,16 @@ final class Guard {
 	}
 
 	/**
+	 * Reflect only an already loaded handler class.
+	 *
+	 * @param string $name Fixed handler name supplied by this guard.
+	 * @return \ReflectionClass<object>|null Existing class reflection.
+	 */
+	private function reflect_handler( string $name ): ?\ReflectionClass {
+		return class_exists( $name, false ) ? new \ReflectionClass( $name ) : null;
+	}
+
+	/**
 	 * Reject before core records success. No plaintext argument is registered.
 	 *
 	 * @param \WP_Error            $error Mutable core error.
@@ -129,9 +169,10 @@ final class Guard {
 	public function application_error( \WP_Error $error, \WP_User $user, array $item ): void {
 		if ( ! $this->config->healthy() || $this->protected_id( (int) $user->ID ) ) {
 			$this->service = $this->protected_id( (int) $user->ID );
-			$uri           = $_SERVER['REQUEST_URI'] ?? '';
-			$route         = is_string( $uri ) && str_starts_with( $uri, $this->prefix() ) ? substr( $uri, strlen( $this->prefix() ) ) : '';
-			$uuid          = $item['uuid'] ?? null;
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw bytes must be rejected, never normalized into an accepted route.
+			$uri   = $_SERVER['REQUEST_URI'] ?? '';
+			$route = is_string( $uri ) && str_starts_with( $uri, $this->prefix() ) ? substr( $uri, strlen( $this->prefix() ) ) : '';
+			$uuid  = $item['uuid'] ?? null;
 			if ( ! $this->config->protects( (int) $user->ID ) || ! is_string( $uuid ) || ! $this->config->lists( $uuid ) || ! defined( 'REST_REQUEST' ) || ! REST_REQUEST || ! is_ssl() || ! Route_Boundary::canonical( $route, 'POST', $_SERVER, $this->prefix() ) || ! $this->handler_ready( $route ) ) {
 				$this->failed = true;
 				$error->add( 'coagmentator_guard_denied', 'Authentication is unavailable for this request.' );
@@ -219,7 +260,7 @@ final class Guard {
 	 * @return bool Guard-only admission.
 	 */
 	public function admits( string $route ): bool {
-		return ! $this->failed && $this->service && $this->user > 0 && $this->user === get_current_user_id() && $this->config->protects( $this->user ) && $this->config->lists( $this->uuid ) && null !== \WP_Application_Passwords::get_user_application_password( $this->user, $this->uuid ) && $this->handler_ready( $route );
+		return ! $this->failed && $this->service && 0 < $this->user && $this->user === get_current_user_id() && $this->config->protects( $this->user ) && $this->config->lists( $this->uuid ) && null !== \WP_Application_Passwords::get_user_application_password( $this->user, $this->uuid ) && $this->handler_ready( $route );
 	}
 
 	/**
@@ -236,11 +277,11 @@ final class Guard {
 	/**
 	 * Refuse competing server authority for the service path.
 	 *
-	 * @param string $class Existing selection.
+	 * @param string $server_class Existing selection.
 	 * @return string MU server.
 	 */
-	public function server_class( string $class ): string {
-		if ( 'WP_REST_Server' !== $class && Guarded_REST_Server::class !== $class ) {
+	public function server_class( string $server_class ): string {
+		if ( 'WP_REST_Server' !== $server_class && Guarded_REST_Server::class !== $server_class ) {
 			$this->failed = true;
 		}
 		return Guarded_REST_Server::class;
@@ -294,11 +335,25 @@ final class Guard {
 		return $this->before_callbacks( $result, $handler, $request );
 	}
 
+	/**
+	 * C02 has no successful bridge response; discard raw core/plugin errors.
+	 *
+	 * @param mixed $response Prior response.
+	 * @param \WP_REST_Server $server Server.
+	 * @param \WP_REST_Request $request Request.
+	 * @return mixed Original human response or closed C02 denial.
+	 */
+	public function finalize( $response, $server, $request ) {
+		return $this->restricted() || str_starts_with( $request->get_route(), '/coagmentator/' ) ? Guarded_REST_Server::denial() : $response;
+	}
+
 	/** Deny non-REST service use before target callbacks. */
 	public function non_rest(): void {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Raw bytes select denial timing only, never authorization.
 		$uri = $_SERVER['REQUEST_URI'] ?? '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presence only defers to REST denial; no action is authorized.
 		$potential_rest = is_string( $uri ) && ( str_starts_with( $uri, $this->prefix() . '/' ) || isset( $_GET['rest_route'] ) );
-		$xmlrpc = defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
+		$xmlrpc         = defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
 		if ( \Coagmentator_Guard_Loader::remote() && ! $potential_rest && ! $xmlrpc ) {
 			$this->failed = true;
 		}
@@ -309,8 +364,8 @@ final class Guard {
 
 	/** External lifecycle owner clears only when its complete cycle has ended. */
 	public function finish(): void {
-		$this->user    = 0;
-		$this->uuid    = '';
+		$this->user = 0;
+		$this->uuid = '';
 		// Keep denial classification for the entire PHP request, including a second serve cycle.
 		// PHP destroys the singleton before the next independent HTTP request.
 	}

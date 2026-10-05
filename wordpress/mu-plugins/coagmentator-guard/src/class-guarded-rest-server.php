@@ -9,9 +9,15 @@ namespace Coagmentator\Guard;
 
 /** Service requests cannot recursively enter core dispatch. */
 final class Guarded_REST_Server extends \WP_REST_Server {
-	/** @var Dispatch_Scope Balanced lifecycle. */
+	/** Balanced lifecycle.
+	 *
+	 * @var Dispatch_Scope Balanced lifecycle.
+	 */
 	private Dispatch_Scope $scope;
-	/** @var bool External serve cycle is active. */
+	/** External serve cycle is active.
+	 *
+	 * @var bool External serve cycle is active.
+	 */
 	private bool $serving = false;
 
 	/** Construct without a normal-plugin dependency. */
@@ -26,26 +32,7 @@ final class Guarded_REST_Server extends \WP_REST_Server {
 	 * @return \WP_REST_Response Denial.
 	 */
 	public static function denial(): \WP_REST_Response {
-		return new \WP_REST_Response(
-			array(
-				'ok'               => false,
-				'contract_version' => '1.0',
-				'correlation_id'   => wp_generate_uuid4(),
-				'site_id'          => null,
-				'error'            => array(
-					'code'                => 'AUTHORIZATION_DENIED',
-					'message'             => 'This request is not permitted.',
-					'origin'              => 'bridge',
-					'retryable'           => false,
-					'retry_after_seconds' => null,
-					'write_state'         => 'not_applied',
-					'details'             => array( 'fields' => array(), 'reason' => null, 'approval' => null ),
-				),
-				'receipt'          => null,
-			),
-			403,
-			array( 'Cache-Control' => 'no-store' )
-		);
+		return new \WP_REST_Response( \Coagmentator_Guard_Loader::failure_data(), 403, array( 'Cache-Control' => 'no-store' ) );
 	}
 
 	/**
@@ -90,7 +77,10 @@ final class Guarded_REST_Server extends \WP_REST_Server {
 		}
 	}
 
-	/** @return false Safely emitted failure without JSONP/envelope handling. */
+	/** Safely emitted failure without JSONP/envelope handling.
+	 *
+	 * @return false Safely emitted failure without JSONP/envelope handling.
+	 */
 	private function emit_denial(): bool {
 		$this->set_status( 403 );
 		$this->send_header( 'Content-Type', 'application/json; charset=UTF-8' );

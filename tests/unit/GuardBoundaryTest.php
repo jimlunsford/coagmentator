@@ -32,7 +32,11 @@ final class GuardBoundaryTest extends TestCase {
 		self::assertFalse( ( new Guard_Config( $path ) )->healthy() );
 	}
 
-	/** Dispatch token/object state is balanced even when the callback throws. */
+	/**
+	 * Dispatch token/object state is balanced even when the callback throws.
+	 *
+	 * @throws RuntimeException Caught locally to exercise balanced cleanup.
+	 */
 	public function test_balanced_scope(): void {
 		$scope   = new Dispatch_Scope();
 		$request = new stdClass();
@@ -67,7 +71,10 @@ final class GuardBoundaryTest extends TestCase {
 		self::assertSame( $operations, Route_Boundary::OPERATIONS );
 		foreach ( $operations as $operation ) {
 			$route  = '/coagmentator/v1/' . $operation;
-			$server = array( 'REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/wp-json' . $route );
+			$server = array(
+				'REQUEST_METHOD' => 'POST',
+				'REQUEST_URI' => '/wp-json' . $route,
+			);
 			self::assertTrue( Route_Boundary::canonical( $route, 'POST', $server, '/wp-json' ) );
 			self::assertFalse( Route_Boundary::canonical( $route . '/', 'POST', $server, '/wp-json' ) );
 			self::assertFalse( Route_Boundary::canonical( $route, 'GET', $server, '/wp-json' ) );
