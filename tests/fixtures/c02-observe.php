@@ -5,6 +5,7 @@
  * @package Coagmentator
  */
 
+// Load only the disposable WordPress runtime.
 require __DIR__ . '/wp-load.php';
 if ( 'disposable' !== getenv( 'C01_TEST_ENVIRONMENT' ) ) {
 	exit( 1 );

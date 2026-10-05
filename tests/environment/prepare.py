@@ -45,7 +45,6 @@ for name in ['database-password', 'root-password']:
 shutil.copyfile('tests/environment/wp-config.php', wp / 'src/wp-config.php')
 shutil.copyfile('tests/fixtures/http-probe.php', wp / 'src/c01-probe.php')
 shutil.copytree('wordpress/coagmentator', wp / 'src/wp-content/plugins/coagmentator', dirs_exist_ok=True)
-shutil.copytree('wordpress/mu-plugins', wp / 'src/wp-content/mu-plugins', dirs_exist_ok=True)
 (runtime / 'guard-config').mkdir(exist_ok=True)
 (runtime / 'guard-config/registry.json').write_text('{"version":1,"protected_user_ids":[],"credential_uuids":[]}')
 tls = runtime / 'tls'

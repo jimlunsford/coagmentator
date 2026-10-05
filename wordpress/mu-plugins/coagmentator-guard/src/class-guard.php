@@ -101,6 +101,7 @@ final class Guard {
 		if ( '{"version":1,"guard_api":1}' !== trim( false === $policy ? '' : $policy ) || ! class_exists( $handler_class, false ) || ! defined( 'WP_PLUGIN_DIR' ) || ! is_string( WP_PLUGIN_DIR ) ) {
 			return false;
 		}
+		/** @var class-string $handler_class Runtime existence was checked without autoload. */
 		$class = new \ReflectionClass( $handler_class );
 		$operation = substr( $route, strlen( '/coagmentator/v1/' ) );
 		if ( ! $class->isFinal() || $class->getFileName() !== realpath( WP_PLUGIN_DIR . '/coagmentator/src/Rest/ReadController.php' ) || ! $class->hasMethod( $operation ) || ! $class->hasMethod( 'authorize_guard_request' ) ) {

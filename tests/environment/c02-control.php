@@ -68,15 +68,20 @@ if ( 'setup' === $mode ) {
 	$data     = json_decode( file_get_contents( $path ), true, 512, JSON_THROW_ON_ERROR );
 	$scenario = $argv[2];
 	$registry = json_encode( array( 'version' => 1, 'protected_user_ids' => array( $data['service'] ), 'credential_uuids' => array( $data['service_uuid'] ) ) );
+	if ( is_file( $reg ) ) {
+		chmod( $reg, 0644 );
+	}
 	file_put_contents( $reg, $registry );
 	file_put_contents( $root . '/.runtime/guard-config/policy.json', '{"version":1,"guard_api":1}' );
 	update_option( 'active_plugins', array() );
 	update_user_meta( $data['service'], 'coagmentator_service', '1' );
 	( new WP_User( $data['service'] ) )->set_role( 'subscriber' );
-	if ( 'missing-registry' === $scenario ) {
+	if ( str_starts_with( $scenario, 'missing-registry' ) ) {
 		unlink( $reg );
-	} elseif ( 'malformed-registry' === $scenario ) {
+	} elseif ( str_starts_with( $scenario, 'malformed-registry' ) ) {
 		file_put_contents( $reg, '{"version":"1","protected_user_ids":[],"credential_uuids":[]}' );
+	} elseif ( 'unreadable-registry' === $scenario ) {
+		chmod( $reg, 0000 );
 	} elseif ( 'bad-policy' === $scenario ) {
 		file_put_contents( $root . '/.runtime/guard-config/policy.json', 'corrupt' );
 	} elseif ( 'missing-policy' === $scenario ) {
@@ -85,6 +90,9 @@ if ( 'setup' === $mode ) {
 		delete_user_meta( $data['service'], 'coagmentator_service' );
 		( new WP_User( $data['service'] ) )->set_role( 'administrator' );
 	} elseif ( 'active' === $scenario ) {
+		update_option( 'active_plugins', array( 'coagmentator/coagmentator.php' ) );
+	}
+	if ( str_ends_with( $scenario, '-active' ) ) {
 		update_option( 'active_plugins', array( 'coagmentator/coagmentator.php' ) );
 	}
 	update_option( 'c02_targets', 0 );

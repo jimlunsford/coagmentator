@@ -29,7 +29,8 @@ final class NonRestBypassTest extends GuardHttpCase {
 		self::assertStringContainsString( 'loginform', $result['body'] );
 		$result = $this->request( '/wp-login.php', 'POST', '', http_build_query( array( 'log' => 'c02_human', 'pwd' => $this->fixture['human_password'], 'redirect_to' => 'https://wordpress.test/wp-admin/', 'testcookie' => '1' ) ), array( 'Content-Type: application/x-www-form-urlencoded', 'Cookie: wordpress_test_cookie=WP%20Cookie%20check' ) );
 		self::assertSame( 302, $result['status'], 'Human password authentication must create a session.' );
-		$result = $this->request( '/wp-admin/', 'GET', 'human-cookie' );
+		self::assertNotSame( '', $this->fresh_cookie, 'Password login must issue a real session cookie.' );
+		$result = $this->request( '/wp-admin/', 'GET', 'fresh-human-cookie' );
 		self::assertSame( 200, $result['status'] );
 		self::assertStringContainsString( 'id="wpbody"', $result['body'] );
 		self::assertStringNotContainsString( 'id="loginform"', $result['body'] );

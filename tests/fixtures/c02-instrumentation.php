@@ -35,10 +35,12 @@ function c02_target(): array {
 add_filter(
 	'rest_dispatch_request',
 	static function ( $result ) {
-		update_option( 'c02_targets', (int) get_option( 'c02_targets', 0 ) + 1 );
+		if ( null === $result ) {
+			update_option( 'c02_targets', (int) get_option( 'c02_targets', 0 ) + 1 );
+		}
 		return $result;
 	},
-	-PHP_INT_MAX
+	PHP_INT_MAX
 );
 add_action( 'admin_post_c02_target', 'c02_target' );
 add_action( 'wp_ajax_c02_target', 'c02_target' );

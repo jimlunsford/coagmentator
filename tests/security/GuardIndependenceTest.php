@@ -18,7 +18,7 @@ final class GuardIndependenceTest extends GuardHttpCase {
 
 	/** Emergency denies valid human Application Passwords without blocking recovery. */
 	public function test_emergency_credentials(): void {
-		if ( in_array( $this->fixture['scenario'], array( 'missing-registry', 'malformed-registry', 'missing-support' ), true ) ) {
+		if ( in_array( $this->fixture['scenario'], array( 'missing-registry', 'malformed-registry', 'missing-registry-active', 'malformed-registry-active', 'unreadable-registry', 'missing-support' ), true ) ) {
 			$this->denied( '/wp-json/c02/v1/target', 'GET', 'human-basic' );
 			$this->denied( '/c02-target.php', 'GET', '', '', array( 'X-C02-User: human' ) );
 		} else {

@@ -13,12 +13,14 @@ if [[ ${C01_MODE:-} == unit ]]; then
   "${container[@]}" php tests/fixtures/package-load.php 7.1.1 reject
   "${container[@]}" php -n tests/fixtures/package-load.php 7.1.2 reject
   if [[ $C01_PHP == 84 ]]; then
-    "${container[@]}" php tools/quality/vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress
+    quality_status=0
+    "${container[@]}" php tools/quality/vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress || quality_status=1
     "${container[@]}" php tools/quality/vendor/bin/phpcs --config-set installed_paths ../../wp-coding-standards/wpcs,../../phpcsstandards/phpcsextra,../../phpcsstandards/phpcsutils
-    "${container[@]}" php tools/quality/vendor/bin/phpcs --standard=phpcs.xml.dist -s
+    "${container[@]}" php tools/quality/vendor/bin/phpcs --standard=phpcs.xml.dist -s || quality_status=1
     for graph in quality wp-tests; do
-      docker run --rm -v "$PWD:/workspace" -w "/workspace/tools/$graph" coagmentator-c01-php composer audit --locked --format=json > ".runtime/evidence/$graph-audit.json"
+      docker run --rm -v "$PWD:/workspace" -w "/workspace/tools/$graph" coagmentator-c01-php composer audit --locked --format=json > ".runtime/evidence/$graph-audit.json" || quality_status=1
     done
+    exit "$quality_status"
   fi
   exit 0
 fi
@@ -59,12 +61,13 @@ test "$(docker network inspect --format '{{.Internal}}' "$network")" = true
 printf 'Internal test network verified; no published host ports.\n'
 
 # C02 begins only after the original C01 smoke/control suite passes.
+cp -R wordpress/mu-plugins .runtime/wordpress/src/wp-content/mu-plugins
 cp tests/fixtures/c02-observe.php .runtime/wordpress/src/c02-observe.php
 cp tests/fixtures/c02-target.php .runtime/wordpress/src/c02-target.php
 cp tests/fixtures/c02-instrumentation.php .runtime/wordpress/src/wp-content/mu-plugins/zz-c02-fixture.php
 "${compose[@]}" exec -T php php tests/environment/c02-control.php setup
 "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight
-for scenario in active deactivated absent deleted bad-policy missing-policy missing-registry malformed-registry promoted-unmarked missing-support restored; do
+for scenario in active deactivated absent deleted bad-policy missing-policy missing-registry malformed-registry missing-registry-active malformed-registry-active unreadable-registry promoted-unmarked missing-support restored; do
   "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"
   if [[ $scenario == absent || $scenario == deleted ]]; then
     mv .runtime/wordpress/src/wp-content/plugins/coagmentator .runtime/c02-plugin-held
