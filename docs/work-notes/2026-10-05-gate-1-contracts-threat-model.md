@@ -67,6 +67,8 @@ Primary sources only, checked 2026-10-05 and linked in the permanent documents:
 - `git diff --check` passed after removing new trailing whitespace; Markdown union pipes were escaped for correct table rendering. Exactly 13 changed files are Markdown under the documented scope. Basic secret-pattern scan and manual publication-content review found no credentials or private source material.
 - The temporary documentation-check script is outside the repository and is not implementation/test scaffolding in this candidate. These structural checks supplement manual review; no runtime or live-integration success is claimed.
 - No implementation tests or CI existed at the baseline. Gate 1 adds no application code, dependencies, workflows, test scaffolds, production configuration or credentials.
+- Published design commit `e3949dd0f4e6613fca12dfbcb3a20612ad76afec`; its tree `1ba4c32b2a4c81cb729bf97a711a303e819b18ea` exactly matched the locally reviewed complete tree.
+- Opened [PR #1](https://github.com/jimlunsford/coagmentator/pull/1) against the unchanged baseline `main`; its initial diff was exactly 13 Markdown files and one design commit. This follow-up only records publication identifiers in this note. The PR description records the final handoff HEAD/tree, avoiding an impossible self-referential commit hash inside its own file.
 
 ## Decisions
 
@@ -91,6 +93,9 @@ Human-review the exact Gate 1 branch/PR candidate against the roadmap checklist 
 
 - Base branch/commit: `main` at `810727bbbd00e672ecb81cd22c285650ee45f357`.
 - Candidate branch: `docs/gate-1-contracts-threat-model`.
-- Candidate commit and PR: to be recorded in the publication handoff update; this initial note is part of the design candidate itself.
+- Published design commit: `e3949dd0f4e6613fca12dfbcb3a20612ad76afec`.
+- Published design tree: `1ba4c32b2a4c81cb729bf97a711a303e819b18ea`.
+- PR: [#1, Gate 1: define contracts, authentication, and threat model](https://github.com/jimlunsford/coagmentator/pull/1).
+- Final handoff revision: the commit adding this publication record; exact branch HEAD/tree are pinned in the PR description and must be reverified before acceptance/merge.
 - Workflow run: none, documentation-only repository with no workflows.
 - Release/tag/deployment: none.
