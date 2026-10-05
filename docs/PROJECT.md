@@ -27,6 +27,16 @@ Typical desired interactions include:
 
 The product should make these operations feel natural from an AI client while keeping every operation constrained by the bridge's explicit tool contract.
 
+## Gate 1 MVP scope candidate
+
+Pending human Gate 1 acceptance, [MCP-TOOLS.md](MCP-TOOLS.md) fixes the surface at 21 operations. The first deployment model has one site, one OAuth operator and one dedicated WordPress service user. All writes start disabled; designated public and destructive operations require independent WordPress approval tied to the exact operation. Lower-impact operations may run under standing authorization, with the residual risk of WordPress hook effects documented.
+
+Post/page reads return complete stored source within documented bounds. Creation is draft-only, publishing is separate, and delete means recoverable Trash with an explicit check that Trash is enabled. There are no bulk operations, scheduling, multisite, custom post types or generic REST/Abilities tools.
+
+The MVP supports bounded raster-byte uploads and safe static HTML/core-block edits. It does not download remote media or execute content for previews. Client file-transfer support must be demonstrated in non-production acceptance.
+
+Approved metadata has three fixed logical keys: `editorial.note`, `seo.title`, and `seo.description`. The latter two require the opt-in bridge-owned basic SEO mode and verified sole ownership of their front-end outputs. Third-party SEO integration remains later work, so compatibility with the reference site is not assumed. These are explicit limits on the initial use case, documented fully in [CONTRACTS.md](CONTRACTS.md).
+
 ## Non-goals for the MVP
 
 The first release is not intended to provide:

@@ -1,0 +1,60 @@
+# MVP Tool Inventory
+
+Gate 1 design candidate, 2026-10-05. This inventory becomes accepted only with human acceptance of Gate 1. There are exactly **21 tools: 10 reads and 11 mutations**. No tools exist yet.
+
+## Reading the inventory
+
+[CONTRACTS.md](CONTRACTS.md) defines every named type, shared field, bound, envelope, precondition, and receipt. [CAPABILITIES.md](CAPABILITIES.md) maps each tool to OAuth scopes and WordPress checks. [ERRORS.md](ERRORS.md) supplies common failures. These requirements compose; a row never waives a shared rule.
+
+- `R` means required and `O` means optional. An optional input has the stated default or is left unchanged. Undocumented properties, explicit nulls except where specified, and coercion between strings and numbers are rejected.
+- Every tool except `site_info` requires `site_id: SiteId`. Each mutation also requires `request_id: UUID`, `requested_at: Timestamp`. These fields are included by reference in every row.
+- Existing-target mutations require `expected_version: Version`, from a fresh read of that target. `create_draft`, `create_term`, and `upload_media` have no existing-target precondition. Clients retain the exact request for retries.
+- All outputs use `Success<T>` or `Failure`. Every mutation returns `Success<MutationResult>` with a verified receipt, including no-op outcomes. An approval challenge is a failure response with `write_state: not_applied`, never a successful write.
+- `Ref` means `{type: "post" | "page", id: Id}`. A page and a post with the same numeric ID are not interchangeable. This is a single-site, single-operator MVP.
+
+## Read tools
+
+| Tool | Purpose and resources read | Required inputs, beyond shared fields | Optional inputs and defaults | Output `data` | Validation and important failures |
+| --- | --- | --- | --- | --- | --- |
+| `site_info` | Identify the configured WordPress site and supported contract features | None, input is `{}` | None | `SiteInfo` | Authenticated only; pinned bridge identity must match. `SITE_MISMATCH`, `UPSTREAM_AUTHENTICATION_FAILED`, `UNSUPPORTED_OPERATION` for incompatible contract |
+| `search_content` | Find authorized posts/pages without downloading bodies | None | `types: ContentType[] = [post,page]`; `statuses: ContentStatus[] = [publish,draft,pending]`; `query: SearchText = ""`; `limit: PageLimit = 20`; `cursor: Cursor` | `Page<ContentSummary>` | Nonempty unique filter arrays; bounded search; permission-filter before results and pagination. No unfiltered total counts. Invalid cursor, unsupported type/status, limits |
+| `get_content` | Retrieve complete stored editorial fields of one post/page | `ref: Ref` | None | `Content` | Requires raw/edit access, rejects password-protected content; body is complete or returns `RESOURCE_LIMIT`, never truncated. Wrong type or concealed resource is `NOT_FOUND` |
+| `list_terms` | Look up categories or tags, including by name | `taxonomy: Taxonomy` | `query: SearchText = ""`; `parent_id: IdOrZero` (category only); `limit = 20`; `cursor` | `Page<Term>` | Taxonomy must be `category` or `post_tag`; no arbitrary taxonomy, hidden metadata, or content counts |
+| `search_media` | Find authorized image attachments | None | `query: SearchText = ""`; `mime_types: ImageMime[] = all supported`; `limit = 20`; `cursor` | `Page<Media>` | Only eligible raster attachments, attachment and parent authorization, bounded results; no local paths, EXIF, or secrets |
+| `get_media` | Inspect an image before reuse or verify a new upload | `media_id: Id` | None | `Media` | Same eligibility/authorization as media search; no arbitrary file read or image transformation |
+| `get_metadata` | Retrieve the fixed public contract's approved metadata | `ref: Ref` | `keys: MetadataKey[] = all enabled keys` | `MetadataSnapshot` | Empty/duplicate/unknown keys rejected; explicitly requested disabled SEO keys yield `UNSUPPORTED_OPERATION`. No all-meta escape hatch |
+| `list_revisions` | Discover saved revisions of authorized content | `ref: Ref` | `limit = 20`; `cursor` | `Page<RevisionSummary>` | Check parent before querying; saved revisions only, no autosaves; zero revisions is a valid empty page |
+| `get_revision` | Read the complete restorable fields of one revision | `ref: Ref`; `revision_id: Id` | None | `Revision` | Revision must belong to the given parent; no cross-parent reads; full content or explicit limit failure |
+| `get_mutation` | Resolve an approval, retry, timeout, or uncertain mutation | `request_id: UUID` | None | `MutationStatus` | Current actor, site, original operation scopes/caps, and target access required. No cross-actor journal lookup; unknown/expired IDs are `NOT_FOUND`, not proof that nothing happened |
+
+## Mutation tools
+
+The resources column describes intended WordPress changes. Core hooks can cause additional effects, covered in [CONTRACTS.md](CONTRACTS.md). `Approval` means the independent WordPress human approval described there, not a model-supplied boolean.
+
+| Tool | Purpose and WordPress resources affected | Required inputs, beyond shared fields | Optional inputs and defaults | Verification and approval | Important operation failures |
+| --- | --- | --- | --- | --- | --- |
+| `create_draft` | Create one post/page owned by the dedicated service user | `type: ContentType`; `title: Title`; `content_raw: Body` | `excerpt_raw: Excerpt = ""`; `slug: Slug` (bridge derives and validates when absent) | Verify requested fields, author, type, and `draft` status; return target ID/version. No publication path; no approval by default | Invalid/sanitized-away content, explicit slug collision, creation failure; no author, date, status, meta, or taxonomy override |
+| `update_content` | Replace selected editorial fields of one existing item; core may create a revision | `ref`; `expected_version`; `patch: ContentPatch` | None | Verify every patch field and preservation of status/author/date/relationships/metadata; approval when current status is `publish` or `private` | Stale version, active editor lock, unsupported status, slug collision, empty patch, verification failure |
+| `publish_content` | Publish one existing draft or pending item immediately | `ref`; `expected_version` | None | Always approval; verify `publish`, publication time, unchanged editorial content and slug, and resulting version | Already published (unless replay), future/private/trash status, empty title/body, missing/invalid/colliding slug, stale approval; scheduling excluded |
+| `trash_content` | Move one item to recoverable Trash; core also updates internal Trash metadata and associated comment status | `ref`; `expected_version` | None | Always approval; verify object still exists with `trash` status and retained editorial values; report retention days | Trash disabled, already trashed (unless replay), future/unsupported status, protected system page, stale version. Never fall back to permanent deletion |
+| `create_term` | Create one category or tag | `taxonomy`; `name: TermName` | `slug: Slug` (generated); `description: TermDescription = ""`; `parent_id: IdOrZero = 0` (category only) | Verify taxonomy, name, requested slug, description, parent; no content assignment; no approval by default | Duplicate name/slug, missing parent, parent in wrong taxonomy, tag parent supplied |
+| `update_term` | Rename or edit one category/tag, potentially changing public archives | `taxonomy`; `term_id: Id`; `expected_version`; `patch: TermPatch` | None | Always approval; verify all patch fields and preserved identity/taxonomy | Duplicate slug/name, hierarchy cycle, wrong taxonomy, stale version, empty patch |
+| `set_content_terms` | Replace one post's complete category or tag assignment | `ref` (post only); `taxonomy`; `term_ids: Id[]`; `expected_version` | None | Verify exact sorted term set and unchanged other taxonomy; approval for `publish`/`private` target | Missing/wrong-taxonomy term, term permission denial, duplicates, pages unsupported; empty categories rejected, empty tags clears |
+| `upload_media` | Decode, validate, re-encode and store one raster image plus attachment | `filename: SafeFilename`; `mime_type: ImageMime`; `data_base64: Base64`; `input_sha256: Digest`; `alt_text: AltText` | `title: Title` (filename stem if absent) | Always approval because WordPress uploads are normally public; verify sanitized stored bytes, MIME, dimensions, attachment, title and alt text | Size/pixel/decoder limits, MIME/extension mismatch, digest mismatch, unsafe filename, unavailable safe decoder, partial file/DB failure |
+| `set_featured_image` | Set or clear a post/page's featured-image relation | `ref`; `expected_version`; `media_id: Id \| null` | None | Verify relation, current attachment eligibility, and unchanged other fields; approval for `publish`/`private` target | Unsupported thumbnail feature, unauthorized/missing/non-image attachment, stale content; null clears, zero is invalid |
+| `update_metadata` | Set/delete selected approved metadata keys on one item | `ref`; `expected_version`; `patch: MetadataPatch` | None | Verify presence and value of every key and preserved unrelated fields; approval for `publish`/`private` target | Unknown/disabled key, type/length failure, missing metadata authorization, incompatible SEO mode, partial failure |
+| `restore_revision` | Copy selected historical editorial fields to the current parent | `ref`; `expected_version`; `revision_id`; `revision_version: Version`; `fields: RevisionField[]` | None | Always approval; verify chosen source fields and preservation of current status, date, author, slug, terms, image and metadata | Wrong parent, autosave, missing/pruned revision, unsafe old content, stale source/parent, empty field list; no automatic republish or metadata rollback |
+
+## Explicit choices and exclusions
+
+- Unified content tools replace duplicated post/page tools. There is no general `create_post` with a status argument: creation always produces a draft, and publication is separate.
+- `set_content_terms` replaces one relationship set, not the term objects. Taxonomy deletion and bulk mutations are excluded. Trash restoration remains a human WordPress operation in this MVP.
+- Media upload uses bytes supplied by a capable client, not URLs, paths, cloud URLs, or automatic downloads. Base64 is deliberately bounded and can be inconvenient for large client attachments. Gate 5 must prove the intended client's file handoff; unsupported client file transfer is reported, never worked around with URL fetching. A future binary-staging design requires a new reviewed contract.
+- Metadata keys and the opt-in basic SEO mode are fixed in [CONTRACTS.md](CONTRACTS.md). No vendor-specific SEO internals are guessed. Supporting existing third-party SEO providers is later work.
+- No user tools, site-setting changes, custom post types, multisite, scheduling, permanent deletion, theme/plugin administration, dynamic Abilities dispatch, REST proxy, SQL, WP-CLI, shell, PHP, or filesystem tools.
+
+## MCP descriptions and annotations
+
+Tool schemas are closed JSON Schema 2020-12 objects. Set `readOnlyHint: true` for the ten reads and false for the eleven writes. Mark every write conservatively `destructiveHint: true`, because WordPress hooks and public effects can be difficult to undo. Read tools use `destructiveHint: false`. Use `openWorldHint: true` for tools that can mutate or disclose site content; WordPress hooks and publication mean the system is not a sealed sandbox. `idempotentHint: false` on writes avoids suggesting that a newly generated request ID is a retry. The request-ID protocol still deduplicates an exact retry. Declare required OAuth scopes per tool; annotations and client approval UI never authorize an operation.
+
+Sources: [MCP tool definitions](https://modelcontextprotocol.io/specification/2026-07-28/server/tools), [OpenAI MCP server guidance](https://developers.openai.com/plugins/build/mcp-server). Checked 2026-10-05. The inventory, limits, safety profile and annotation choices above are Coagmentator design decisions.

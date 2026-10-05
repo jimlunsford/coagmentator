@@ -34,7 +34,9 @@ Acceptance evidence:
 
 ## Gate 1: Contracts and threat model
 
-**Status: NOT STARTED**
+**Status: IN PROGRESS**
+
+Design candidate ready for human review. Not accepted or merged; Gate 2 remains `NOT STARTED`.
 
 Goals:
 
@@ -49,6 +51,24 @@ Goals:
 
 No production connection is permitted in this gate.
 
+Objective acceptance criteria:
+
+- [x] A fixed tool inventory gives every operation's purpose, required/optional inputs, output, affected resources, validation and failures: [MCP-TOOLS.md](MCP-TOOLS.md), 21 tools.
+- [x] Both sides share explicit envelopes, versioning, shapes, bounded fields, pagination, mutation inputs, status transitions and capability-aware response behavior: [CONTRACTS.md](CONTRACTS.md).
+- [x] Every mutation has exact retry/approval/precondition rules, a readback strategy and a receipt, including no-op, partial and unknown outcomes; crash/replay limits are explicit.
+- [x] A single normalized error model covers auth, permissions, validation, missing resources, conflicts, unsupported features, limits, WordPress/transport failures and verification: [ERRORS.md](ERRORS.md).
+- [x] Every tool has OAuth, custom and native capability mapping; service privileges and alternative-native-API bypass prevention are specified: [CAPABILITIES.md](CAPABILITIES.md).
+- [x] Current primary-source WordPress and MCP/ChatGPT requirements are dated, linked and separated from project choices: [AUTHENTICATION.md](AUTHENTICATION.md).
+- [x] Concrete threats identify assets, attack paths, impact, control ownership, residual risk and a later verification gate: [THREAT-MODEL.md](THREAT-MODEL.md), 28 scenarios.
+- [x] Architecture, security, project scope and decision log agree with the focused documents. No security-critical mechanism is left for Gate 2 to invent.
+- [x] Documentation-only scope and internal-consistency checks are recorded in the [Gate 1 work note](work-notes/2026-10-05-gate-1-contracts-threat-model.md).
+- [ ] Human reviewer accepts the exact candidate and its explicit limits, or requests corrections. Acceptance must identify a commit/PR.
+- [ ] Authorized closeout records acceptance and merge evidence, promotes proposed D-009 through D-014 as appropriate, and sets Gate 1 to `ACCEPTED`. Do not infer acceptance from opening a PR.
+
+Review specifically: separate human approval UX; must-use guard installation; native-editor concurrency risk; byte-only media/client handoff; supported static content subset; and optional basic SEO without third-party vendor compatibility. These are known design limits, not hidden "TBD" mechanisms. A change to any requires corresponding contract/capability/threat updates.
+
+No unmade architecture choice blocks review. Provider product, SDK/core support versions and actual callback values are selected and proven in their implementation/deployment gates within the specified contracts. Current-source research is not end-to-end integration evidence.
+
 ## Gate 2: WordPress bridge read foundation
 
 **Status: NOT STARTED**
@@ -56,6 +76,7 @@ No production connection is permitted in this gate.
 Goals:
 
 - create WordPress plugin skeleton
+- establish mandatory service-identity must-use guard before any test credential is issued
 - implement authentication integration
 - implement capability framework
 - implement read-only site/content endpoints
@@ -70,6 +91,8 @@ Candidate operations:
 - categories/tags lookup
 - media search
 - revision lookup
+
+Acceptance must include native-capability denial by author/status, raw-result privacy, identity/site mismatch, and REST/XML-RPC/batch/alternate-auth bypass tests. No write endpoint is enabled or implemented in this gate. A mutation-status read is deferred with its journal to Gate 3; do not invent a stub success. Select and document a maintained WordPress/PHP test matrix before implementation, and verify that current core mappings satisfy the Gate 1 profile.
 
 ## Gate 3: WordPress bridge editorial mutations
 
@@ -86,6 +109,9 @@ Goals:
 - revision restore
 - media upload and featured-image assignment
 - mutation receipts and readback verification
+- durable mutation journal, exact-intent human approval UI, and read-only mutation-status lookup
+
+Acceptance must cover the Gate 1 verification obligations for all eleven writes: conflict/ownership/replay/crash behavior, no automatic retry of uncertain effects, live/private authority, approval substitution/CSRF, disabled Trash, safe limited-field revision restore, raw-content restrictions, safe media, metadata and basic SEO ownership, quotas, readback mismatch, and honest partial outcomes.
 
 ## Gate 4: MCP server foundation
 
@@ -101,6 +127,8 @@ Goals:
 - add service audit correlation
 - add automated tests
 
+Pin a conforming established OAuth provider configuration and official SDK version; prove `2026-07-28` and `2025-11-25` behavior, discovery, PKCE, issuer/audience/subject/scope checks, callback modes, challenges, token/key rotation, redaction and emergency disable. Recheck current primary sources; document changed requirements before implementation rather than weakening the profile.
+
 ## Gate 5: End-to-end non-production integration
 
 **Status: NOT STARTED**
@@ -114,6 +142,8 @@ Goals:
 - verify failure modes
 - verify audit trail
 - verify credential isolation
+
+Record the actual ChatGPT client protocol/auth/callback path, prove client media-byte handoff, verify the must-use guard against direct hostile callers, test approval and uncertain-outcome reconciliation, and review installed hook/media execution behavior. Missing file-transfer compatibility is a failed workflow criterion, not grounds to enable URL fetching silently.
 
 Production JimLunsford.com must not be the first end-to-end test target.
 
@@ -131,6 +161,8 @@ Goals:
 - execute controlled draft/update/media tests
 - verify rollback and revision paths
 - document production configuration without secrets
+
+Resolve actual content-format and SEO-owner compatibility before claiming those workflows accepted. Production authorization remains a separate decision; Gate 1 does not inspect or change JimLunsford.com.
 
 ## Gate 7: v0.1.0 release
 
