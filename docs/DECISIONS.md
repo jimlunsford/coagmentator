@@ -67,9 +67,11 @@ WPVibe and other open-source systems may be used as references for architecture,
 
 Coagmentator will not be implemented as a copy or disguised fork of WPVibe.
 
-## D-008: License direction
+## D-008: Project license
 
 **Status:** Accepted  
 **Date:** 2026-10-05
 
-Coagmentator will use **AGPL-3.0-or-later**, subject to adding the canonical full license text before the first code release.
+Coagmentator is licensed under **AGPL-3.0-or-later**.
+
+The canonical full license text is committed at the repository root in `LICENSE`.
