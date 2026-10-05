@@ -120,6 +120,15 @@ The correction review covers the complete Gate 1 checklist, not runtime implemen
 - Rechecked the remaining Gate 1 boundaries: raw-source reads, static write policy, native capability mapping/guard, metadata/SEO ownership, publication/Trash/restore restrictions, rate/storage ceilings, privacy/redaction, version/concurrency limits and unchanged protocol compatibility choices.
 - Structural verification passed: 21 tools, 21 capability mappings, 21 annotation rows, 30 threats, 57 local links, 18 aligned Markdown tables, 3 parsed JSON examples, eight accepted/six proposed decisions, and all gate states preserved. `git diff --check` and added-content secret-pattern checks passed. Exactly 13 Markdown files changed; zero implementation, dependency, workflow or test files were added. Exact publication identifiers are recorded with the published correction checkpoint below. No runtime tests/CI are applicable: the repository still contains documentation/license only.
 
+### Correction publication checkpoint
+
+- Correction design commit: `53eb7513cba2416f33bcd0aba790b9d220b2d36d`.
+- Correction complete design tree: `1e615690191170d7bf3d1fa08d8a4628b008d4b3`, exactly matching the locally reviewed tree.
+- Parent reviewed HEAD: `5a1e1451798fff58e3953e453f8a628f15db6fdf`.
+- Destination: existing `docs/gate-1-contracts-threat-model` branch and PR #1, based on unchanged `main` at `810727bbbd00e672ecb81cd22c285650ee45f357`.
+- The following single publication-handoff commit changes only this note to record these immutable identifiers. Its final HEAD/tree are pinned in PR #1's description and the human-review handoff, avoiding a self-referential hash inside its own tree. Verify those identifiers before acceptance.
+- The complete revised candidate contains four commits over main (two original Gate 1 commits and these two correction commits), still exactly 13 Markdown files. No merge, tag, release or deployment is part of this correction.
+
 ### Decisions, limitations and next action
 
 D-001 through D-008 remain accepted. D-009 through D-014 remain proposed, with the requested corrections recorded in their relevant entries; this is not Gate 1 acceptance. Actual file-source origins and platform/provider behavior require later non-production evidence. No production deployment, credentials, tags, releases or Gate 2 scaffolding were added.
@@ -130,7 +139,7 @@ Next action: human-review the exact revised PR #1 HEAD/tree. Keep Gate 1 `IN PRO
 
 Human-review the exact Gate 1 branch/PR candidate against the roadmap checklist and accept it or request corrections. After explicit acceptance, a separate closeout should reverify the accepted commit, record the acceptance, authorize/perform the merge and update proposed decision statuses. Do not implement Gate 2 during this review/closeout execution.
 
-## References
+## Original publication references
 
 - Base branch/commit: `main` at `810727bbbd00e672ecb81cd22c285650ee45f357`.
 - Candidate branch: `docs/gate-1-contracts-threat-model`.
