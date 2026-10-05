@@ -2,7 +2,7 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 2, C02
-Status: PARTIAL, bounded custom-server human-review correction pending its one permitted CI run; not human-accepted
+Status: PARTIAL/BLOCKED, bounded custom-server correction published; its single CI run failed with five jobs cancelled before execution; not human-accepted
 
 ## Goal and starting state
 
@@ -169,8 +169,47 @@ Goal: preserve an ordinary custom REST server while rejecting its use as Coagmen
 
 Added disposable `C02_Custom_REST_Server`, selected through `wp_rest_server_class`. The new HTTP suite asserts the actual selected class and credential count, denies bridge/native service and marker-cookie requests, retains target/state sentinels, and verifies public native REST plus an identified legitimate human cookie/nonce request. The fixed synthetic controller is loaded during both conflict phases. The first phase follows an actual rejected issuance preflight and requires zero Application Passwords; the second exercises already-issued credentials. Removing the fixture restores successful normal preflight/issuance and reruns the original internal-dispatch/native/normalization/non-REST suite unchanged.
 
-Files: guard class; test-only custom server, observer and CustomServerTest/XML suite; disposable preflight and run orchestration; security harness README; architecture; this handoff; one workflow trigger line. Only the duplicate C02 branch push trigger is removed, leaving the existing exact-head PR trigger and every job/lane/control/pin/lock unchanged. This enforces the owner's one-full-execution limit for the open PR. A later evidence-only documentation update will not launch another matrix, because documentation is outside the existing PR paths filter.
+Files: guard class; test-only custom server, observer and CustomServerTest/XML suite; disposable preflight and run orchestration; security harness README; architecture; this handoff; one workflow trigger line. Only the duplicate C02 branch push trigger is removed, leaving the existing exact-head PR trigger and every job/lane/control/pin/lock unchanged. This enforces the owner's one-full-execution limit for the open PR. The result-only documentation commit will use an explicit `[skip ci]` marker to prevent a second execution. The PR path filter alone is insufficient because the PR still contains source changes.
 
 Local verification before publication: shell syntax and Git whitespace checks. No local PHP/container runtime is available; runtime, lint and quality evidence must come from the single complete exact-correction-head CI execution. No CI pass is claimed here. One implementation pass and one CI execution are authorized; on failure inspect the failing step, append its evidence and stop without source fixes or reruns. Any post-run handoff commit is documentation-only and must distinguish the tested correction SHA/tree from the final documentation SHA/tree rather than claim that the latter was separately run.
 
 Decision: honor the accepted availability boundary without trusting another server. No C03 or production work. Next action: publish this correction to PR #4, inspect its one nine-job/six-lane exact-head run, record the outcome, and stop for human review (or report the remaining failure). Final identities/run/job evidence belong in the result appendix and PR description after they exist.
+
+
+## Bounded correction result: incomplete matrix, execution stopped
+
+Published correction HEAD: `d039aed3c07ac357c6798d989ccbe3df76cec5d2`.
+Complete tested tree: `728d1c088587d53b9221bfd17b856cb941e0d44c`.
+Exact workflow: [37364803455](https://github.com/jimlunsford/coagmentator/actions/runs/37364803455), `pull_request`, attempt 1, overall **FAILURE**. Started 2026-10-05 19:39:22 UTC; terminal result 19:54:25 UTC. Exactly one workflow execution was launched for the correction. No retry, rerun, second implementation pass or post-failure source fix was performed.
+
+| Job | Job ID | Conclusion |
+| --- | --- | --- |
+| Unit and quality PHP 8.3 | 111947307918 | CANCELLED before execution |
+| Unit and quality PHP 8.4 | 111947307494 | SUCCESS |
+| Unit and quality PHP 8.5 | 111947307759 | CANCELLED before execution |
+| PHP 8.3 + MariaDB 10.11 | 111947307807 | SUCCESS |
+| PHP 8.3 + MySQL 8.4 | 111947307979 | SUCCESS |
+| PHP 8.4 + MariaDB 10.11 | 111947307928 | SUCCESS |
+| PHP 8.4 + MySQL 8.4 | 111947307823 | CANCELLED before execution |
+| PHP 8.5 + MariaDB 10.11 | 111947307949 | CANCELLED before execution |
+| PHP 8.5 + MySQL 8.4 | 111947307864 | CANCELLED before execution |
+
+All five cancelled jobs report empty step lists and no assigned runner; they terminated at 19:54:24 UTC. There is no failing test/step to identify in those jobs because none executed. The available workflow/job metadata does not establish the cancellation cause. The workflow nevertheless reports FAILURE, so this is not a nine-job or six-lane pass. Further investigation/execution belongs to a separately authorized continuation.
+
+All four completed job logs were inspected and verify the exact correction SHA/tree above. PHP 8.4 quality passes 7 tests/80 assertions, lint, the unchanged C01 package-load probes, PHPStan level 8, WPCS, locked Composer audits and evidence disclosure checks. Each of the three completed database lanes passes 122 tests/12,809 assertions, including unchanged C01 controls. Each confirms:
+
+- the actual competing `C02_Custom_REST_Server` remains selected;
+- the issuance preflight fails and independently verifies zero Application Passwords before issuance;
+- conflict HTTP tests pass before credentials (1 test/144 assertions) and with existing credentials (1 test/170 assertions);
+- the fixed synthetic bridge callback cannot execute under the conflict, service/marker native requests deny, and public native REST plus the identified human cookie/nonce REST request succeed;
+- removing the custom selection restores normal preflight/issuance and the unchanged internal/native/normalization/non-REST suite (6 tests/525 assertions);
+- callback and protected editorial/user/credential sentinels remain enforced;
+- secret scans, explicit credential revocation/verification, disposable user deletion and container/volume cleanup complete.
+
+These results establish the correction only on the three completed database lanes; no result is inferred for PHP 8.4/MySQL or either PHP 8.5 lane. Cancelled unit jobs likewise have no result. No source defect is demonstrated by this run, but full required verification is incomplete.
+
+The post-run commit updates only this handoff and the README/architecture/roadmap status text to remove stale ready-for-review claims. It uses `[skip ci]` solely to honor the owner's one-execution limit after recording failure. Its parent is the exact tested correction above; runtime, tests, workflow and dependency/configuration files are byte-identical to that parent. The final documentation HEAD/tree are recorded in PR #4 because a commit cannot contain its own hash. No CI result is attributed to that documentation-only HEAD.
+
+Final scope: PR #4 remains open and unmerged, main unchanged at `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`, C02/Gate 2 unaccepted and IN PROGRESS. No C03, production access, production user, production credential, deployment or merge occurred.
+
+**Exact next step:** In a separately authorized short continuation, investigate why the five queued jobs were cancelled and complete the required exact-head CI verification. Do not make another implementation correction unless evidence demonstrates one is needed. Do not merge or start C03. This execution stops after publishing the failure record.
