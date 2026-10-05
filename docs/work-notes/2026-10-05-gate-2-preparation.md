@@ -68,10 +68,19 @@ Human-review the exact preparation PR HEAD/tree. Accept the plan or request corr
 ## References
 
 - Preparation branch: `feature/gate-2-wordpress-read-foundation`.
-- Candidate commit/tree and PR: recorded in the publication checkpoint below and final PR description; the commit containing a note cannot embed its own resulting hash.
+- PR: [#2, Gate 2 preparation](https://github.com/jimlunsford/coagmentator/pull/2), open, ready for review and unmerged.
+- Candidate commit/tree: recorded in the publication checkpoint below and final PR description; the commit containing a note cannot embed its own resulting hash.
 - Workflow run: none.
 - Release/tag/deployment: none.
 
 ## Publication checkpoint
 
-The preparation design commit will be identified here in a documentation-only handoff follow-up. The final PR description pins the resulting final HEAD and complete tree without a self-referential hash inside its own commit.
+- Published preparation design HEAD: `f42785a76508b197354f22a04b62608e5a02e501`.
+- Published preparation complete tree: `7f2833160b648abc6d512c202ee1b5a05b13b801`, exactly equal to the locally reviewed tree.
+- Its sole parent is accepted starting main `31b9e9f0745ae48a3b61c060fbeb388431d837cd`.
+- PR #2 freshly verified OPEN, ready for review, mergeable, unmerged, base main, correct preparation branch and six changed Markdown files. At this checkpoint it contained one design commit.
+- GitHub API publication used the reviewed complete tree. A fresh local fetch and complete-tree diff confirmed equality; the working branch was aligned with the published commit without changing file contents.
+- Whitespace and added-content secret/private-reference scans passed. Full inventory remains Markdown and LICENSE only, with no code/dependency/workflow/fixture additions. No accepted Gate 1 contract changed.
+- Remote main was freshly reverified at its unchanged accepted SHA before publication. Final verification must recheck it and the final PR tip after this note-only follow-up.
+- This handoff-only follow-up changes no preparation design. The final PR description and session report pin its final HEAD/tree; retrieve the exact reviewed checkpoint there to avoid a self-referential hash in this note.
+- Final state remains Gate 2 IN PROGRESS, preparation ready for human review. No merge or implementation authorized by this publication.
