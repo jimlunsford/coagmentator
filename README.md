@@ -19,22 +19,7 @@ The project exists to provide a self-hosted, auditable alternative to metered th
 
 ## Initial architecture
 
-```text
-AI client
-   |
-   | MCP over HTTPS
-   v
-Coagmentator MCP Server
-   |
-   | authenticated WordPress requests
-   v
-Coagmentator WordPress Bridge
-   |
-   v
-WordPress
-```
-
-The MCP server and WordPress bridge are separate components with a shared contract layer.
+The MCP server authenticates AI clients with OAuth over HTTPS and calls a separate WordPress bridge using a dedicated service identity. It accepts supported client-file parameters, retrieves files under a restricted policy and sends only validated bytes to WordPress. WordPress enforces capabilities, verifies writes and returns receipts. A must-use guard limits the service identity to the documented operations. Strict and trusted single-operator approval profiles share the same server authorization; model results expose useful mutation evidence while protected records retain the audit details. See [architecture and trust boundaries](docs/ARCHITECTURE.md).
 
 ## Repository layout
 
@@ -60,11 +45,20 @@ The code directories will be created as implementation begins. Documentation is 
 
 ## Status
 
-**Gate 0: Project foundation is accepted. Gate 1: Contracts and threat model has not started.**
+**Gate 0 is accepted. Gate 1 is in progress, with its human-review corrections ready for another review. Gate 2 has not started.**
 
 No implementation has begun.
 
 Read `AGENTS.md` and `docs/ROADMAP.md` before starting implementation.
+
+Gate 1 review documents:
+
+- [21-tool MVP inventory](docs/MCP-TOOLS.md)
+- [Shared contracts, approvals and receipts](docs/CONTRACTS.md)
+- [Capability and service-user mapping](docs/CAPABILITIES.md)
+- [Authentication and current MCP compatibility](docs/AUTHENTICATION.md)
+- [Normalized errors](docs/ERRORS.md)
+- [Threat model](docs/THREAT-MODEL.md)
 
 ## License
 

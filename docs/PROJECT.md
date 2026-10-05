@@ -27,6 +27,18 @@ Typical desired interactions include:
 
 The product should make these operations feel natural from an AI client while keeping every operation constrained by the bridge's explicit tool contract.
 
+## Gate 1 MVP scope candidate
+
+Pending human Gate 1 acceptance, [MCP-TOOLS.md](MCP-TOOLS.md) fixes the surface at 21 operations. The first deployment model has one site, one OAuth operator and one dedicated WordPress service user. All writes start disabled. Two explicit server-side approval profiles are supported: `strict` retains independent exact-intent WordPress approval for designated public/destructive operations; `trusted_single_operator` permits individually enabled write families under standing authorization plus MCP client confirmation behavior. The latter is intended for the JimLunsford.com reference workflow, subject to later deployment authorization. Both preserve OAuth/scopes, binding, Application Passwords, the must-use guard, native/custom capabilities, versions, deduplication and verified receipts. Client confirmation is a UX safeguard, not server authorization or proof against a compromised MCP host.
+
+Post/page reads return complete stored source within documented bounds. Creation is draft-only, publishing is separate, and delete means recoverable Trash with an explicit check that Trash is enabled. There are no bulk operations, scheduling, multisite, custom post types or generic REST/Abilities tools.
+
+The MVP accepts a top-level ChatGPT file parameter for raster uploads and supports safe static HTML/core-block edits. MCP alone retrieves client files through a reviewed source profile with strict HTTPS, SSRF, redirect, byte and decoder limits; arbitrary remote-media URLs remain prohibited. WordPress receives only validated bytes, independently re-encodes them and strips metadata. Neither component renders content for previews. Actual file handoff and hostile direct-client rejection must be demonstrated in non-production acceptance.
+
+Tools do not ask the model for fixed site/actor identifiers or request timestamps. Coagmentator owns new mutation handles and timestamps, retains them durably across uncertainty, and returns the handle plus useful verified state. Internal audit identities, receipt IDs and trace times remain in protected records, separate from model output.
+
+Approved metadata has three fixed logical keys: `editorial.note`, `seo.title`, and `seo.description`. The latter two require the opt-in bridge-owned basic SEO mode and verified sole ownership of their front-end outputs. Third-party SEO integration remains later work, so compatibility with the reference site is not assumed. These are explicit limits on the initial use case, documented fully in [CONTRACTS.md](CONTRACTS.md).
+
 ## Non-goals for the MVP
 
 The first release is not intended to provide:

@@ -34,7 +34,9 @@ Acceptance evidence:
 
 ## Gate 1: Contracts and threat model
 
-**Status: NOT STARTED**
+**Status: IN PROGRESS**
+
+Human-review correction candidate ready for another human review. Not accepted or merged; Gate 2 remains `NOT STARTED`.
 
 Goals:
 
@@ -49,6 +51,25 @@ Goals:
 
 No production connection is permitted in this gate.
 
+Objective acceptance criteria:
+
+- [x] A fixed tool inventory gives every operation's purpose, required/optional inputs, output, affected resources, validation and failures: [MCP-TOOLS.md](MCP-TOOLS.md), 21 tools.
+- [x] Both sides share explicit envelopes, versioning, shapes, bounded fields, pagination, mutation inputs, status transitions and capability-aware response behavior: [CONTRACTS.md](CONTRACTS.md).
+- [x] Every mutation has exact retry/approval/precondition rules, a readback strategy and a receipt, including no-op, partial and unknown outcomes; trusted server ownership of request IDs/timestamps and MCP/bridge lost-response recovery are explicit.
+- [x] A single normalized error model covers auth, permissions, validation, missing resources, conflicts, unsupported features, limits, WordPress/transport failures and verification: [ERRORS.md](ERRORS.md).
+- [x] Every tool has OAuth, custom and native capability mapping; service privileges and alternative-native-API bypass prevention are specified: [CAPABILITIES.md](CAPABILITIES.md).
+- [x] Current primary-source WordPress and MCP/ChatGPT requirements are dated, linked and separated from project choices: [AUTHENTICATION.md](AUTHENTICATION.md).
+- [x] Concrete threats identify assets, attack paths, impact, control ownership, residual risk and a later verification gate: [THREAT-MODEL.md](THREAT-MODEL.md), 30 scenarios.
+- [x] Architecture, security, project scope and decision log agree with the focused documents. No security-critical mechanism is left for Gate 2 to invent.
+- [x] Current official OpenAI file parameters, controlled retrieval with no arbitrary URL path, per-tool annotations, model/audit separation and both approval profiles have explicit contracts and consistency evidence. Strict self-approval remains prohibited; trusted compromised-MCP exposure is documented.
+- [x] Documentation-only scope and internal-consistency checks are recorded in the [Gate 1 work note](work-notes/2026-10-05-gate-1-contracts-threat-model.md).
+- [ ] Human reviewer accepts the exact candidate and its explicit limits, or requests corrections. Acceptance must identify a commit/PR.
+- [ ] Authorized closeout records acceptance and merge evidence, promotes proposed D-009 through D-014 as appropriate, and sets Gate 1 to `ACCEPTED`. Do not infer acceptance from opening a PR.
+
+Review specifically: strict versus trusted approval policy and residual compromised-MCP exposure; must-use guard installation; native-editor concurrency risk; external file parameters versus internal byte-only bridge input; trusted request-handle ownership/lost-result recovery; compact model evidence versus protected audit records; individual annotations; static content subset; and optional basic SEO without third-party vendor compatibility. These are known design limits, not hidden "TBD" mechanisms. A change to any requires corresponding contract/capability/threat updates.
+
+No unmade architecture choice blocks review. Provider product, SDK/core support versions and actual callback values are selected and proven in their implementation/deployment gates within the specified contracts. Current-source research is not end-to-end integration evidence.
+
 ## Gate 2: WordPress bridge read foundation
 
 **Status: NOT STARTED**
@@ -56,6 +77,7 @@ No production connection is permitted in this gate.
 Goals:
 
 - create WordPress plugin skeleton
+- establish mandatory service-identity must-use guard before any test credential is issued
 - implement authentication integration
 - implement capability framework
 - implement read-only site/content endpoints
@@ -70,6 +92,8 @@ Candidate operations:
 - categories/tags lookup
 - media search
 - revision lookup
+
+Acceptance must include native-capability denial by author/status, raw-result privacy, identity/site mismatch, and REST/XML-RPC/batch/alternate-auth bypass tests. No write endpoint is enabled or implemented in this gate. A mutation-status read is deferred with its journal to Gate 3; do not invent a stub success. Select and document a maintained WordPress/PHP test matrix before implementation, and verify that current core mappings satisfy the Gate 1 profile.
 
 ## Gate 3: WordPress bridge editorial mutations
 
@@ -86,6 +110,9 @@ Goals:
 - revision restore
 - media upload and featured-image assignment
 - mutation receipts and readback verification
+- durable mutation journal, both server-side approval profiles, strict exact-intent human approval UI, and read-only mutation-status lookup
+
+Acceptance must cover the Gate 1 verification obligations for all eleven writes: conflict/ownership/replay/crash behavior, no automatic retry of uncertain effects, live/private authority, both policy profiles, strict approval substitution/CSRF/self-approval denial, trusted-policy capability ceilings and policy-downgrade refusal, disabled Trash, safe limited-field revision restore, raw-content restrictions, safe media, metadata and basic SEO ownership, quotas, readback mismatch, and honest partial outcomes.
 
 ## Gate 4: MCP server foundation
 
@@ -98,8 +125,12 @@ Goals:
 - expose read tools
 - expose write tools against shared contracts
 - normalize WordPress errors
-- add service audit correlation
+- add protected service audit correlation and allowlisted model projections
+- implement durable server-owned handles/timestamps and lost-result duplicate admission
+- implement bounded client-file retrieval and the internal byte adapter
 - add automated tests
+
+Pin a conforming established OAuth provider configuration and official SDK version; prove `2026-07-28` and `2025-11-25` behavior, discovery, PKCE, issuer/audience/subject/scope checks, callback modes, challenges, token/key rotation, redaction and emergency disable. Prove each individual tool annotation and the official top-level file schema, no arbitrary URL path, source-profile denial for direct callers, DNS rebinding/redirect/private-address defenses, before-buffer byte limits, internal-byte-only WordPress routing, identity/telemetry rejection in model schemas, and lost-response handle recovery. Recheck current primary sources; document changed requirements before implementation rather than weakening the profile.
 
 ## Gate 5: End-to-end non-production integration
 
@@ -115,6 +146,8 @@ Goals:
 - verify audit trail
 - verify credential isolation
 
+Record the actual ChatGPT client protocol/auth/callback path, prove the actual client file-parameter handoff and controlled MCP download, verify the must-use guard against direct hostile callers, test both approval profiles, strict self-approval denial and uncertain-outcome reconciliation, and review installed hook/media execution behavior. Missing file-transfer/source-profile compatibility is a failed workflow criterion, not grounds to allow arbitrary URLs or WordPress fetching.
+
 Production JimLunsford.com must not be the first end-to-end test target.
 
 ## Gate 6: JimLunsford.com production acceptance
@@ -127,10 +160,12 @@ Goals:
 - create least-privilege service identity
 - connect production to the MCP service
 - start with read-only acceptance
-- explicitly authorize write-tool enablement
+- explicitly select the approval profile and authorize each write family; the reference plan is `trusted_single_operator`, with residual risk reviewed
 - execute controlled draft/update/media tests
 - verify rollback and revision paths
 - document production configuration without secrets
+
+Resolve actual content-format and SEO-owner compatibility before claiming those workflows accepted. Production authorization remains a separate decision; Gate 1 does not inspect or change JimLunsford.com.
 
 ## Gate 7: v0.1.0 release
 
