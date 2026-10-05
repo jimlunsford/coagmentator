@@ -26,6 +26,18 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse HEAD)
+          printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
+          test "$actual_sha" = "$EXPECTED_SHA"
+          git rev-parse 'HEAD^{tree}'
       - name: Unit, lint, negative load and quality
         env:
           C01_PHP: ${{ matrix.php }}
@@ -56,6 +68,18 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse HEAD)
+          printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
+          test "$actual_sha" = "$EXPECTED_SHA"
+          git rev-parse 'HEAD^{tree}'
       - name: Real WordPress integration and verified TLS
         env:
           C01_PHP: ${{ matrix.php }}
