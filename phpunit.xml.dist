@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="tests/bootstrap/unit.php" colors="false" failOnWarning="true" failOnRisky="true" failOnDeprecation="true" cacheDirectory=".runtime/phpunit">
+  <testsuites><testsuite name="unit"><directory>tests/unit</directory></testsuite></testsuites>
+  <source><include><directory>wordpress/coagmentator/src</directory></include></source>
+</phpunit>

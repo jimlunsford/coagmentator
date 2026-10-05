@@ -1,0 +1,1078 @@
+{
+  "schema": 1,
+  "repository": "jimlunsford/coagmentator",
+  "pr": 3,
+  "main": {
+    "sha": "ab4ccb3362ca13b006ff3f2887d4743af06ba035",
+    "tree": "9e83480e09bf6f81882b897827866a46e256d2a1"
+  },
+  "classification": "Delayed observable push execution; underlying cause unproven. PR opened and synchronize event paths both executed without approval.",
+  "first_pr_run": {
+    "id": 37331691984,
+    "event": "pull_request",
+    "activity": "opened",
+    "sha": "c6c6bf54e05f39f1f112cad7d97a7e4014897a4d",
+    "tree": "f9975ca3416d03594ca191ab6166afb8848fc3ba",
+    "conclusion": "failure",
+    "attempt": 1,
+    "jobs": [
+      {
+        "id": 111836105477,
+        "name": "Unit and quality PHP 83",
+        "conclusion": "success"
+      },
+      {
+        "id": 111836105704,
+        "name": "Unit and quality PHP 84",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836105773,
+        "name": "Integration and HTTP PHP 83 mysql",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836105849,
+        "name": "Integration and HTTP PHP 84 mysql",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836105955,
+        "name": "Integration and HTTP PHP 84 mariadb",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836105963,
+        "name": "Integration and HTTP PHP 83 mariadb",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836105999,
+        "name": "Integration and HTTP PHP 85 mariadb",
+        "conclusion": "failure"
+      },
+      {
+        "id": 111836106003,
+        "name": "Unit and quality PHP 85",
+        "conclusion": "success"
+      },
+      {
+        "id": 111836106004,
+        "name": "Integration and HTTP PHP 85 mysql",
+        "conclusion": "failure"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 11355006565,
+        "name": "integration-http-84-mysql",
+        "digest": "sha256:d532fd00e7fa67e73e2b7725c19efca38c41522e6fdced72656844c4ed1efcc6"
+      },
+      {
+        "id": 11354866131,
+        "name": "integration-http-84-mariadb",
+        "digest": "sha256:15f17da585b6146e7ace80afd6299ee36c4aa6865b80e44b8c1e29807ef2c195"
+      },
+      {
+        "id": 11354468041,
+        "name": "integration-http-85-mysql",
+        "digest": "sha256:ae3c753163f94a6097b93745906b65028e5855fcc400ae5f948da212a1fd3a10"
+      },
+      {
+        "id": 11354413001,
+        "name": "unit-83",
+        "digest": "sha256:465b5e21ce60049fa5e2fc5d5f50a025db37e71630a1f6779c27aa93355d2920"
+      },
+      {
+        "id": 11354338428,
+        "name": "integration-http-83-mysql",
+        "digest": "sha256:6a93c72fb237d04bb5165580bf64e92ddb2ee9d67fd40f7a577972a028994a98"
+      },
+      {
+        "id": 11354282916,
+        "name": "integration-http-83-mariadb",
+        "digest": "sha256:ca70a973bf4e6e0496a72f00f345a7a999c81baf1aa814455244e0f82b03b0c1"
+      },
+      {
+        "id": 11353968714,
+        "name": "integration-http-85-mariadb",
+        "digest": "sha256:e85149066625d4e464f74e7d935a3772a41a27e8e200676cd7a2f1d5f331625c"
+      },
+      {
+        "id": 11353519792,
+        "name": "unit-84",
+        "digest": "sha256:9548f6c4170b2fa8961fc1b8fd4d246c7eb2320a1683ce7769aa15d6055499c6"
+      },
+      {
+        "id": 11353494834,
+        "name": "unit-85",
+        "digest": "sha256:1a40307109bd3f904dae875cf7983cd576222ebb1b75271f5a713b06c6477233"
+      }
+    ]
+  },
+  "corrected_run": {
+    "id": 37332251616,
+    "event": "pull_request",
+    "activity": "synchronize",
+    "sha": "4cac2d6689a973d6c96596f2d31c981bb272df69",
+    "tree": "3ae31f56608b4e16d0e86c870f55cf4dd7bf690b",
+    "conclusion": "success",
+    "attempt": 1,
+    "jobs": [
+      {
+        "id": 111838011805,
+        "name": "Unit and quality PHP 84",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:11.5644241Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:11.5646357Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:11.5648094Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:51.0528487Z OK (4 tests, 15 assertions)",
+          "2026-10-05T15:22:55.3461622Z  [OK] No errors                                                                 ",
+          "2026-10-05T15:22:58.8729778Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012111,
+        "name": "Unit and quality PHP 85",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:11.5053874Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:11.5055795Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:11.5057539Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:55.1448444Z OK (4 tests, 15 assertions)",
+          "2026-10-05T15:22:57.6481691Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012196,
+        "name": "Integration and HTTP PHP 84 mariadb",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:13.9170387Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:13.9172155Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:13.9174110Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:18.7569403Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:19.6101443Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:19.6922621Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:20.0654552Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012359,
+        "name": "Integration and HTTP PHP 84 mysql",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:13.8418246Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:13.8419771Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:13.8496169Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:26.9861475Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:27.8059228Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:27.8819289Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:29.6815883Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012370,
+        "name": "Integration and HTTP PHP 83 mariadb",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:13.1291518Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:13.1292598Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:13.1293599Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:33.3846510Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:34.2735197Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:34.3486126Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:34.7893116Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012373,
+        "name": "Unit and quality PHP 83",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:12.0963180Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:12.0965269Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:12.0967351Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:54.1688278Z OK (4 tests, 15 assertions)",
+          "2026-10-05T15:22:56.7113819Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012380,
+        "name": "Integration and HTTP PHP 83 mysql",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:13.0861923Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:13.0863375Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:13.0864809Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:20.4239896Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:21.1667425Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:21.2313735Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:22.6703534Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012471,
+        "name": "Integration and HTTP PHP 85 mariadb",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:12.8419716Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:12.8420568Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:12.8421530Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:08.6998611Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:09.4863732Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:09.5548639Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:09.8953060Z Evidence allowlist and secret scan passed."
+        ]
+      },
+      {
+        "id": 111838012574,
+        "name": "Integration and HTTP PHP 85 mysql",
+        "conclusion": "success",
+        "failed_steps": [],
+        "verified_log_excerpts": [
+          "2026-10-05T15:22:12.1615833Z Event: pull_request; activity: synchronize",
+          "2026-10-05T15:22:12.1617507Z Expected source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:22:12.1619222Z Checked-out source: 4cac2d6689a973d6c96596f2d31c981bb272df69",
+          "2026-10-05T15:23:18.7031941Z OK (3 tests, 142 assertions)",
+          "2026-10-05T15:23:19.5526506Z OK (3 tests, 10 assertions)",
+          "2026-10-05T15:23:19.6368261Z Internal test network verified; no published host ports.",
+          "2026-10-05T15:23:20.5935415Z Evidence allowlist and secret scan passed."
+        ]
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 11355370239,
+        "name": "integration-http-83-mariadb",
+        "digest": "sha256:b962e7734aa89b6cd259b9607faea00a7d5cf6df92bb88199b0ef8bea7327353",
+        "size_in_bytes": 2465,
+        "expires_at": "2026-10-19T15:23:34Z",
+        "verified_junit": {
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.549415"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.522951"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.023831"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.002634"
+              }
+            ]
+          },
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.010121"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.002305"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.003335"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.004481"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11355051069,
+        "name": "unit-85",
+        "digest": "sha256:160d739272c5b54fd2dd9847d4e988cbc6478a1bf8b62188a1ebad8e2756f448",
+        "size_in_bytes": 2074,
+        "expires_at": "2026-10-19T15:22:57Z",
+        "verified_junit": {
+          "unit.xml": {
+            "summary": {
+              "name": "/workspace/phpunit.xml.dist",
+              "tests": "4",
+              "assertions": "15",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.001433"
+            },
+            "cases": [
+              {
+                "name": "test_current_runtime",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "17",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "1",
+                "time": "0.000840"
+              },
+              {
+                "name": "test_supported_lines",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "22",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000192"
+              },
+              {
+                "name": "test_unsupported_environments",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "29",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000200"
+              },
+              {
+                "name": "test_platform_prerequisites",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "36",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "8",
+                "time": "0.000201"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11355032358,
+        "name": "integration-http-84-mariadb",
+        "digest": "sha256:5cc5ce270d9e91030a134e93a97673cb9e4573758e7fdf4ff3d2cd2379ddd522",
+        "size_in_bytes": 2467,
+        "expires_at": "2026-10-19T15:23:20Z",
+        "verified_junit": {
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.494032"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.458727"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.031702"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.003603"
+              }
+            ]
+          },
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.014402"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.002787"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.004878"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.006736"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11354752377,
+        "name": "integration-http-85-mysql",
+        "digest": "sha256:14152a3236a57e1c884f8a9e2c36785e9efc939899a9dea91526d06e9d26b60a",
+        "size_in_bytes": 2467,
+        "expires_at": "2026-10-19T15:23:20Z",
+        "verified_junit": {
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.505087"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.467000"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.034537"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.003549"
+              }
+            ]
+          },
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.018529"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.005488"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.006168"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.006873"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11354672579,
+        "name": "integration-http-85-mariadb",
+        "digest": "sha256:7aa0ad55875d171397279fcc0105be0186eb090fe9216a6809acfc9ac0a75696",
+        "size_in_bytes": 2468,
+        "expires_at": "2026-10-19T15:23:10Z",
+        "verified_junit": {
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.011767"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.002409"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.004013"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.005345"
+              }
+            ]
+          },
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.488874"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.457174"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.028528"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.003172"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11354359007,
+        "name": "unit-83",
+        "digest": "sha256:fd4bc5b42b7905d80e6627c42038c9d3b57b28852886337dc6eb94c14496bd1c",
+        "size_in_bytes": 2074,
+        "expires_at": "2026-10-19T15:22:56Z",
+        "verified_junit": {
+          "unit.xml": {
+            "summary": {
+              "name": "/workspace/phpunit.xml.dist",
+              "tests": "4",
+              "assertions": "15",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.001487"
+            },
+            "cases": [
+              {
+                "name": "test_current_runtime",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "17",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "1",
+                "time": "0.000829"
+              },
+              {
+                "name": "test_supported_lines",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "22",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000228"
+              },
+              {
+                "name": "test_unsupported_environments",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "29",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000207"
+              },
+              {
+                "name": "test_platform_prerequisites",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "36",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "8",
+                "time": "0.000223"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11354064212,
+        "name": "integration-http-84-mysql",
+        "digest": "sha256:623224aecfbd068f850b5e01ddc44dbf3d4522199c85a1993df58dfea5e86f79",
+        "size_in_bytes": 2468,
+        "expires_at": "2026-10-19T15:23:29Z",
+        "verified_junit": {
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.014912"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.002827"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.005564"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.006521"
+              }
+            ]
+          },
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.497337"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.460670"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.032881"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.003785"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11353879646,
+        "name": "integration-http-83-mysql",
+        "digest": "sha256:58f41a9102071b1af1b43c63c34f3d3e608ea8a4555b8a8dcf746e0c14ba8def",
+        "size_in_bytes": 2469,
+        "expires_at": "2026-10-19T15:23:22Z",
+        "verified_junit": {
+          "http.xml": {
+            "summary": {
+              "name": "/workspace/tests/http/phpunit.xml",
+              "tests": "3",
+              "assertions": "10",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.464881"
+            },
+            "cases": [
+              {
+                "name": "test_wordpress_and_header",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "37",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "6",
+                "time": "0.431554"
+              },
+              {
+                "name": "test_untrusted_ca_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "58",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.030409"
+              },
+              {
+                "name": "test_wrong_hostname_is_rejected",
+                "file": "/workspace/tests/http/HttpTest.php",
+                "line": "73",
+                "class": "HttpTest",
+                "classname": "HttpTest",
+                "assertions": "2",
+                "time": "0.002917"
+              }
+            ]
+          },
+          "wordpress.xml": {
+            "summary": {
+              "name": "",
+              "tests": "3",
+              "assertions": "142",
+              "errors": "0",
+              "warnings": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.011738"
+            },
+            "cases": [
+              {
+                "name": "test_bootstrap",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "11",
+                "assertions": "4",
+                "time": "0.002016"
+              },
+              {
+                "name": "test_factory",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "19",
+                "assertions": "3",
+                "time": "0.004398"
+              },
+              {
+                "name": "test_no_bridge_or_credentials",
+                "class": "BootstrapTest",
+                "classname": "BootstrapTest",
+                "file": "/workspace/tests/wordpress/BootstrapTest.php",
+                "line": "32",
+                "assertions": "135",
+                "time": "0.005324"
+              }
+            ]
+          }
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      },
+      {
+        "id": 11353754817,
+        "name": "unit-84",
+        "digest": "sha256:3cf59c852e0820605848c6bcafb3b7c3babdc475fe3c5538ea877abfde15114e",
+        "size_in_bytes": 2427,
+        "expires_at": "2026-10-19T15:22:59Z",
+        "verified_junit": {
+          "unit.xml": {
+            "summary": {
+              "name": "/workspace/phpunit.xml.dist",
+              "tests": "4",
+              "assertions": "15",
+              "errors": "0",
+              "failures": "0",
+              "skipped": "0",
+              "time": "0.001528"
+            },
+            "cases": [
+              {
+                "name": "test_current_runtime",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "17",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "1",
+                "time": "0.000860"
+              },
+              {
+                "name": "test_supported_lines",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "22",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000221"
+              },
+              {
+                "name": "test_unsupported_environments",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "29",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "3",
+                "time": "0.000206"
+              },
+              {
+                "name": "test_platform_prerequisites",
+                "file": "/workspace/tests/unit/EnvironmentTest.php",
+                "line": "36",
+                "class": "EnvironmentTest",
+                "classname": "EnvironmentTest",
+                "assertions": "8",
+                "time": "0.000241"
+              }
+            ]
+          }
+        },
+        "quality-audit.json": {
+          "advisories": [],
+          "abandoned": [],
+          "filter": []
+        },
+        "wp-tests-audit.json": {
+          "advisories": [],
+          "abandoned": [],
+          "filter": []
+        },
+        "archive_digest_verified": true,
+        "candidate_identity_and_manifest_verified": true
+      }
+    ]
+  },
+  "pins_unchanged": true,
+  "workflow_approval_required": false,
+  "c02_started": false,
+  "service_user_created": false,
+  "application_password_created": false,
+  "production_accessed": false,
+  "environment_manifest": {
+    "schema": 1,
+    "resolved_date": "2026-10-05",
+    "platform": "linux/amd64",
+    "wordpress": {
+      "version": "7.1.2",
+      "repository": "https://github.com/WordPress/wordpress-develop.git",
+      "commit": "0a106cde38df869e196a83eb4975ba38a4e5837b",
+      "runtime_repository": "https://github.com/WordPress/WordPress.git",
+      "runtime_commit": "160387b7312c9407c7fe4b1d3dd2055206749a34"
+    },
+    "images": {
+      "php83": {
+        "discovery_tag": "php:8.3-fpm-bookworm",
+        "image": "php@sha256:536a1188a926efe7e6f927b7ca01f3a043c63d0a527567c6d4d3bf9fbd637866",
+        "image_id": "sha256:8dd15e784bf2c986d9a529cd50e43c08949f0f69c048c3f5091c7bbc2fc393d8",
+        "version": "8.3.35"
+      },
+      "php84": {
+        "discovery_tag": "php:8.4-fpm-bookworm",
+        "image": "php@sha256:43e1ac38217031dbbecae60e84ccf8593722031559178d199bf56adb0145d5d0",
+        "image_id": "sha256:bf6127fc0ad7f05618dcda3551c25e59c84fdc9e2dfe0feb9b8df1ebc038c22a",
+        "version": "8.4.26"
+      },
+      "php85": {
+        "discovery_tag": "php:8.5-fpm-bookworm",
+        "image": "php@sha256:53eab56a8f43f51a92119f6c29b3448af98eec288ff17f92829354a4b4c9ca05",
+        "image_id": "sha256:1eec88f3ef7f7e2885c1608aebe4ae463bd19a8971d582b550bc1b0588aad252",
+        "version": "8.5.11"
+      },
+      "mariadb": {
+        "discovery_tag": "mariadb:10.11",
+        "image": "mariadb@sha256:7db29378d4fdab73f8123bbc2b48905c90d1a4b00cf848b028f1e81e623257f2",
+        "image_id": "sha256:41096ae9913468679bb5e05bbc19f44edcaf0eae45d67fcde224ffdeda9d3a1f",
+        "version": "mariadbd  Ver 10.11.19-MariaDB-ubu2204 for debian-linux-gnu on x86_64 (mariadb.org binary distribution)\n2026-10-05 14:43:11 0 [Warning] failed to retrieve the MAC address"
+      },
+      "mysql": {
+        "discovery_tag": "mysql:8.4",
+        "image": "mysql@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "image_id": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "version": "/usr/sbin/mysqld  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)"
+      },
+      "nginx": {
+        "discovery_tag": "nginx:1.30.5-trixie",
+        "image": "nginx@sha256:b972f831f200b19ef0767938224f9711e74cd783718738cd7405d5cabf75c442",
+        "version": "nginx version: nginx/1.30.5",
+        "source": "https://hub.docker.com/v2/namespaces/library/repositories/nginx/tags/1.30.5-trixie"
+      },
+      "composer": {
+        "discovery_tag": "composer:2",
+        "image": "composer@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac",
+        "image_id": "sha256:87ef1f7078ab07ff3822199a1572016cd47bc5dc5cd9aae9e6f2d9b2884a50f9",
+        "version": "Composer version 2.10.3 2026-08-27 13:34:23\nPHP version 8.5.11 (/usr/local/bin/php)\nRun the \"diagnose\" command to get more detailed diagnostics output."
+      }
+    },
+    "packages": {
+      "quality": {
+        "php": ">=8.3 <8.6",
+        "phpunit/phpunit": "12.5.38",
+        "phpstan/phpstan": "2.2.17",
+        "wp-coding-standards/wpcs": "3.4.1",
+        "squizlabs/php_codesniffer": "3.13.6"
+      },
+      "wp-tests": {
+        "php": ">=8.3 <8.6",
+        "phpunit/phpunit": "9.6.38",
+        "yoast/phpunit-polyfills": "1.1.5"
+      }
+    }
+  },
+  "dependency_lock_sha256": {
+    "quality": "5f35eca05b1896efdbba2ce444d3b1a664e9119a7e8337a0fd40eb765468b711",
+    "wp-tests": "acd1f10d0a7de7638cb5408e2f947ffe48d8508324bdd7fc14e87af39b90518f"
+  }
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="../bootstrap/wordpress.php" colors="false" failOnWarning="true" failOnRisky="true" convertDeprecationsToExceptions="true">
+  <testsuites><testsuite name="wordpress"><directory suffix="Test.php">.</directory></testsuite></testsuites>
+</phpunit>

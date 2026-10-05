@@ -1,0 +1,46 @@
+services:
+  database:
+    image: ${DATABASE_IMAGE:?Pinned database image required}
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: c01
+      MYSQL_PASSWORD_FILE: /run/secrets/database_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password
+    secrets: [database_password, root_password]
+    volumes:
+      - ../../.runtime/database-init.sql:/docker-entrypoint-initdb.d/c01.sql:ro
+    networks: [isolated]
+  php:
+    image: coagmentator-c01-php
+    volumes:
+      - ../..:/workspace
+    environment:
+      C01_TEST_ENVIRONMENT: disposable
+    secrets: [database_password]
+    networks: [isolated]
+  edge:
+    image: ${NGINX_IMAGE:?Pinned Nginx image required}
+    volumes:
+      - ../../.runtime/wordpress/src:/workspace/.runtime/wordpress/src:ro
+      - ../../.runtime/tls:/etc/nginx/tls:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [php]
+    networks:
+      isolated:
+        aliases: [wordpress.test]
+  client:
+    image: coagmentator-c01-php
+    command: ["true"]
+    volumes:
+      - ../..:/workspace
+    environment:
+      C01_TEST_ENVIRONMENT: disposable
+    networks: [isolated]
+secrets:
+  database_password:
+    file: ../../.runtime/secrets/database-password
+  root_password:
+    file: ../../.runtime/secrets/root-password
+networks:
+  isolated:
+    internal: true

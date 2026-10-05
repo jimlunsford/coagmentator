@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "resolved_date": "2026-10-05",
+  "platform": "linux/amd64",
+  "wordpress": {
+    "version": "7.1.2",
+    "repository": "https://github.com/WordPress/wordpress-develop.git",
+    "commit": "0a106cde38df869e196a83eb4975ba38a4e5837b",
+    "runtime_repository": "https://github.com/WordPress/WordPress.git",
+    "runtime_commit": "160387b7312c9407c7fe4b1d3dd2055206749a34"
+  },
+  "images": {
+    "php83": {
+      "discovery_tag": "php:8.3-fpm-bookworm",
+      "image": "php@sha256:536a1188a926efe7e6f927b7ca01f3a043c63d0a527567c6d4d3bf9fbd637866",
+      "image_id": "sha256:8dd15e784bf2c986d9a529cd50e43c08949f0f69c048c3f5091c7bbc2fc393d8",
+      "version": "8.3.35"
+    },
+    "php84": {
+      "discovery_tag": "php:8.4-fpm-bookworm",
+      "image": "php@sha256:43e1ac38217031dbbecae60e84ccf8593722031559178d199bf56adb0145d5d0",
+      "image_id": "sha256:bf6127fc0ad7f05618dcda3551c25e59c84fdc9e2dfe0feb9b8df1ebc038c22a",
+      "version": "8.4.26"
+    },
+    "php85": {
+      "discovery_tag": "php:8.5-fpm-bookworm",
+      "image": "php@sha256:53eab56a8f43f51a92119f6c29b3448af98eec288ff17f92829354a4b4c9ca05",
+      "image_id": "sha256:1eec88f3ef7f7e2885c1608aebe4ae463bd19a8971d582b550bc1b0588aad252",
+      "version": "8.5.11"
+    },
+    "mariadb": {
+      "discovery_tag": "mariadb:10.11",
+      "image": "mariadb@sha256:7db29378d4fdab73f8123bbc2b48905c90d1a4b00cf848b028f1e81e623257f2",
+      "image_id": "sha256:41096ae9913468679bb5e05bbc19f44edcaf0eae45d67fcde224ffdeda9d3a1f",
+      "version": "mariadbd  Ver 10.11.19-MariaDB-ubu2204 for debian-linux-gnu on x86_64 (mariadb.org binary distribution)\n2026-10-05 14:43:11 0 [Warning] failed to retrieve the MAC address"
+    },
+    "mysql": {
+      "discovery_tag": "mysql:8.4",
+      "image": "mysql@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+      "image_id": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+      "version": "/usr/sbin/mysqld  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)"
+    },
+    "nginx": {
+      "discovery_tag": "nginx:1.30.5-trixie",
+      "image": "nginx@sha256:b972f831f200b19ef0767938224f9711e74cd783718738cd7405d5cabf75c442",
+      "version": "nginx version: nginx/1.30.5",
+      "source": "https://hub.docker.com/v2/namespaces/library/repositories/nginx/tags/1.30.5-trixie"
+    },
+    "composer": {
+      "discovery_tag": "composer:2",
+      "image": "composer@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac",
+      "image_id": "sha256:87ef1f7078ab07ff3822199a1572016cd47bc5dc5cd9aae9e6f2d9b2884a50f9",
+      "version": "Composer version 2.10.3 2026-08-27 13:34:23\nPHP version 8.5.11 (/usr/local/bin/php)\nRun the \"diagnose\" command to get more detailed diagnostics output."
+    }
+  },
+  "packages": {
+    "quality": {
+      "php": ">=8.3 <8.6",
+      "phpunit/phpunit": "12.5.38",
+      "phpstan/phpstan": "2.2.17",
+      "wp-coding-standards/wpcs": "3.4.1",
+      "squizlabs/php_codesniffer": "3.13.6"
+    },
+    "wp-tests": {
+      "php": ">=8.3 <8.6",
+      "phpunit/phpunit": "9.6.38",
+      "yoast/phpunit-polyfills": "1.1.5"
+    }
+  }
+}
