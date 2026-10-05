@@ -137,3 +137,48 @@ Sources: [PHP cURL constants](https://www.php.net/manual/en/curl.constants.php),
 ### Next step and boundaries
 
 Publish this bounded correction on the existing branch; verify the changed PR head and a new pull_request/synchronize run; inspect all terminal jobs and logs before declaring readiness. No C02, MU guard, bridge route, service user or Application Password was implemented or issued. Ordinary disposable WordPress control-admin fixtures remain test-only. Production was neither contacted nor modified. Main, releases and tags remain untouched.
+
+## C01 internal verification completed, 2026-10-05
+
+This is the current C01 handoff, superseding the blocked latest-state statements in the historical entries above. **C01 is internally verified and awaits human acceptance. Gate 2 remains IN PROGRESS.** No merge or C02 authorization is implied.
+
+Correction commit `4cac2d6689a973d6c96596f2d31c981bb272df69`, complete tree `3ae31f56608b4e16d0e86c870f55cf4dd7bf690b`, produced PR run [37332251616](https://github.com/jimlunsford/coagmentator/actions/runs/37332251616), attempt 1, terminal SUCCESS. Every job printed `pull_request` / `synchronize`, verified that exact source SHA, and printed the matching tree. No approval was required; no jobs were retried.
+
+| Corrected PR-run job | Job ID | Conclusion |
+| --- | --- | --- |
+| Unit and quality PHP 84 | 111838011805 | SUCCESS |
+| Unit and quality PHP 85 | 111838012111 | SUCCESS |
+| Integration and HTTP PHP 84 mariadb | 111838012196 | SUCCESS |
+| Integration and HTTP PHP 84 mysql | 111838012359 | SUCCESS |
+| Integration and HTTP PHP 83 mariadb | 111838012370 | SUCCESS |
+| Unit and quality PHP 83 | 111838012373 | SUCCESS |
+| Integration and HTTP PHP 83 mysql | 111838012380 | SUCCESS |
+| Integration and HTTP PHP 85 mariadb | 111838012471 | SUCCESS |
+| Integration and HTTP PHP 85 mysql | 111838012574 | SUCCESS |
+
+### Final implementation evidence
+
+- PHPUnit 12.5.38 unit suites: 4 tests / 15 assertions on each of PHP 8.3.35, 8.4.26 and 8.5.11.
+- PHP lint and vendor-free positive/unsupported-version/missing-extension load probes: PASS on all three lines. Unit assertions separately cover unsupported PHP, WordPress, integer width, each required extension and multisite.
+- PHPStan 2.2.17 level 8: PASS. WPCS 3.4.1 with PHP_CodeSniffer 3.13.6: PASS, no newly disabled sniff.
+- Both Composer 2.10.3 locked-graph audits: zero advisories and zero abandoned packages. Downloaded audit JSON independently inspected.
+- WordPress 7.1.2 / PHPUnit 9.6.38 / Polyfills 1.1.5: 3 tests / 142 assertions in each of all six PHP/database lanes.
+- HTTP/TLS / PHPUnit 12.5.38: 3 tests / 10 assertions in each of all six lanes. Actual Nginx/FPM/WordPress/database and Authorization-header probe passed; untrusted CA and wrong hostname each fail with the exact certificate error. TLS verification stays enabled.
+- All six networks verified internal, with no published host ports. Test teardown completed. No skipped project tests or unresolved project warnings/deprecations were accepted.
+- All nine job logs inspected. All nine artifact ZIPs downloaded, SHA-256 checked against the API digest, and their exact candidate SHA/tree plus complete environment manifests checked. Parsed all JUnit suites, including zero failures/errors/skips (and zero WordPress warnings), and both audit results.
+- Environment manifest, seven digest-selected images, runtime/test-library source revisions and both lockfiles are unchanged from the starting corrected candidate. Exact manifest/lock package versions agree. Quality lock SHA-256 `5f35eca05b1896efdbba2ce444d3b1a664e9119a7e8337a0fd40eb765468b711`; WordPress-test lock SHA-256 `acd1f10d0a7de7638cb5408e2f947ffe48d8508324bdd7fc14e87af39b90518f`.
+- Nonblocking upstream/tool notices remain identified: upload-artifact v4.6.2 Node deprecation notices, core test-library notices about its own excluded groups, and Composer's fallback root-package version notice when Git refuses cross-UID repository ownership inside the container. No PHP project deprecation was suppressed and dependency/platform checks passed.
+
+[Machine-readable evidence](2026-10-05-gate-2-c01-ci-recovery-evidence.json) preserves the first failed PR run, green implementation run, job identifiers, relevant verified log excerpts, artifact identities/digests, parsed test cases, both audit payloads and exact pins. The GitHub artifacts expire after 14 days; these recorded verification facts remain in Git.
+
+### Final documentation checkpoint and review procedure
+
+This final publication changes only README, architecture/status documentation, this appended handoff, and the evidence JSON. It does not change implementation, workflows, tests, assertions, dependency locks or environment pins after the green run above. The original environment-blocker note remains byte-for-byte unchanged; earlier continuation entries remain historical evidence.
+
+To avoid self-referential commit identifiers or endless evidence-only commits, this note records the fully tested implementation checkpoint. The introducing final documentation commit is separately tested with the same complete workflow. Its exact HEAD/tree, final run, nine job IDs and conclusions are recorded in PR #3 and the execution report. Do not mark the PR ready unless that exact final checkpoint is green. No older run is substituted for the newer HEAD.
+
+Once the final exact-HEAD run passes, mark PR #3 ready for human review, leave it open and unmerged, and stop. The next owner action is human acceptance review of C01. Do not begin C02. Any merge or C02 execution requires a separate instruction.
+
+### Boundaries confirmed
+
+No service identity or Application Password was created or found by disposable fixture inventory. The only ordinary users are core's disposable test/control users, not Coagmentator service users. No MU guard, authentication, bridge route, C02 behavior or production connection was added. Production was neither contacted nor modified. Main remains `ab4ccb3362ca13b006ff3f2887d4743af06ba035`, tree `9e83480e09bf6f81882b897827866a46e256d2a1`; no merge, tag, release or deployment occurred. No architecture/support-policy change.

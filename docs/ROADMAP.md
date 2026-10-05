@@ -94,9 +94,9 @@ Preparation acceptance evidence:
 - [Preparation closeout](work-notes/2026-10-05-gate-2-preparation-closeout.md) records verification and the final closeout checkpoint. The earlier [preparation handoff](work-notes/2026-10-05-gate-2-preparation.md) is historical evidence.
 - Next: **Begin Gate 2 implementation at C01: Package and Test Skeleton.** Then **C02: Independent MU Guard must be established and verified before any service Application Password is issued.** Neither checkpoint began during closeout.
 
-### C01 implementation checkpoint (partial, not accepted)
+### C01 implementation checkpoint (internally verified, not accepted)
 
-The [Actions continuation handoff](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) records a successful hosted preflight and dependency construction, followed by failed initial full-matrix acceptance. Corrections are published, but subsequent branch HEADs have no observable workflow run/check suite. C01 remains blocked on execution of the corrected candidate and resolution of any remaining failures. No implementation PR is open. Main remains the accepted preparation checkpoint. No C02 or production work is authorized by this status entry.
+The appended recovery section in the [Actions continuation handoff](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) records restored observable push execution and independent PR opened/synchronize execution. [PR #3](https://github.com/jimlunsford/coagmentator/pull/3) was opened as an explicitly authorized draft CI mechanism. Corrected HEAD `4cac2d6689a973d6c96596f2d31c981bb272df69`, tree `3ae31f56608b4e16d0e86c870f55cf4dd7bf690b`, passed all nine jobs in PR run `37332251616`: three unit/lint/unsupported-environment lanes, PHPStan, WPCS, both clean Composer audits, and six real WordPress integration plus HTTP/TLS lanes. [Recorded evidence](work-notes/2026-10-05-gate-2-c01-ci-recovery-evidence.json) includes verified artifact digests, exact identities, JUnit results and audit data. The final documentation checkpoint must also pass exact-HEAD CI before the PR is made ready; its identity and run are recorded in the PR. C01 awaits human acceptance and must not be merged without authorization. Main remains the accepted preparation checkpoint. Gate 2 remains IN PROGRESS; C02 has not begun and no production work is authorized by this status entry.
 
 Goals:
 

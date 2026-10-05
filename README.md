@@ -47,7 +47,7 @@ The code directories will be created as implementation begins. Documentation is 
 
 **Gate 0 and Gate 1 are accepted. Gate 2 preparation is accepted. Gate 2 remains IN PROGRESS.**
 
-C01 package/test implementation is partial on `feature/gate-2-c01-package-test-skeleton`; it is not ready for acceptance. See the [Actions continuation handoff](docs/work-notes/2026-10-05-gate-2-c01-actions-continuation.md). The [Gate 2 implementation plan](docs/GATE-2-IMPLEMENTATION-PLAN.md), [read route specifications](docs/GATE-2-READ-ROUTES.md) and [support/test matrix](docs/TEST-MATRIX.md) were human-reviewed and accepted on 2026-10-05. C02 has not begun; no service identity, Application Password or bridge route exists.
+C01 package/test scaffolding has passed the complete required matrix on `feature/gate-2-c01-package-test-skeleton` and awaits human acceptance in [PR #3](https://github.com/jimlunsford/coagmentator/pull/3). See the appended recovery evidence in the [Actions continuation handoff](docs/work-notes/2026-10-05-gate-2-c01-actions-continuation.md). The [Gate 2 implementation plan](docs/GATE-2-IMPLEMENTATION-PLAN.md), [read route specifications](docs/GATE-2-READ-ROUTES.md) and [support/test matrix](docs/TEST-MATRIX.md) were human-reviewed and accepted on 2026-10-05. C02 has not begun; no service identity, Application Password or bridge route exists.
 
 Read `AGENTS.md` and `docs/ROADMAP.md` before starting implementation.
 
