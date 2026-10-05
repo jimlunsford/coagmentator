@@ -1,0 +1,36 @@
+name: C01 dependency construction
+on:
+  push:
+    branches: [feature/gate-2-c01-package-test-skeleton]
+    paths:
+      - .github/workflows/c01-construction.yml
+      - tests/environment/resolve.py
+permissions:
+  contents: read
+jobs:
+  construct:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Resolve upstream versions and immutable image identities
+        run: python3 tests/environment/resolve.py
+      - name: Construct isolated Composer locks and review audits
+        run: |
+          set -euo pipefail
+          docker build -t coagmentator-construction .c01-construction
+          for graph in quality wp-tests; do
+            docker run --rm -v "$PWD/.c01-construction:/construction" -w "/construction/tools/$graph" coagmentator-construction composer update --no-install --no-interaction --no-plugins --no-scripts
+            docker run --rm -v "$PWD/.c01-construction:/construction" -w "/construction/tools/$graph" coagmentator-construction composer audit --locked --format=json > ".c01-construction/$graph-audit.json"
+          done
+      - name: Preserve construction evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: c01-construction
+          path: .c01-construction/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
