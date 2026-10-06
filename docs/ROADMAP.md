@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 and C02 are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `NOT STARTED`.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 and C02 are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 is now `IN PROGRESS` at the bounded C03A substep.
 
 Preparation acceptance evidence:
 
@@ -121,9 +121,9 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a normal merge
 - Custom-server compatibility correction accepted: preserve public/human traffic, refuse Coagmentator preflight and issuance with zero credentials, deny protected service/native and bridge requests, restore guarded behavior after conflict removal.
 - [C02 closeout](work-notes/2026-10-05-gate-2-c02-closeout.md) records complete executed-job evidence and the final checkpoint. The earlier [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md) remains unchanged, including failures, cancellations and recovery history.
 
-### C03: Authentication/config/operations foundation, NOT STARTED
+### C03: Authentication/config/operations foundation, IN PROGRESS
 
-Exact next checkpoint, in a separately authorized execution, from the clean C02 closeout main. No real bridge read handler or C03 implementation exists. No production identity, production Application Password, production access or deployment was created or performed in C02 closeout. Gate 3 remains NOT STARTED.
+C03A: Authentication Evidence and Configuration Foundation verification is complete and ready for human review after the bounded quality correction and successful focused run `37399919186` (attempt 1). C03A is not yet human-accepted. See the [C03A schema/boundary](C03A-CONFIGURATION.md) and [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md). C03 is partial and is not ready for human acceptance. C03B transport/proxy work and C03C admission/audit/concurrency are NOT STARTED. Full C03 verification is deferred to C03D. No real bridge read handler, C04 implementation or production provisioning/access exists. Gate 3 remains NOT STARTED.
 
 Goals:
 

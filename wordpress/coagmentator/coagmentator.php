@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Coagmentator
- * Description: Package skeleton only. No bridge operations are available.
+ * Description: Authentication and configuration foundation. No bridge operations are available.
  * Version: 0.1.0-dev.c01
  * Requires at least: 7.1.2
  * Requires PHP: 8.3
@@ -31,5 +31,12 @@ if ( array() !== \Coagmentator\Environment::issues(
 	return false;
 }
 
-// C01 loads only the package. No hooks, routes, roles or identities are created.
+require_once __DIR__ . '/src/foundation.php';
+
+// A normal plugin can observe core evidence only when the independent MU exists.
+if ( class_exists( \Coagmentator\Guard\Guard::class, false ) && function_exists( 'add_action' ) ) {
+	\Coagmentator\Auth\Authentication_Evidence::boot();
+}
+
+// C03A adds no routes, roles, credentials, capabilities or operational storage.
 return true;
