@@ -1,6 +1,6 @@
 # C03B Transport and Proxy Foundation
 
-C03B is an unaccepted candidate within C03 and Gate 2, both IN PROGRESS. It adds transport evidence only. C03A remains ACCEPTED; C03C, C04 and Gate 3 remain NOT STARTED. No runtime ReadController or bridge data handler is added.
+C03B is ACCEPTED and merged unchanged through [PR #6](https://github.com/jimlunsford/coagmentator/pull/6); see the [acceptance closeout](work-notes/2026-10-06-gate-2-c03b-closeout.md). C03 and Gate 2 both remain IN PROGRESS. It adds transport evidence only. C03A remains ACCEPTED; C03C, C04 and Gate 3 remain NOT STARTED. No runtime ReadController or bridge data handler is added.
 
 ## Closed configuration extension
 

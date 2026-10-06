@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02 and C03A are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03B an unaccepted transport/proxy candidate.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02, C03A and C03B are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03C the next unstarted checkpoint.
 
 Preparation acceptance evidence:
 
@@ -140,9 +140,22 @@ Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge
 - [C03A closeout](work-notes/2026-10-06-gate-2-c03a-closeout.md) records verification and the final checkpoint. The original [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md), including failed run `37398487754` and its correction history, remains unchanged.
 - C02 MU guard and fixture remain unchanged. No bridge handler, production service identity/Application Password, production access or deployment was created by this work.
 
-**C03B: IN PROGRESS.** The [transport/proxy candidate](C03B-TRANSPORT.md) implements closed deployment profiles and conjunctive server transport evidence. Focused run [37451804620](https://github.com/jimlunsford/coagmentator/actions/runs/37451804620), attempt 1, passed all four jobs at `26e7e4a5c238668c1192b2db85ec793333f4c9e1`, tree `47e068bf21ff71499e78c4c2b061fea18e40e6e5`. C03B is ready for human review, not accepted. See the [work note](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md).
+#### C03B: Transport and Proxy Foundation, ACCEPTED
 
-**C03C: NOT STARTED.** Admission/audit/concurrency work remains deferred.
+Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge commit.
+
+- Accepted PR: [#6](https://github.com/jimlunsford/coagmentator/pull/6), merged.
+- Accepted branch: `feature/gate-2-c03b-transport-proxy-foundation`.
+- Accepted final HEAD: `a3607596b8d587b1bf3a93f4a7e6dc6ccb211bd0`; tree `147d7788633341fa5654655997c6c05ca7823fc6`.
+- Tested implementation HEAD: `26e7e4a5c238668c1192b2db85ec793333f4c9e1`; tree `47e068bf21ff71499e78c4c2b061fea18e40e6e5`. Exactly two commits ahead and zero behind pre-merge main, 27 changed files; the final child changes only the four specified Markdown files.
+- Focused workflow [37451804620](https://github.com/jimlunsford/coagmentator/actions/runs/37451804620), attempt 1: SUCCESS. Jobs `112229881036`, `112229881392`, `112229881324` and `112229881305` all SUCCESS.
+- Pre-merge main: `e4c958310cf2f48e1a638cb79dceefdc48b399a7`; tree `4dfa5c389c42d199ce8a8da0cf22011949325768`.
+- Merge commit: `61943fda724e6aa926809117078d61a3587ecdaa`; ordered parents are that pre-merge main and accepted final HEAD. Immediate merge tree: `147d7788633341fa5654655997c6c05ca7823fc6`, exactly the accepted candidate.
+- Accepted [transport/proxy foundation](C03B-TRANSPORT.md): direct TLS, exact trusted immediate peer and forwarding authority, explicit early host bootstrap, canonical Authorization preservation and stripped/alternate-header denial, exact subdirectory binding, A04 transport evidence and A02 stripped-Authorization carryover. Global/per-user Application Password disablement denies admission.
+- [C03B closeout](work-notes/2026-10-06-gate-2-c03b-closeout.md) records evidence and the final checkpoint. Original [implementation handoff](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md) remains unchanged as historical evidence.
+- C02 guard and C03A identity/configuration semantics remain intact. No real bridge read handler, production service identity/Application Password, production access or deployment was created by this work.
+
+**C03C: NOT STARTED.** Admission/audit/concurrency is the exact next checkpoint, only in a separately authorized execution.
 
 **C04: NOT STARTED.** No capability-policy or bridge-read implementation begins in this closeout.
 
