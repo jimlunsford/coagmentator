@@ -9,8 +9,12 @@
 if ( 'disposable' !== getenv( 'C01_TEST_ENVIRONMENT' ) ) {
 	exit( 1 );
 }
-define( 'COAGMENTATOR_FEATURE_CONFIG', '/run/coagmentator/feature.json' );
+if ( ! defined( 'COAGMENTATOR_FEATURE_CONFIG' ) ) {
+	define( 'COAGMENTATOR_FEATURE_CONFIG', '/run/coagmentator/feature.json' );
+}
 add_filter( 'pre_wp_mail', '__return_true' );
+add_filter( 'wp_is_application_passwords_available', static fn( $available ) => 'app-disabled' === get_option( 'c03b_case' ) ? false : $available );
+add_filter( 'wp_is_application_passwords_available_for_user', static fn( $available ) => 'app-user-disabled' === get_option( 'c03b_case' ) ? false : $available );
 
 /**
  * Test only: evaluate fixed envelope claims against real normal-plugin code.
@@ -18,12 +22,13 @@ add_filter( 'pre_wp_mail', '__return_true' );
  * @return bool Foundation's actual answer.
  */
 function c03a_check(): bool {
-	$config                               = Coagmentator\Config\Feature_Config::load();
-	$case                                 = get_option( 'c03a_case' );
-	$site                                 = 'wrong-site' === $case ? '5a7bc459-9999-4350-aaa0-426614174000' : 'f3858c09-8c56-48fd-99d1-ab75862bb955';
-	$actor                                = 'wrong-actor' === $case ? 'other-actor' : 'operator-1';
-	$allow                                = null !== $config && Coagmentator\Auth\Bridge_Identity::allows( $config, '/coagmentator/v1/site_info', $site, $actor );
-	$GLOBALS['c03a_observed']['checks'][] = $allow;
+	$config = Coagmentator\Config\Feature_Config::load();
+	$case   = get_option( 'c03a_case' );
+	$site   = 'wrong-site' === $case ? '5a7bc459-9999-4350-aaa0-426614174000' : 'f3858c09-8c56-48fd-99d1-ab75862bb955';
+	$actor  = 'wrong-actor' === $case ? 'other-actor' : 'operator-1';
+	$allow  = null !== $config && Coagmentator\Auth\Bridge_Identity::allows( $config, '/coagmentator/v1/site_info', $site, $actor );
+	$GLOBALS['c03a_observed']['transport_checks'][] = null !== $config && Coagmentator\Auth\Transport_Evidence::current( $config, '/coagmentator/v1/site_info' );
+	$GLOBALS['c03a_observed']['checks'][]           = $allow;
 	return $allow;
 }
 add_action(
@@ -32,10 +37,11 @@ add_action(
 		// This loads definitions but deliberately does not boot the observer when
 		// the normal plugin is absent in the missing-evidence scenario.
 		require_once WP_PLUGIN_DIR . '/coagmentator/src/foundation.php';
-		if ( '/wp-json/coagmentator/v1/site_info' !== ( $_SERVER['REQUEST_URI'] ?? '' ) ) {
+		if ( Coagmentator\Guard\Guard::instance()->prefix() . '/coagmentator/v1/site_info' !== ( $_SERVER['REQUEST_URI'] ?? '' ) ) {
 			return;
 		}
 		$GLOBALS['c03a_observed'] = array(
+			'transport_checks'         => array(),
 			'checks'                   => array(),
 			'events'                   => 0,
 			'outer'                    => 0,

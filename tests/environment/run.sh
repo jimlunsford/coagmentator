@@ -148,5 +148,23 @@ if [[ ${C03A_FOCUSED:-} == 1 ]]; then
   done
   printf 'Focused C03A identity/configuration scenarios completed on PHP 8.4 and MariaDB 10.11 only.\n'
 fi
+if [[ ${C03B_FOCUSED:-} == 1 ]]; then
+  test "${C03A_FOCUSED:-}" = 1
+  python3 tests/environment/c03b-prepare.py
+  python3 tests/environment/c03b-edge.py direct
+  compose+=(-f tests/environment/c03b-compose.yml)
+  "${compose[@]}" up -d origin
+  # Keep the same edge container/IP: update the mounted file and reload Nginx.
+  "${compose[@]}" up -d --force-recreate edge
+  for scenario in direct direct-http direct-forged-proto direct-forged-host invalid-certificate wrong-certificate-host proxy proxy-http proxy-spoof proxy-untrusted proxy-multiple-scheme proxy-malformed-scheme proxy-multiple-host proxy-malformed-host proxy-conflicting-forwarded wrong-configured-host wrong-request-host wrong-configured-path proxy-strip proxy-strip-cookie proxy-strip-injected proxy-alternate-authorization app-disabled app-user-disabled subdirectory subdirectory-alias redirect; do
+    python3 tests/environment/c03b-edge.py "$scenario"
+    "${compose[@]}" exec -T edge nginx -t
+    "${compose[@]}" exec -T edge nginx -s reload
+    "${compose[@]}" exec -T php php tests/environment/c03b-control.php "$scenario"
+    "${compose[@]}" restart php
+    "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/c03b.xml --log-junit ".runtime/evidence/c03b-$scenario.xml"
+  done
+  printf 'Focused C03B real HTTP/TLS transport scenarios completed.\n'
+fi
 python3 tests/environment/check-evidence.py
 "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup

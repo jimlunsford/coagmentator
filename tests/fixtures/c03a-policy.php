@@ -27,6 +27,10 @@ function c03a_policy( int $user, string $uuid ): array {
 		'home_path'          => '/',
 		'bridge_origin'      => 'https://wordpress.test',
 		'bridge_path'        => '/wp-json/coagmentator/v1',
+		'transport'          => array(
+			'mode'            => 'direct_tls',
+			'trusted_proxies' => array(),
+		),
 		'private_reads'      => false,
 		'read_operations'    => array( 'site_info' ),
 		'policy_version'     => 1,

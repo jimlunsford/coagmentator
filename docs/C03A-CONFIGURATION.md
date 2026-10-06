@@ -1,6 +1,6 @@
 # C03A Authentication Evidence and Configuration Foundation
 
-C03A implements only identity evidence and closed host configuration. C03 remains IN PROGRESS and unaccepted. Transport/proxy enforcement (C03B), operational admission/audit/concurrency (C03C), the full C03 matrix (C03D), capabilities (C04) and real bridge read routes remain deferred. No runtime `ReadController` exists.
+C03A implements only identity evidence and closed host configuration. C03 remains IN PROGRESS and unaccepted. The [C03B transport candidate](C03B-TRANSPORT.md) extends this foundation; operational admission/audit/concurrency (C03C), the full C03 matrix (C03D), capabilities (C04) and real bridge read routes remain deferred. No runtime `ReadController` exists.
 
 ## Evidence and authority
 
@@ -31,6 +31,7 @@ Version 1 uses compact canonical JSON in the field order below, with unescaped s
 | `home_path` | Canonical slash-terminated installation path, at most 256 bytes, with ASCII alphanumeric/underscore/hyphen segments |
 | `bridge_origin` | Exactly the home origin |
 | `bridge_path` | Home path plus `wp-json/coagmentator/v1`, without a trailing slash; identity use also requires agreement with the guard's pinned REST prefix |
+| `transport` (C03B candidate) | Exactly `mode`, then `trusted_proxies`; explicit direct TLS or exact-address trusted proxy profile. See the C03B document |
 | `private_reads` | Boolean, represented only; no private-read capability implementation |
 | `read_operations` | Unique subset of the nine accepted Gate 2 read names. No writes, `get_mutation`, generic dispatcher or unknown operation |
 | `policy_version` | Positive safe integer |
@@ -38,7 +39,7 @@ Version 1 uses compact canonical JSON in the field order below, with unescaped s
 | `writes_enabled` | Must be boolean false |
 | `storage` | Exactly `cursor_key_file`, `audit_directory`, `admission_directory`, in that order, each an absolute bounded host path reference |
 
-Storage references reject relative paths, traversal, ambiguous separators, URI wrappers, query/encoded/control characters, and lexical/resolved containment inside excluded roots. Existing ancestors are resolved to catch symlink aliases even when the referenced child does not yet exist. Parsing does not create/open future cursor/audit/admission storage, validate its locking semantics or claim operational readiness. Ownership/permissions, storage preflight and effective limit enforcement remain C03C work. Direct-TLS/trusted-proxy fields and transport checks remain C03B work; this schema cannot silently accept them before their reviewed implementation.
+Storage references reject relative paths, traversal, ambiguous separators, URI wrappers, query/encoded/control characters, and lexical/resolved containment inside excluded roots. Existing ancestors are resolved to catch symlink aliases even when the referenced child does not yet exist. Parsing does not create/open future cursor/audit/admission storage, validate its locking semantics or claim operational readiness. Ownership/permissions, storage preflight and effective limit enforcement remain C03C work. The C03B candidate requires the explicit `transport` object immediately after `bridge_path`, as documented in [C03B-TRANSPORT](C03B-TRANSPORT.md). C03A acceptance remains the historical boundary; C03B is not yet accepted.
 
 Every identity use rechecks the absolute rotation interval. Expired overlap denies both credentials until an operator replaces the policy with the remaining single approved UUID and revokes the retired credential through a trusted path. There is no rolling extension, auto-selection or credential-management endpoint.
 

@@ -14,7 +14,7 @@ use Coagmentator\Guard\Guard;
 final class Bridge_Identity {
 	/**
 	 * Evaluate live event evidence before using claimed envelope bindings.
-	 * Later transport, capabilities and operational admission remain mandatory.
+	 * Later capabilities and operational admission remain mandatory.
 	 *
 	 * @param Feature_Config $config Closed host policy.
 	 * @param string         $route Fixed operation route from trusted code.
@@ -24,6 +24,6 @@ final class Bridge_Identity {
 	 */
 	public static function allows( Feature_Config $config, string $route, string $site, string $actor ): bool {
 		$evidence = Authentication_Evidence::current( $route );
-		return null !== $evidence && $config->enables( $route, Guard::instance()->prefix() ) && $config->matches( $evidence->user_id, $evidence->credential_uuid, $site, $actor, time() );
+		return null !== $evidence && Transport_Evidence::current( $config, $route ) && $config->enables( $route, Guard::instance()->prefix() ) && $config->matches( $evidence->user_id, $evidence->credential_uuid, $site, $actor, time() );
 	}
 }
