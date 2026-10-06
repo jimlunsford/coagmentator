@@ -28,6 +28,7 @@ final class ReadController {
 		$evidence = \Coagmentator\Auth\Authentication_Evidence::current( '/coagmentator/v1/site_info' );
 		if ( null !== $evidence ) {
 			try {
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- Test-only attempt proves authentication evidence rejects persistence.
 				serialize( $evidence );
 			} catch ( \LogicException $failure ) {
 				$GLOBALS['c03a_observed']['serialization_denied'] = true;
@@ -41,6 +42,14 @@ final class ReadController {
 add_action(
 	'rest_api_init',
 	static function (): void {
-		register_rest_route( 'coagmentator/v1', '/site_info', array( 'methods' => 'POST', 'callback' => array( ReadController::class, 'site_info' ), 'permission_callback' => array( ReadController::class, 'authorize_guard_request' ) ) );
+		register_rest_route(
+			'coagmentator/v1',
+			'/site_info',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( ReadController::class, 'site_info' ),
+				'permission_callback' => array( ReadController::class, 'authorize_guard_request' ),
+			)
+		);
 	}
 );

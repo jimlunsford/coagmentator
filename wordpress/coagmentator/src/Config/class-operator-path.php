@@ -13,8 +13,9 @@ final class Operator_Path {
 	 * Reject ambiguous/relative paths and resolved web/package containment.
 	 * Existing ancestors are resolved to catch symlink escapes for future paths.
 	 *
-	 * @param mixed        $path Operator value.
-	 * @param list<string> $excluded Web root and code roots.
+	 * @param mixed    $path Operator value.
+	 * @param string[] $excluded Web root and code roots.
+	 * @phpstan-param list<string> $excluded
 	 * @return bool Safe absolute reference, not a storage-readiness claim.
 	 */
 	public static function valid( mixed $path, array $excluded ): bool {

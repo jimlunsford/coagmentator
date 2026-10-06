@@ -110,7 +110,7 @@ final class Authentication_Evidence {
 		// Re-read metadata at admission rather than reusing the authentication cache.
 		wp_cache_delete( self::$event_user, 'user_meta' );
 		// Core returns a record transiently; retain only an existence/UUID result.
-		if ( self::$event_uuid !== ( \WP_Application_Passwords::get_user_application_password( self::$event_user, self::$event_uuid )['uuid'] ?? null ) ) {
+		if ( ( \WP_Application_Passwords::get_user_application_password( self::$event_user, self::$event_uuid )['uuid'] ?? null ) !== self::$event_uuid ) {
 			return null;
 		}
 		return new self( self::$event_user, self::$event_uuid );
@@ -119,7 +119,7 @@ final class Authentication_Evidence {
 	/**
 	 * Evidence cannot become a persisted authority object.
 	 *
-	 * @return array<never, never> Never returns.
+	 * @return never Always throws.
 	 * @throws \LogicException Always, without identity details.
 	 */
 	public function __serialize(): array {

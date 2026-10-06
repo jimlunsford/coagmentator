@@ -29,7 +29,7 @@ final class Feature_Config {
 	 * Only the validating factory constructs policies.
 	 *
 	 * @param array<string, mixed> $values Validated fields.
-	 * @param Credential_Window   $credentials Validated credential window.
+	 * @param Credential_Window    $credentials Validated credential window.
 	 */
 	private function __construct( array $values, Credential_Window $credentials ) {
 		$this->values      = $values;
@@ -61,7 +61,8 @@ final class Feature_Config {
 	 * @param string       $bytes Local configuration bytes, maximum 16 KiB.
 	 * @param Guard_Config $registry Separately loaded protected registry.
 	 * @param int          $now Trusted server clock.
-	 * @param list<string> $excluded Web root and repository/package roots.
+	 * @param string[]     $excluded Web root and repository/package roots.
+	 * @phpstan-param list<string> $excluded
 	 * @return self|null Valid policy or closed failure.
 	 */
 	public static function parse( string $bytes, Guard_Config $registry, int $now, array $excluded ): ?self {
@@ -97,7 +98,7 @@ final class Feature_Config {
 				return null;
 			}
 		}
-		if ( ! self::origin( $data['home_origin'] ) || $data['bridge_origin'] !== $data['home_origin'] || ! is_string( $data['home_path'] ) || strlen( $data['home_path'] ) > 256 || 1 !== preg_match( '#^/(?:[A-Za-z0-9_-]+/)*$#D', $data['home_path'] ) || $data['bridge_path'] !== rtrim( $data['home_path'], '/' ) . '/wp-json/coagmentator/v1' ) {
+		if ( ! self::origin( $data['home_origin'] ) || $data['bridge_origin'] !== $data['home_origin'] || ! is_string( $data['home_path'] ) || strlen( $data['home_path'] ) > 256 || 1 !== preg_match( '#^/(?:[A-Za-z0-9_-]+/)*$#D', $data['home_path'] ) || rtrim( $data['home_path'], '/' ) . '/wp-json/coagmentator/v1' !== $data['bridge_path'] ) {
 			return null;
 		}
 		$operations = $data['read_operations'];
@@ -136,7 +137,7 @@ final class Feature_Config {
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- Pure host configuration parser also runs without WordPress.
 		$port = parse_url( $origin, PHP_URL_PORT );
-		return strlen( $origin ) <= 253 && 1 === preg_match( '#^https://[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+(?::(?:[1-9][0-9]{0,4}))?$#D', $origin ) && ! str_ends_with( $origin, ':443' ) && ( null === $port || ( is_int( $port ) && $port <= 65535 ) );
+		return strlen( $origin ) <= 253 && 1 === preg_match( '#^https://[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+(?::(?:[1-9][0-9]{0,4}))?$#D', $origin ) && ! str_ends_with( $origin, ':443' ) && ( null === $port || is_int( $port ) );
 	}
 
 	/**

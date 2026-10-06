@@ -34,7 +34,16 @@ final class BindingConfigurationTest extends TestCase {
 	/** Independent registry restricts two fixture IDs but grants no authority. */
 	protected function setUp(): void {
 		$this->registry_path = tempnam( sys_get_temp_dir(), 'c03a-registry-' );
-		file_put_contents( $this->registry_path, json_encode( array( 'version' => 1, 'protected_user_ids' => array( 17, 18 ), 'credential_uuids' => array( self::UUID, self::NEXT ) ) ) );
+		file_put_contents(
+			$this->registry_path,
+			json_encode(
+				array(
+					'version'            => 1,
+					'protected_user_ids' => array( 17, 18 ),
+					'credential_uuids'   => array( self::UUID, self::NEXT ),
+				)
+			)
+		);
 		$this->registry = new Guard_Config( $this->registry_path );
 	}
 
@@ -83,7 +92,12 @@ final class BindingConfigurationTest extends TestCase {
 			'service_user_id'    => array( 0, -1, 19, '17', 17.0, true, 9007199254740992 ),
 			'protected_user_ids' => array( array(), array( 17, 17 ), array( 18 ), array( 17, '18' ), array( 17, 19 ), array( 'id' => 17 ) ),
 			'credential_uuids'   => array( array(), array( self::UUID, self::UUID ), array( self::UUID, self::NEXT, self::NEXT ), array( 'invalid' ), array( 17 ), array( 'uuid' => self::UUID ) ),
-			'rotation'           => array( array( 'started_at' => 99999, 'expires_at' => 100001 ) ),
+			'rotation'           => array(
+				array(
+					'started_at' => 99999,
+					'expires_at' => 100001,
+				),
+			),
 			'home_origin'        => array( 'http://wordpress.test', 'https://user@wordpress.test', 'https://wordpress.test/', 'https://wordpress.test?x=1' ),
 			'home_path'          => array( '', '/sub', '/../', '/%2f/', '/sub//', 17 ),
 			'bridge_origin'      => array( 'https://other.test', 'https://wordpress.test:99999' ),
@@ -124,7 +138,10 @@ final class BindingConfigurationTest extends TestCase {
 		}
 		$data                     = c03a_policy( 17, self::UUID );
 		$data['credential_uuids'] = array( self::UUID, self::NEXT );
-		$data['rotation']         = array( 'started_at' => 99999, 'expires_at' => 186399 );
+		$data['rotation']         = array(
+			'started_at' => 99999,
+			'expires_at' => 186399,
+		);
 		$config                   = $this->parse( $data );
 		self::assertNotNull( $config );
 		self::assertTrue( $config->matches( 17, self::NEXT, $data['site_id'], 'operator-1', 186398 ) );

@@ -5,6 +5,7 @@
  * @package Coagmentator
  */
 
+// Load the fixed foundation definitions.
 require_once __DIR__ . '/Config/class-identity-values.php';
 require_once __DIR__ . '/Config/class-credential-window.php';
 require_once __DIR__ . '/Config/class-operator-path.php';

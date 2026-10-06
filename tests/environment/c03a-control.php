@@ -20,7 +20,13 @@ if ( 'setup' === $c03a_case ) {
 	if ( ! rest_get_server() instanceof Coagmentator\Guard\Guarded_REST_Server || ! Coagmentator\Guard\Guard::instance()->protected_id( $data['service'] ) || null === WP_Application_Passwords::get_user_application_password( $data['service'], $data['service_uuid'] ) ) {
 		throw new RuntimeException( 'Accepted guard fixture is required.' );
 	}
-	$credential = WP_Application_Passwords::create_new_application_password( $data['service'], array( 'name' => 'Disposable C03A overlap', 'app_id' => $data['service_uuid'] ) );
+	$credential = WP_Application_Passwords::create_new_application_password(
+		$data['service'],
+		array(
+			'name'   => 'Disposable C03A overlap',
+			'app_id' => $data['service_uuid'],
+		)
+	);
 	if ( is_wp_error( $credential ) ) {
 		throw new RuntimeException( 'Disposable overlap issuance failed.' );
 	}
@@ -32,7 +38,11 @@ if ( 'setup' === $c03a_case ) {
 	exit;
 }
 $policy   = c03a_policy( $data['service'], $data['service_uuid'] );
-$registry = array( 'version' => 1, 'protected_user_ids' => array( $data['service'] ), 'credential_uuids' => array( $data['service_uuid'], $data['rotation_uuid'] ) );
+$registry = array(
+	'version'            => 1,
+	'protected_user_ids' => array( $data['service'] ),
+	'credential_uuids'   => array( $data['service_uuid'], $data['rotation_uuid'] ),
+);
 update_option( 'active_plugins', array( 'coagmentator/coagmentator.php' ) );
 update_user_meta( $data['service'], 'coagmentator_service', '1' );
 ( new WP_User( $data['service'] ) )->set_role( 'subscriber' );
@@ -47,7 +57,10 @@ if ( 'wrong-service' === $c03a_case ) {
 	$policy['enabled'] = false;
 } elseif ( 'overlap' === $c03a_case || 'expired-overlap' === $c03a_case ) {
 	$policy['credential_uuids'] = array( $data['service_uuid'], $data['rotation_uuid'] );
-	$policy['rotation']         = array( 'started_at' => time() - 60, 'expires_at' => time() + ( 'overlap' === $c03a_case ? 600 : -1 ) );
+	$policy['rotation']         = array(
+		'started_at' => time() - 60,
+		'expires_at' => time() + ( 'overlap' === $c03a_case ? 600 : -1 ),
+	);
 } elseif ( 'promoted-unmarked' === $c03a_case ) {
 	delete_user_meta( $data['service'], 'coagmentator_service' );
 	( new WP_User( $data['service'] ) )->set_role( 'administrator' );

@@ -31,9 +31,10 @@ final class Credential_Window {
 	/**
 	 * Construct only after closed validation.
 	 *
-	 * @param list<string> $uuids UUIDs.
-	 * @param int|null    $starts Start.
-	 * @param int|null    $expires Expiry.
+	 * @param string[] $uuids UUIDs.
+	 * @param int|null $starts Start.
+	 * @param int|null $expires Expiry.
+	 * @phpstan-param list<string> $uuids
 	 */
 	private function __construct( array $uuids, ?int $starts, ?int $expires ) {
 		$this->uuids   = $uuids;

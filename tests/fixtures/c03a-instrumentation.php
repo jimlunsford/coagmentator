@@ -35,7 +35,15 @@ add_action(
 		if ( '/wp-json/coagmentator/v1/site_info' !== ( $_SERVER['REQUEST_URI'] ?? '' ) ) {
 			return;
 		}
-		$GLOBALS['c03a_observed'] = array( 'checks' => array(), 'events' => 0, 'outer' => 0, 'removed' => false, 'serialization_denied' => false, 'stale_denied' => false, 'uuid_differs_from_app_id' => false );
+		$GLOBALS['c03a_observed'] = array(
+			'checks'                   => array(),
+			'events'                   => 0,
+			'outer'                    => 0,
+			'removed'                  => false,
+			'serialization_denied'     => false,
+			'stale_denied'             => false,
+			'uuid_differs_from_app_id' => false,
+		);
 		add_action( 'set_current_user', 'c03a_check', PHP_INT_MAX );
 		add_action( 'rest_api_init', 'c03a_check', PHP_INT_MAX );
 		add_action(
@@ -43,7 +51,7 @@ add_action(
 			static function ( WP_User $user, array $item ): void {
 				++$GLOBALS['c03a_observed']['events'];
 				$GLOBALS['c03a_observed']['uuid_differs_from_app_id'] = $item['uuid'] !== $item['app_id'];
-				$case                                                 = get_option( 'c03a_case' );
+				$case = get_option( 'c03a_case' );
 				if ( 'revoke-after-event' === $case ) {
 					WP_Application_Passwords::delete_application_password( $user->ID, $item['uuid'] );
 					$GLOBALS['c03a_observed']['removed'] = null === WP_Application_Passwords::get_user_application_password( $user->ID, $item['uuid'] );

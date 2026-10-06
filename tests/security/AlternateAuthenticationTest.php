@@ -21,7 +21,9 @@ final class AlternateAuthenticationTest extends GuardHttpCase {
 			'injected-user'         => array( '', array( 'X-C03A-User: service' ) ),
 			'jwt-like-plugin'       => array( '', array( 'X-C03A-User: human', 'Authorization: Bearer disposable.invalid.jwt' ) ),
 			'oauth-bearer'          => array( '', array( 'Authorization: Bearer disposable-token' ) ),
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Test-only Basic header exercises alternate-authentication denial.
 			'basic-without-event'   => array( '', array( 'Authorization: Basic ' . base64_encode( 'c02_service:invalid-disposable' ) ) ),
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Test-only Basic header exercises alternate-authentication denial.
 			'normal-login-password' => array( '', array( 'Authorization: Basic ' . base64_encode( 'c02_human:' . $this->fixture['human_password'] ) ) ),
 			'marker-cookie'         => array( 'marker-cookie', array() ),
 		);
