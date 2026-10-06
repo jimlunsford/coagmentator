@@ -1,0 +1,107 @@
+name: C03C focused admission audit concurrency
+on:
+  push:
+    branches: [feature/gate-2-c03c-admission-audit-concurrency]
+    paths:
+      - 'wordpress/**'
+      - 'tests/**'
+      - 'tools/**'
+      - '.github/workflows/c03c.yml'
+      - 'phpunit.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpcs.xml.dist'
+permissions:
+  contents: read
+jobs:
+  unit-quality:
+    name: Unit and quality PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['83', '84', '85']
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse HEAD)
+          printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
+          test "$actual_sha" = "$EXPECTED_SHA"
+          source_tree=$(git show -s --format=%T "$EXPECTED_SHA")
+          actual_tree=$(git rev-parse 'HEAD^{tree}')
+          test "$actual_tree" = "$source_tree"
+          printf 'Verified source tree: %s\n' "$actual_tree"
+      - name: Unit, lint, negative load and quality
+        env:
+          C01_PHP: ${{ matrix.php }}
+          C01_MODE: unit
+        run: bash tests/environment/run.sh
+      - name: Check evidence disclosure
+        id: disclosure
+        if: always()
+        run: python3 tests/environment/check-evidence.py
+      - name: Preserve sanitized test evidence
+        if: ${{ !cancelled() && steps.disclosure.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: unit-${{ matrix.php }}
+          path: .runtime/evidence/
+          if-no-files-found: warn
+          retention-days: 14
+  integration-http:
+    name: Integration and HTTP PHP ${{ matrix.php }} ${{ matrix.database }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['84']
+        database: [mariadb]
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact candidate checkout
+        env:
+          EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse HEAD)
+          printf 'Event: %s; activity: %s\nExpected source: %s\nChecked-out source: %s\n' "$EVENT_NAME" "$EVENT_ACTION" "$EXPECTED_SHA" "$actual_sha"
+          test "$actual_sha" = "$EXPECTED_SHA"
+          source_tree=$(git show -s --format=%T "$EXPECTED_SHA")
+          actual_tree=$(git rev-parse 'HEAD^{tree}')
+          test "$actual_tree" = "$source_tree"
+          printf 'Verified source tree: %s\n' "$actual_tree"
+      - name: Real WordPress integration and verified TLS
+        env:
+          C01_PHP: ${{ matrix.php }}
+          C01_DATABASE: ${{ matrix.database }}
+          C03A_FOCUSED: '1'
+          C03B_FOCUSED: '1'
+          C03C_FOCUSED: '1'
+        run: bash tests/environment/run.sh
+      - name: Check evidence disclosure
+        id: disclosure
+        if: always()
+        run: python3 tests/environment/check-evidence.py
+      - name: Preserve sanitized test evidence
+        if: ${{ !cancelled() && steps.disclosure.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: integration-http-${{ matrix.php }}-${{ matrix.database }}
+          path: .runtime/evidence/
+          if-no-files-found: warn
+          retention-days: 14

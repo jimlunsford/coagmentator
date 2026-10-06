@@ -1,0 +1,7 @@
+services:
+  php:
+    volumes:
+      - ${C03C_STORAGE:?Disposable outside-repository storage required}:/var/coagmentator-c03c
+  client:
+    volumes:
+      - ${C03C_STORAGE:?Disposable outside-repository storage required}:/var/coagmentator-c03c

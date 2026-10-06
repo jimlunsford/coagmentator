@@ -30,6 +30,12 @@ final class Feature_Config {
 	 * @var Transport_Policy Transport profile.
 	 */
 	private Transport_Policy $transport;
+	/**
+	 * Trusted excluded code roots.
+	 *
+	 * @var list<string> Trusted excluded code roots.
+	 */
+	private array $excluded = array();
 
 	/**
 	 * Only the validating factory constructs policies.
@@ -133,7 +139,9 @@ final class Feature_Config {
 				return null;
 			}
 		}
-		return new self( $data, $window, $transport );
+		$config           = new self( $data, $window, $transport );
+		$config->excluded = $excluded;
+		return $config;
 	}
 
 	/**
@@ -160,6 +168,36 @@ final class Feature_Config {
 	 */
 	public function transport(): Transport_Policy {
 		return $this->transport;
+	}
+
+	/**
+	 * Trusted configured site for operational accounting and restricted audit.
+	 *
+	 * @return string Canonical configured UUID.
+	 */
+	public function site(): string {
+		return (string) $this->values['site_id'];
+	}
+
+	/**
+	 * Fixed storage reference, never selected from HTTP data.
+	 *
+	 * @param string $name Internal storage field.
+	 * @return string Validated reference or empty denial value.
+	 */
+	public function storage( string $name ): string {
+		$storage = $this->values['storage'];
+		return is_array( $storage ) && in_array( $name, array( 'audit_directory', 'admission_directory' ), true ) && is_string( $storage[ $name ] ?? null ) ? $storage[ $name ] : '';
+	}
+
+	/**
+	 * Preserve the code/web exclusions used by the validating factory.
+	 *
+	 * @return string[] Trusted excluded roots.
+	 * @phpstan-return list<string>
+	 */
+	public function excluded_roots(): array {
+		return $this->excluded;
 	}
 
 	/**

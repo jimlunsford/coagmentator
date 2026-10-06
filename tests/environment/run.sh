@@ -35,6 +35,12 @@ cleanup() {
   revoke_status=$?
   "${compose[@]}" down --volumes --remove-orphans
   destroy_status=$?
+  if [[ ${C03C_STORAGE:-} == /tmp/coagmentator-c03c-http-* ]]; then
+    # Root-owned private fixture files are removed only after container teardown.
+    docker run --rm --network none -v "$C03C_STORAGE:/disposable" coagmentator-c01-php php -r '$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("/disposable", FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST); foreach ($it as $f) { $f->isDir() && !$f->isLink() ? rmdir($f->getPathname()) : unlink($f->getPathname()); }' || destroy_status=1
+    rmdir "$C03C_STORAGE" || destroy_status=1
+    printf 'C03C outside-repository operational fixture removed.\n'
+  fi
   if (( original_status || scan_status || revoke_status || destroy_status )); then
     exit 1
   fi
@@ -165,6 +171,36 @@ if [[ ${C03B_FOCUSED:-} == 1 ]]; then
     "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/c03b.xml --log-junit ".runtime/evidence/c03b-$scenario.xml"
   done
   printf 'Focused C03B real HTTP/TLS transport scenarios completed.\n'
+fi
+if [[ ${C03C_FOCUSED:-} == 1 ]]; then
+  test "${C03B_FOCUSED:-}" = 1
+  export C03C_STORAGE
+  C03C_STORAGE=$(mktemp -d /tmp/coagmentator-c03c-http-XXXXXXXX)
+  compose+=(-f tests/environment/c03c-compose.yml)
+  "${compose[@]}" up -d --force-recreate php
+  python3 tests/environment/c03b-edge.py direct
+  "${compose[@]}" exec -T edge nginx -t
+  "${compose[@]}" exec -T edge nginx -s reload
+  "${compose[@]}" exec -T php php tests/environment/c03b-control.php direct
+  cp tests/fixtures/c03c-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+  python3 - <<'PYBOOT'
+from pathlib import Path
+p = Path('.runtime/wordpress/src/wp-config.php')
+s = p.read_text()
+assert s.count("require '/workspace/tests/fixtures/c03b-bootstrap.php';") == 1
+p.write_text(s.replace("require '/workspace/tests/fixtures/c03b-bootstrap.php';", "require '/workspace/tests/fixtures/c03c-bootstrap.php';"))
+PYBOOT
+  for scenario in healthy throw rate preauth parallel wrong-site read-corrupt read-full read-unwritable audit-unwritable audit-corrupt audit-clock-corrupt audit-full audit-missing slot-corrupt preauth-corrupt preauth-unwritable; do
+    "${compose[@]}" exec -T php php tests/environment/c03c-control.php "$scenario"
+    "${compose[@]}" restart php
+    if [[ $scenario == rate || $scenario == preauth ]]; then
+      # A single bounded wait starts real-clock HTTP boundary evidence in a fresh minute.
+      remaining=$((60 - $(date +%s) % 60))
+      sleep "$remaining"
+    fi
+    "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/c03c.xml --log-junit ".runtime/evidence/c03c-$scenario.xml"
+  done
+  printf 'Focused C03C operational admission and actual parallel FPM controls completed.\n'
 fi
 python3 tests/environment/check-evidence.py
 "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup

@@ -7,7 +7,7 @@
   <rule ref="WordPress"/>
   <!-- Isolated C03A fixture intentionally reuses C02's test-only controller identity.
        This sniff registers names file-wide before declaration-level ignores apply. -->
-  <rule ref="Generic.Classes.DuplicateClassName"><exclude-pattern>tests/fixtures/c03a-controller.php</exclude-pattern></rule>
+  <rule ref="Generic.Classes.DuplicateClassName"><exclude-pattern>tests/fixtures/c03a-controller.php</exclude-pattern><exclude-pattern>tests/fixtures/c03c-controller.php</exclude-pattern></rule>
   <!-- WordPress auto-loads this required MU entry point; the fallback class must live here. -->
   <rule ref="WordPress.Files.FileName.InvalidClassFileName"><exclude-pattern>wordpress/mu-plugins/coagmentator-guard.php</exclude-pattern></rule>
   <!-- PHPUnit class discovery uses *Test.php; these are never runtime plugin files. -->

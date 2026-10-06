@@ -64,6 +64,17 @@ final class Transport_Policy {
 	}
 
 	/**
+	 * Reuse exact C03B canonical peer validation for early IP admission.
+	 *
+	 * @param array<string, mixed> $server Trusted raw server state.
+	 * @return string|null Immediate peer; forwarding headers are ignored.
+	 */
+	public static function peer( array $server ): ?string {
+		$peer = $server['REMOTE_ADDR'] ?? null;
+		return self::address( $peer ) ? $peer : null;
+	}
+
+	/**
 	 * Whether an early host bootstrap must normalize proxy HTTPS for core.
 	 *
 	 * @return bool Proxy mode.
