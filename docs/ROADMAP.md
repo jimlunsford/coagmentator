@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 and C02 are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 is now `IN PROGRESS` at the bounded C03A substep.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02 and C03A are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03B the next unstarted checkpoint.
 
 Preparation acceptance evidence:
 
@@ -123,7 +123,28 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a normal merge
 
 ### C03: Authentication/config/operations foundation, IN PROGRESS
 
-C03A: Authentication Evidence and Configuration Foundation verification is complete and ready for human review after the bounded quality correction and successful focused run `37399919186` (attempt 1). C03A is not yet human-accepted. See the [C03A schema/boundary](C03A-CONFIGURATION.md) and [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md). C03 is partial and is not ready for human acceptance. C03B transport/proxy work and C03C admission/audit/concurrency are NOT STARTED. Full C03 verification is deferred to C03D. No real bridge read handler, C04 implementation or production provisioning/access exists. Gate 3 remains NOT STARTED.
+C03 remains partial and is not ready for overall human acceptance. Full C03 verification is deferred to C03D. No real bridge read handler or production provisioning/access exists. Gate 3 remains NOT STARTED.
+
+#### C03A: Authentication Evidence and Configuration Foundation, ACCEPTED
+
+Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge commit.
+
+- Accepted PR: [#5](https://github.com/jimlunsford/coagmentator/pull/5), merged.
+- Accepted branch: `feature/gate-2-c03-auth-config-operations-foundation`.
+- Accepted final HEAD: `4a6c02725cd8eb14246ae4f747e0d00d26763740`; tree `06aafca640b6ea50a78fcd61e92afbbaa0ee04af`.
+- Tested implementation HEAD: `1d6439f1a57bab979c85d717eaee11e58c137412`; tree `bf1463d1dfa06b3afa69c8bac40c67950ed5fba9`. The final candidate commit changes only the four specified Markdown files.
+- Focused workflow [37399919186](https://github.com/jimlunsford/coagmentator/actions/runs/37399919186), attempt 1: SUCCESS. Jobs `112064578304`, `112064578468`, `112064578377` and `112064578170` all SUCCESS.
+- Pre-merge main: `11db731b9d6fbf016b0bf6dfe7d565a1d10732ed`; tree `6fd663cd18d2c1e3a03a069198d2da2c2bfea8a8`.
+- Merge commit: `f26cb88ae0a8324384e27d1e19cd19e678ac6344`; ordered parents are that pre-merge main and accepted final HEAD. Immediate merge tree: `06aafca640b6ea50a78fcd61e92afbbaa0ee04af`, exactly the accepted candidate.
+- Authentication evidence and closed configuration are accepted within the [C03A schema/boundary](C03A-CONFIGURATION.md). The accepted quality correction preserves behavior and expectations. Test-only PHPCS exceptions remain limited to one serialization attempt, two Base64 header constructions and the duplicate-class sniff only for `tests/fixtures/c03a-controller.php`.
+- [C03A closeout](work-notes/2026-10-06-gate-2-c03a-closeout.md) records verification and the final checkpoint. The original [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md), including failed run `37398487754` and its correction history, remains unchanged.
+- C02 MU guard and fixture remain unchanged. No bridge handler, production service identity/Application Password, production access or deployment was created by this work.
+
+**C03B: NOT STARTED.** Transport/proxy work is the exact next checkpoint, only in a separately authorized execution.
+
+**C03C: NOT STARTED.** Admission/audit/concurrency work remains deferred.
+
+**C04: NOT STARTED.** No capability-policy or bridge-read implementation begins in this closeout.
 
 Goals:
 
