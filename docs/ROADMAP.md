@@ -140,7 +140,7 @@ Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge
 - [C03A closeout](work-notes/2026-10-06-gate-2-c03a-closeout.md) records verification and the final checkpoint. The original [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md), including failed run `37398487754` and its correction history, remains unchanged.
 - C02 MU guard and fixture remain unchanged. No bridge handler, production service identity/Application Password, production access or deployment was created by this work.
 
-**C03B: IN PROGRESS.** The [transport/proxy candidate](C03B-TRANSPORT.md) implements closed deployment profiles and conjunctive server transport evidence. One focused CI execution is pending. It is not accepted. See the [work note](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md).
+**C03B: IN PROGRESS.** The [transport/proxy candidate](C03B-TRANSPORT.md) implements closed deployment profiles and conjunctive server transport evidence. Focused run [37451804620](https://github.com/jimlunsford/coagmentator/actions/runs/37451804620), attempt 1, passed all four jobs at `26e7e4a5c238668c1192b2db85ec793333f4c9e1`, tree `47e068bf21ff71499e78c4c2b061fea18e40e6e5`. C03B is ready for human review, not accepted. See the [work note](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md).
 
 **C03C: NOT STARTED.** Admission/audit/concurrency work remains deferred.
 
