@@ -2,7 +2,7 @@
 
 Date: 2026-10-05 America/Indiana/Indianapolis (2026-10-06 UTC)
 Roadmap gate: Gate 2, C03A
-Status: PARTIAL, implementation prepared; single focused CI pending
+Status: BLOCKED, C03A partial after the single focused CI execution
 
 ## Goal
 
@@ -61,7 +61,43 @@ The existing C02 cleanup deletes all credentials for each fixture user, verifies
 
 ## Exact candidate and CI evidence
 
-Pending publication of this implementation commit. The immutable implementation checkpoint is the first commit introducing this work note, with sole parent the starting main above. The literal tested HEAD/tree, run/job IDs, results and cleanup evidence will be appended in a documentation-only handoff commit after the one focused execution. No self-referential Git hash is embedded in its own commit.
+Published runtime/test HEAD: `7b6de0ca631557c031d1ae2ccd8f8d7873cb8778`.
+
+Complete tested tree: `873236fa2952378fbc764c1548defcc76c94b5d4`.
+
+Sole parent is the exact starting main. The local reviewed tree and GitHub-created tree match exactly. Direct Git push lacked local authentication; the authorized connector published the same complete tree and created the branch. A fresh Git fetch independently confirms it. The earlier local commit differed only in commit metadata and is not claimed as the tested source.
+
+Exactly one workflow was triggered: [37398487754](https://github.com/jimlunsford/coagmentator/actions/runs/37398487754), `push`, attempt 1. All four jobs received GitHub-hosted runners and verified the exact source SHA/tree. No PR was opened. No rerun, second CI execution, code correction or test weakening occurred after the real failure.
+
+| Job | Actual job ID | Observed result |
+| --- | --- | --- |
+| PHP 8.3 unit/lint | 112060034925 | SUCCESS; 13 tests / 235 assertions; 52 PHP lint checks and package-load controls pass |
+| PHP 8.4 unit/quality | 112060035015 | FAILURE in Unit, lint, negative load and quality; unit 13/235 and all 52 lint checks pass; PHPStan/WPCS fail |
+| PHP 8.5 unit/lint | 112060034978 | SUCCESS; 13 tests / 235 assertions; 52 PHP lint checks and package-load controls pass |
+| PHP 8.4 + MariaDB 10.11 integration/HTTP | 112060034742 | SUCCESS; 140 tests / 13,446 assertions total, including 18 C03A tests / 637 assertions |
+
+PHPStan level 8 reports exactly one error at `Config/class-feature-config.php:139`: the upper-port comparison is always true after `parse_url` has returned its documented integer range (`smallerOrEqual.alwaysTrue`). No baseline or analysis setting was changed.
+
+WPCS reports 27 errors and five warnings. Findings cover PHPDoc type/spacing compatibility (`list<string>` versus PHP `array` annotations), two Yoda comparisons, the always-throwing serialization method's return documentation, two file-docblock classifications, associative-array layout, one assignment alignment, intentional serialization/Base64 test operations and duplicate test-only `ReadController` class names. The duplicate-class finding is caused by the new isolated C03A fixture; the accepted C02 fixture remains byte-identical. These findings are recorded, not corrected in this execution.
+
+Both locked Composer audits still executed despite those quality failures. Downloaded artifact `11383743284`, SHA-256 `d1f4139f2e324842a5dd1be681b6a529e7fc720833b3ab1d11f3f54b90933c3b`, independently verifies both audit JSON files have empty `advisories`, `abandoned` and `filter` arrays. Its environment manifest matches the exact tested HEAD/tree. All three unit jobs passed the evidence disclosure scan and uploaded sanitized artifacts. No dependency pin or lock changed.
+
+The focused integration job completed successfully. Its unchanged C01/C02 portion passed 122 tests / 12,809 assertions. The new C03A portion passed all 17 identity scenarios plus the alternate-authentication test, totaling 18 tests / 637 assertions. The full lane passed 140 tests / 13,446 assertions. The custom-server and absent-guard preflight controls proved zero credentials before the restored guard preflight allowed fixture creation. No second database lane ran. Sanitized integration evidence was uploaded as artifact `11383539101`.
+
+Executed cleanup evidence, all on 2026-10-06 UTC:
+
+- At 01:21:57.379, the evidence allowlist and secret scan passed before cleanup.
+- At 01:21:57.669, cleanup confirmed credentials revoked, revocation verified, disposable identities deleted and the runtime secret fixture removed. Revocation-after-event and revoked-UUID scenarios also passed independently before cleanup.
+- The overlap credential belonged to the same disposable service user and was covered by the delete-all/recheck cleanup. No production credential or identity was used.
+- At 01:21:57.707, the cleanup evidence scan passed again.
+- The existing EXIT trap ran Compose teardown with `--volumes --remove-orphans`. Edge, PHP and database containers and the isolated network were removed by 01:21:58.352.
+- At 01:21:58.399, the workflow evidence scan passed. The integration job concluded SUCCESS.
+
+The overall run concluded FAILURE solely in the PHP 8.4 quality step. This is a real quality failure, not a runner-infrastructure block. Work stopped without correcting source/tests, changing quality settings or executing another CI run.
+
+## Documentation-only handoff checkpoint
+
+The final handoff is a direct child of the tested HEAD above. It changes only `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md` and this work note to record the observed result. Its commit message is `docs: record partial C03A focused CI evidence [skip ci]`. Runtime, test, workflow, pin and lock blobs remain identical to the tested tree. No runtime verification is claimed for a second candidate. The final report records the resulting documentation commit and complete tree literally; embedding a commit's own hash in its tracked contents would be self-referential.
 
 ## Risks and deviations
 
@@ -69,4 +105,35 @@ C03 is partial and unaccepted. No C03B transport/proxy enforcement, C03C rate/co
 
 ## Exact next action
 
-Publish this bounded candidate on the C03 branch and execute the one focused workflow. If any job actually fails, inspect and record the failing step and stop for a separate C03A continuation. If runner infrastructure blocks execution, record that and stop without code churn. Only a verified C03A pass can make separately authorized C03B the next implementation substep; do not begin it here.
+A separately authorized, short C03A continuation must correct the recorded PHPStan/WPCS findings, preserve the accepted guard/pins/locks and scope, then repeat the focused verification. There is no observed integration blocker. C03A is not complete or accepted. C03 remains IN PROGRESS; C03B is NOT STARTED and must not begin as a correction workaround.
+
+
+## Files added/changed
+
+- `.github/workflows/c03a.yml`
+- `README.md`
+- `docs/ARCHITECTURE.md`
+- `docs/C03A-CONFIGURATION.md`
+- `docs/ROADMAP.md`
+- `docs/work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md`
+- `tests/bootstrap/unit.php`
+- `tests/environment/c03a-control.php`
+- `tests/environment/run.sh`
+- `tests/fixtures/c03a-controller.php`
+- `tests/fixtures/c03a-instrumentation.php`
+- `tests/fixtures/c03a-observe.php`
+- `tests/fixtures/c03a-policy.php`
+- `tests/security/AlternateAuthenticationTest.php`
+- `tests/security/ApplicationPasswordIdentityTest.php`
+- `tests/security/c03a-alternate.xml`
+- `tests/security/c03a.xml`
+- `tests/unit/BindingConfigurationTest.php`
+- `tests/unit/CredentialWindowTest.php`
+- `wordpress/coagmentator/coagmentator.php`
+- `wordpress/coagmentator/src/Auth/class-authentication-evidence.php`
+- `wordpress/coagmentator/src/Auth/class-bridge-identity.php`
+- `wordpress/coagmentator/src/Config/class-credential-window.php`
+- `wordpress/coagmentator/src/Config/class-feature-config.php`
+- `wordpress/coagmentator/src/Config/class-identity-values.php`
+- `wordpress/coagmentator/src/Config/class-operator-path.php`
+- `wordpress/coagmentator/src/foundation.php`
