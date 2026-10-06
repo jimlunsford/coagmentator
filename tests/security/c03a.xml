@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="../bootstrap/security.php" colors="false" failOnWarning="true" failOnRisky="true" failOnDeprecation="true">
+  <testsuites><testsuite name="C03A identity binding"><file>ApplicationPasswordIdentityTest.php</file></testsuite></testsuites>
+</phpunit>

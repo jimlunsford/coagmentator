@@ -12,3 +12,5 @@ require_once dirname( __DIR__, 2 ) . '/wordpress/coagmentator/src/class-environm
 require_once dirname( __DIR__, 2 ) . '/wordpress/mu-plugins/coagmentator-guard/src/class-guard-config.php';
 require_once dirname( __DIR__, 2 ) . '/wordpress/mu-plugins/coagmentator-guard/src/class-route-boundary.php';
 require_once dirname( __DIR__, 2 ) . '/wordpress/mu-plugins/coagmentator-guard/src/class-dispatch-scope.php';
+
+require_once dirname( __DIR__, 2 ) . '/wordpress/coagmentator/src/foundation.php';

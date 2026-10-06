@@ -128,5 +128,25 @@ printf 'Competing server removed; normal guarded authentication and internal-dis
 "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario replacement
 "${compose[@]}" restart php
 "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/replacement.xml --log-junit .runtime/evidence/c02-replacement.xml
+# C03A adds one focused identity/configuration pass only when explicitly selected.
+if [[ ${C03A_FOCUSED:-} == 1 ]]; then
+  test "$C01_PHP" = 84
+  test "$C01_DATABASE" = mariadb
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+  "${compose[@]}" exec -T php php tests/environment/c03a-control.php setup
+  rm .runtime/wordpress/src/wp-content/mu-plugins/zz-c02-fixture.php
+  cp tests/fixtures/c03a-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+  cp tests/fixtures/c03a-instrumentation.php .runtime/wordpress/src/wp-content/mu-plugins/zz-c03a-fixture.php
+  cp tests/fixtures/c03a-observe.php .runtime/wordpress/src/c03a-observe.php
+  for scenario in approved wrong-admin wrong-user wrong-service wrong-uuid app-id wrong-site wrong-actor disabled overlap expired-overlap promoted-unmarked role-only missing-evidence mismatch revoke-after-event revoked; do
+    "${compose[@]}" exec -T php php tests/environment/c03a-control.php "$scenario"
+    "${compose[@]}" restart php
+    "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/c03a.xml --log-junit ".runtime/evidence/c03a-$scenario.xml"
+    if [[ $scenario == approved ]]; then
+      "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/c03a-alternate.xml --log-junit .runtime/evidence/c03a-alternate.xml
+    fi
+  done
+  printf 'Focused C03A identity/configuration scenarios completed on PHP 8.4 and MariaDB 10.11 only.\n'
+fi
 python3 tests/environment/check-evidence.py
 "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup
