@@ -2,7 +2,7 @@
 
 Date: 2026-10-05
 Roadmap gate: Gate 2, C02
-Status: PARTIAL/BLOCKED, bounded custom-server correction published; its single CI run failed with five jobs cancelled before execution; not human-accepted
+Status: COMPLETE (CI evidence recovery only), all nine jobs/six database lanes verified; ready for human acceptance review; C02 remains IN PROGRESS and not human-accepted
 
 ## Goal and starting state
 
@@ -213,3 +213,76 @@ The post-run commit updates only this handoff and the README/architecture/roadma
 Final scope: PR #4 remains open and unmerged, main unchanged at `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`, C02/Gate 2 unaccepted and IN PROGRESS. No C03, production access, production user, production credential, deployment or merge occurred.
 
 **Exact next step:** In a separately authorized short continuation, investigate why the five queued jobs were cancelled and complete the required exact-head CI verification. Do not make another implementation correction unless evidence demonstrates one is needed. Do not merge or start C03. This execution stops after publishing the failure record.
+
+## Authorized CI recovery: complete evidence, awaiting human acceptance
+
+Date: 2026-10-05 America/Indiana/Indianapolis (reruns executed 2026-10-06 UTC).
+Status: COMPLETE for evidence recovery only. This appendix supersedes the blocked status above without replacing its historical evidence. C02 and Gate 2 remain IN PROGRESS and unaccepted.
+
+### Goal and verified starting state
+
+Complete only the five missing jobs after the owner-reported GitHub Actions hosted-runner incident recovery. Do not change runtime/tests, begin C03, merge PR #4 or access production.
+
+- Repository/branch: `jimlunsford/coagmentator`, `feature/gate-2-c02-independent-mu-guard`.
+- PR #4: open, ready for review, mergeable and unmerged.
+- Starting documentation HEAD: `50b12c7d4c341ea4501a0094254d42f4fef377cd`; tree `902abe1498009b484137bf76367a06bba6e7a817`.
+- Exact runtime/test candidate and sole parent of that HEAD: `d039aed3c07ac357c6798d989ccbe3df76cec5d2`; tree `728d1c088587d53b9221bfd17b856cb941e0d44c`.
+- Unchanged main: `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`; tree `dee181535214e8d20c7faafb3f00b7453075866c`.
+- Fresh clone, Git objects, remote refs and GitHub PR/compare reads agree. The one-commit runtime-to-starting-HEAD delta contains only README status, architecture status, roadmap status and this handoff. The ordinary plugin remains the C01 skeleton; no C03 implementation exists.
+
+### Sequential reruns and runner evidence
+
+Original workflow: [37364803455](https://github.com/jimlunsford/coagmentator/actions/runs/37364803455), event `pull_request`. Attempts 1 and 2 retain five cancelled jobs with no runner and zero steps. They provide infrastructure non-execution evidence, not failing project tests. The owner identified the hosted-runner incident and reported its recovery; this continuation independently proves restored runner allocation and execution.
+
+Exactly five individual job-rerun requests were made, in the prescribed order. Each previous job reached SUCCESS and its checkout SHA/tree were verified from its log before the next request. No full-workflow rerun was requested.
+
+| Rerun job | Requested prior job ID | Attempt | Executed job ID | Hosted runner | Conclusion |
+| --- | --- | ---: | --- | --- | --- |
+| Unit and quality PHP 8.3 | 111965531463 | 3 | 112041379478 | GitHub Actions 1000001962 | SUCCESS |
+| Unit and quality PHP 8.5 | 112041380653 | 4 | 112041972042 | GitHub Actions 1000001963 | SUCCESS |
+| PHP 8.4 + MySQL 8.4 | 112041973234 | 5 | 112042553394 | GitHub Actions 1000001964 | SUCCESS |
+| PHP 8.5 + MariaDB 10.11 | 112042554709 | 6 | 112043656430 | GitHub Actions 1000001965 | SUCCESS |
+| PHP 8.5 + MySQL 8.4 | 112043657565 | 7 | 112044868198 | GitHub Actions 1000001966 | SUCCESS |
+
+Every rerun received an actual GitHub-hosted runner, executed checkout, exact-candidate verification, its project test step, disclosure scan and artifact preservation, and completed successfully. Every log reports checked-out source `d039aed3c07ac357c6798d989ccbe3df76cec5d2` and verified source tree `728d1c088587d53b9221bfd17b856cb941e0d44c`.
+
+GitHub carries other job conclusions forward under new job IDs in later attempt snapshots. These are not additional executions. The executed IDs above, their original start times and logs identify the five actual reruns. Final attempt **7** reports **SUCCESS**, with all nine job conclusions successful.
+
+### Complete independently verified matrix
+
+| Required job | Successful execution attempt | Executed job ID | Result |
+| --- | ---: | --- | --- |
+| Unit and quality PHP 8.3 | 3 | 112041379478 | PASS |
+| Unit and quality PHP 8.4 | 1 | 111947307494 | PASS |
+| Unit and quality PHP 8.5 | 4 | 112041972042 | PASS |
+| PHP 8.3 + MariaDB 10.11 | 1 | 111947307807 | PASS |
+| PHP 8.3 + MySQL 8.4 | 1 | 111947307979 | PASS |
+| PHP 8.4 + MariaDB 10.11 | 1 | 111947307928 | PASS |
+| PHP 8.4 + MySQL 8.4 | 5 | 112042553394 | PASS |
+| PHP 8.5 + MariaDB 10.11 | 6 | 112043656430 | PASS |
+| PHP 8.5 + MySQL 8.4 | 7 | 112044868198 | PASS |
+
+All nine successful execution logs were independently inspected for the exact SHA/tree, hosted execution and results. Each unit lane passes **7 tests / 80 assertions**, lint on all **36 PHP files**, the unchanged supported/unsupported-environment package-load probes and evidence scanning. PHP 8.4 also passes PHPStan level 8, WPCS and both locked Composer audits. Artifact `11367942822` was downloaded and its ZIP SHA-256 verified as `f8487c2010f4630c582d0fa5dc38b3cf59e86b96c5a79653530505bbea125e16`; its environment manifest matches the runtime SHA/tree, and both audit JSON files contain empty advisories, abandoned and filter arrays.
+
+Each of the six database lanes passes **122 tests / 12,809 assertions**, including preserved C01 controls. Reading the unchanged test assertions and orchestration alongside all six successful logs verifies:
+
+- actual `C02_Custom_REST_Server` selection, rejected Coagmentator issuance preflight and zero Application Passwords after rejection;
+- public native REST and identified legitimate human cookie/nonce native REST remain functional;
+- protected/marked service identities and every tested Coagmentator bridge request remain denied, with callback and state sentinels intact;
+- custom-server suites before credentials (**1 test / 144 assertions**) and with existing disposable credentials (**1 test / 170 assertions**) both pass;
+- removing the conflict restores normal guarded preflight/issuance and the unchanged internal/native/normalization/non-REST suite (**6 tests / 525 assertions**);
+- explicit credential revocation and zero-credential verification, fixture-user/secret-file removal, three evidence scans per lane, and successful container/network teardown through the volume-removing cleanup command.
+
+No actual project test failed in this recovery execution. No new no-runner cancellation occurred for a requested rerun. All previously missing evidence is complete; no assertion, lane or requirement was weakened or waived.
+
+### Files, final checkpoint and boundaries
+
+Only `README.md`, the opening status in `docs/ARCHITECTURE.md`, C02 status in `docs/ROADMAP.md`, and this C02 work note change. The new documentation commit has parent `50b12c7d4c341ea4501a0094254d42f4fef377cd` and uses `[skip ci]` to avoid an unnecessary matrix. Its immutable identity is the single commit introducing this recovery appendix; literal final HEAD/tree are recorded in PR #4 and the session report because a commit cannot embed its own hash.
+
+The final documentation HEAD is not a separately executed runtime candidate. Runtime, tests, workflows, dependency locks, pins and configuration remain byte-identical to `d039aed3c07ac357c6798d989ccbe3df76cec5d2`. The original documentation-only delta was rechecked after CI. Final publication verification must confirm only the four Markdown files differ from the tested runtime candidate, clean working state, unchanged main and an open, mergeable, unmerged PR.
+
+No new architecture decision. No merge, C03 work, release, deployment, production access, production service identity or production Application Password occurred. Production was not contacted to inventory it. Disposable credentials existed only inside the existing hosted test lanes and their revocation is verified above.
+
+Remaining requirement: owner acceptance of C02. CI completeness does not provide that acceptance. Historical failures/cancellations and nonblocking tool notices remain preserved; none is rewritten as a successful execution. No new implementation defect remains demonstrated by this evidence.
+
+**Exact next step:** Human-review the exact runtime/test candidate and the documentation-only recovery commit in open PR #4. Await explicit owner acceptance and separate merge authorization. Do not merge or begin C03 in this execution.

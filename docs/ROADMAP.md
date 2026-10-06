@@ -110,7 +110,7 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a merge commit
 
 ### C02: Independent MU Guard, IN PROGRESS
 
-The original implementation verification and subsequent bounded custom-server correction are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. The correction's single workflow run failed: four jobs passed and five were cancelled before execution. C02 remains unaccepted and verification is blocked; no rerun or second correction was performed. A separately authorized continuation must resolve the incomplete matrix before acceptance. PR #4 remains unmerged. C03 has not begun.
+The original implementation verification and subsequent bounded custom-server correction are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. The authorized CI recovery continuation completed the five missing jobs sequentially in workflow `37364803455`, attempts 3 through 7. Final attempt 7 is SUCCESS with all three unit/quality jobs and all six database lanes covered. Every successful execution verifies runtime SHA `d039aed3c07ac357c6798d989ccbe3df76cec5d2`, tree `728d1c088587d53b9221bfd17b856cb941e0d44c`; later commits are documentation/status only. C02 is ready for human acceptance review, remains IN PROGRESS and unaccepted, and PR #4 remains open and unmerged. C03 has not begun. Earlier infrastructure cancellations remain historical evidence, not project test failures.
 
 Goals:
 
