@@ -2,7 +2,11 @@
 
 Date: 2026-10-05 America/Indiana/Indianapolis (2026-10-06 UTC)
 Roadmap gate: Gate 2, C03A
-Status: BLOCKED, C03A partial after the single focused CI execution
+Status: COMPLETE for C03A verification, ready for human review; C03 remains IN PROGRESS
+
+## Initial implementation session (historical)
+
+The original failed run and handoff below are preserved. The separately authorized quality-correction continuation is recorded at the end.
 
 ## Goal
 
@@ -137,3 +141,84 @@ A separately authorized, short C03A continuation must correct the recorded PHPSt
 - `wordpress/coagmentator/src/Config/class-identity-values.php`
 - `wordpress/coagmentator/src/Config/class-operator-path.php`
 - `wordpress/coagmentator/src/foundation.php`
+
+
+## Quality-correction continuation, 2026-10-05 local / 2026-10-06 UTC
+
+### Goal and exact starting state
+
+Correct only the first focused run's PHPStan/WPCS findings, preserving C03A semantics and tests. Authorization permits one quality-correction implementation pass and one new focused CI execution, with no fix/push/rerun loop after a CI failure.
+
+- Branch: `feature/gate-2-c03-auth-config-operations-foundation`.
+- Starting HEAD: `7f263c33b188055e3a20a453a7f81783e8a55134`.
+- Starting tree: `bcf091107d2933b6ba4854e98fd2335f09c74ab4`.
+- Unchanged main: `11db731b9d6fbf016b0bf6dfe7d565a1d10732ed`, tree `6fd663cd18d2c1e3a03a069198d2da2c2bfea8a8`.
+- Previous tested implementation: `7b6de0ca631557c031d1ae2ccd8f8d7873cb8778`, tree `873236fa2952378fbc764c1548defcc76c94b5d4`.
+- Previous run `37398487754`, attempt 1: failed only PHPStan/WPCS, with passing behavioral tests and audits, as recorded above.
+- Fresh Git checkout matched all supplied hashes and was clean. GitHub PR search found no PR for this branch.
+
+### Exact correction and files changed
+
+- `wordpress/coagmentator/src/Config/class-feature-config.php`: remove only the redundant upper-port comparison after `parse_url`; retain null/integer rejection behavior, canonical syntax, and default-port rejection. Correct PHPDoc alignment, express native-compatible `string[]` with `@phpstan-param list<string>` preserving precise analysis, and reverse the strict bridge-path comparison for Yoda style.
+- `wordpress/coagmentator/src/Config/class-operator-path.php`: native-compatible parameter PHPDoc with the precise PHPStan list annotation preserved.
+- `wordpress/coagmentator/src/Config/class-credential-window.php`: parameter spacing and native-compatible PHPDoc with precise list analysis preserved.
+- `wordpress/coagmentator/src/Auth/class-authentication-evidence.php`: reverse the strict UUID comparison for Yoda style; document the always-throwing serialization method as `@return never`, retaining its native array signature and exception.
+- `wordpress/coagmentator/src/foundation.php` and `tests/fixtures/c03a-observe.php`: document the initial include separately so PHPCS recognizes the existing package docblock as file documentation.
+- `tests/environment/c03a-control.php`, `tests/fixtures/c03a-controller.php`, `tests/fixtures/c03a-instrumentation.php`, `tests/unit/CredentialWindowTest.php`, and `tests/unit/BindingConfigurationTest.php`: associative-array layout and assignment alignment only, plus the controller exception described below.
+- `tests/security/AlternateAuthenticationTest.php`: two line-specific test-only Base64 exceptions.
+- `phpcs.xml.dist`: one exact-file, one-sniff test-only duplicate-class exception.
+
+Intentional test-only exceptions:
+
+1. `WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize` on the single controller serialization attempt, with a comment explaining that it proves evidence cannot persist.
+2. `WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode` individually on each of the two Basic-header fixtures, with comments explaining alternate-authentication denial testing.
+3. `Generic.Classes.DuplicateClassName` only for `tests/fixtures/c03a-controller.php`. Inspection of pinned PHPCS 3.13.6 shows that this sniff processes all declarations at `T_OPEN_TAG` and records class identities before declaration-level ignores apply. A local ignore on the new declaration would still register the identity and report the duplicate against accepted C02 when C03A is scanned first. The exact-file/sniff exception avoids traversal-order dependence without altering C02, excluding any other sniff, or suppressing this sniff globally.
+
+No authentication redesign, configuration schema change, test expectation change, PHPStan baseline/configuration change, dependency/lock change, workflow change, or accepted MU/C02 fixture change. `Bridge_Identity` and `Identity_Values` remain byte-identical.
+
+### Local verification and publication
+
+- Isolated scratch PHP 8.3 CLI and the exact pinned PHPCS/WPCS/PHPCSUtils/PHPCSExtra versions enabled local verification without modifying repository dependencies or production.
+- All 52 PHP files pass syntax checks; full repository WPCS passes with zero unsuppressed errors or warnings.
+- `git diff --check` and shell syntax pass. Diff review confirms only the stated semantic-preserving runtime changes and presentation/documentation changes.
+- A PHP-token comparison of all seven changed test/support files against the starting commit confirms identical executable tokens after ignoring whitespace, comments and optional trailing commas. No assertions or test mechanics changed.
+- Local PHPUnit/PHPStan were not run; the focused CI supplies those results. A standalone PHPUnit PHAR fetch was unavailable and no repository dependency was changed to work around it.
+- Reviewed local tree and connector-created Git tree match exactly. Connector publication updated only the existing branch using the exact expected starting HEAD, followed by independent Git fetch verification.
+- Corrected tested HEAD: `1d6439f1a57bab979c85d717eaee11e58c137412`.
+- Corrected complete tested tree: `bf1463d1dfa06b3afa69c8bac40c67950ed5fba9`.
+- Exactly one new focused workflow: [37399919186](https://github.com/jimlunsford/coagmentator/actions/runs/37399919186), push, attempt 1. No PR, rerun, six-lane expansion or merge.
+
+
+### Successful focused CI evidence
+
+Run `37399919186`, attempt 1, concluded SUCCESS. All jobs verified the exact tested HEAD/tree above. The candidate has exactly one workflow run, and no additional CI execution was requested.
+
+| Job | Job ID | Conclusion and evidence |
+| --- | --- | --- |
+| PHP 8.3 unit/lint | 112064578304 | SUCCESS, 13 tests / 235 assertions, 52 PHP lint checks, package-load and negative-load controls |
+| PHP 8.4 unit/quality | 112064578468 | SUCCESS, 13 tests / 235 assertions, 52 PHP lint checks, package-load controls, PHPStan, WPCS and both locked audits |
+| PHP 8.5 unit/lint | 112064578377 | SUCCESS, 13 tests / 235 assertions, 52 PHP lint checks, package-load and negative-load controls |
+| PHP 8.4 + MariaDB 10.11 integration/HTTP | 112064578170 | SUCCESS, 140 tests / 13,446 assertions |
+
+- PHPStan level 8: `[OK] No errors`, at 01:36:20.263 UTC.
+- WPCS/PHPCS: successful exit with zero unsuppressed errors or warnings. The quality step preserves each command's failure through its aggregate status; no failure was masked.
+- Both locked Composer audits: PASS. Artifact `11384313978` (`unit-84`), SHA-256 `c7eca8deefc4e313427fc21763d50116b406b6eefce43dac70031a582bb61985`, was downloaded and independently inspected. Both `quality-audit.json` and `wp-tests-audit.json` contain empty `advisories`, `abandoned` and `filter` arrays. The environment manifest matches the exact tested HEAD/tree. Composer's existing root-version/dubious-ownership diagnostic did not prevent either locked audit; no workaround or configuration change was introduced.
+- Integration artifact `11383929297`, SHA-256 `c8cb1534a6befaa4122c60a57d9f6d106bef483823165fea41c5f2eb0d9cb343`, was downloaded and its manifest and JUnit cases independently checked: 140 tests / 13,446 assertions, no errors/failures. C01/C02 contribute 122 tests / 12,809 assertions; C03A contributes 18 tests / 637 assertions, covering all 17 identity scenarios and the alternate-authentication test. A03 unit controls retain the same expectations and totals.
+- Existing missing/custom-server preflight controls still verified zero credentials before accepted guard restoration permitted fixture issuance. Revocation-after-event and subsequent revoked-credential scenarios pass.
+- Disclosure/evidence allowlist scans pass for every job. All four sanitized evidence artifacts uploaded successfully.
+
+Executed cleanup on 2026-10-06 UTC:
+
+- 01:38:26.869: pre-cleanup evidence allowlist and secret scan PASS.
+- 01:38:27.109: credentials revoked and revocation verified; disposable identities and runtime secret file removed. The unchanged delete-all/recheck cleanup covers the extra overlap credential on the same service user.
+- 01:38:27.143: cleanup evidence scan PASS.
+- EXIT trap completed Compose teardown with `--volumes --remove-orphans`; edge, PHP and database containers and the isolated network were removed by 01:38:27.685.
+- 01:38:27.731: final workflow evidence scan PASS.
+
+### Documentation-only handoff and remaining boundaries
+
+The final handoff is a direct child of tested HEAD `1d6439f1a57bab979c85d717eaee11e58c137412`, with message `docs: record verified C03A quality correction [skip ci]`. Only `README.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md` and this work note change. All runtime/test, quality-rule, workflow and dependency blobs remain identical to the tested candidate. Its exact resulting HEAD/tree is reported separately because a commit cannot embed its own hash.
+
+C03A verification is complete and ready for human review, not human-accepted or merged. C03 overall and Gate 2 remain IN PROGRESS. C03B transport/proxy, C03C admission/audit/concurrency, C04 and bridge read routes remain unstarted. Full C03D verification remains deferred. No new durable design decision was made. Main remains unchanged; no PR, merge, production access, provisioning or deployment occurred.
+
+Exact next step: human review of this bounded C03A candidate and evidence. Do not begin C03B, C03C, C04 or bridge routes during this continuation.
