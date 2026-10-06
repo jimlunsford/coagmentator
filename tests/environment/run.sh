@@ -13,17 +13,33 @@ if [[ ${C01_MODE:-} == unit ]]; then
   "${container[@]}" php tests/fixtures/package-load.php 7.1.1 reject
   "${container[@]}" php -n tests/fixtures/package-load.php 7.1.2 reject
   if [[ $C01_PHP == 84 ]]; then
-    "${container[@]}" php tools/quality/vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress
+    quality_status=0
+    "${container[@]}" php tools/quality/vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress || quality_status=1
     "${container[@]}" php tools/quality/vendor/bin/phpcs --config-set installed_paths ../../wp-coding-standards/wpcs,../../phpcsstandards/phpcsextra,../../phpcsstandards/phpcsutils
-    "${container[@]}" php tools/quality/vendor/bin/phpcs --standard=phpcs.xml.dist -s
+    "${container[@]}" php tools/quality/vendor/bin/phpcs --standard=phpcs.xml.dist -s || quality_status=1
     for graph in quality wp-tests; do
-      docker run --rm -v "$PWD:/workspace" -w "/workspace/tools/$graph" coagmentator-c01-php composer audit --locked --format=json > ".runtime/evidence/$graph-audit.json"
+      docker run --rm -v "$PWD:/workspace" -w "/workspace/tools/$graph" coagmentator-c01-php composer audit --locked --format=json > ".runtime/evidence/$graph-audit.json" || quality_status=1
     done
+    exit "$quality_status"
   fi
   exit 0
 fi
 compose=(docker compose --project-name "c01-${C01_PHP}-${C01_DATABASE}" --env-file .runtime/compose.env -f tests/environment/compose.yml)
-trap '"${compose[@]}" down --volumes --remove-orphans' EXIT
+cleanup() {
+  original_status=$?
+  trap - EXIT
+  set +e
+  python3 tests/environment/check-evidence.py
+  scan_status=$?
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup
+  revoke_status=$?
+  "${compose[@]}" down --volumes --remove-orphans
+  destroy_status=$?
+  if (( original_status || scan_status || revoke_status || destroy_status )); then
+    exit 1
+  fi
+}
+trap cleanup EXIT
 "${compose[@]}" up -d database php edge
 "${compose[@]}" exec -T edge nginx -v
 # Bounded readiness probe, without printing connection errors or passwords.
@@ -43,3 +59,74 @@ done
 network="c01-${C01_PHP}-${C01_DATABASE}_isolated"
 test "$(docker network inspect --format '{{.Internal}}' "$network")" = true
 printf 'Internal test network verified; no published host ports.\n'
+
+# C02 begins only after the original C01 smoke/control suite passes.
+cp -R wordpress/mu-plugins .runtime/wordpress/src/wp-content/mu-plugins
+cp tests/fixtures/c02-observe.php .runtime/wordpress/src/c02-observe.php
+cp tests/fixtures/c02-target.php .runtime/wordpress/src/c02-target.php
+cp tests/fixtures/c02-instrumentation.php .runtime/wordpress/src/wp-content/mu-plugins/zz-c02-fixture.php
+"${compose[@]}" exec -T php php tests/environment/c02-control.php setup
+for scenario in restored missing-registry malformed-registry; do
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"
+  "${compose[@]}" restart php
+  "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/preflight.xml --log-junit ".runtime/evidence/c02-preflight-$scenario.xml"
+done
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+# A real competing server must fail issuance without disabling public/human REST.
+# Load the fixed synthetic handler so its absence cannot explain bridge denial.
+mkdir -p .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest
+cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
+cp tests/fixtures/c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+if "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight; then
+  printf 'Credential issuance did not stop on competing REST server.\n' >&2
+  exit 1
+fi
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/custom-server.xml --log-junit .runtime/evidence/c02-custom-server-preflight.xml
+printf 'Custom REST server preserved; failed preflight has zero credentials; public and human REST controls passed.\n'
+rm .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario restored
+"${compose[@]}" restart php
+mv .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard.php .runtime/c02-loader-held.php
+if "${compose[@]}" exec -T php php tests/environment/c02-control.php preflight; then
+  printf 'Credential issuance did not stop on absent guard.\n' >&2
+  exit 1
+fi
+mv .runtime/c02-loader-held.php .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard.php
+"${compose[@]}" exec -T php php tests/environment/c02-control.php preflight
+for scenario in active deactivated absent deleted bad-policy missing-policy missing-registry malformed-registry missing-registry-active malformed-registry-active unreadable-registry promoted-unmarked missing-support restored; do
+  "${compose[@]}" exec -T php php tests/environment/c02-control.php scenario "$scenario"
+  if [[ $scenario == absent || $scenario == deleted ]]; then
+    mv .runtime/wordpress/src/wp-content/plugins/coagmentator .runtime/c02-plugin-held
+  fi
+  if [[ $scenario == missing-support ]]; then
+    mv .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard/src/class-guard.php .runtime/c02-guard-held.php
+  fi
+  "${compose[@]}" restart php
+  "${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/phpunit.xml --log-junit ".runtime/evidence/c02-$scenario.xml"
+  if [[ -d .runtime/c02-plugin-held ]]; then
+    mv .runtime/c02-plugin-held .runtime/wordpress/src/wp-content/plugins/coagmentator
+  fi
+  if [[ -f .runtime/c02-guard-held.php ]]; then
+    mv .runtime/c02-guard-held.php .runtime/wordpress/src/wp-content/mu-plugins/coagmentator-guard/src/class-guard.php
+  fi
+done
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario internal
+mkdir -p .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest
+cp tests/fixtures/c02-controller.php .runtime/wordpress/src/wp-content/plugins/coagmentator/src/Rest/ReadController.php
+printf '%s\n' '<?php require WP_PLUGIN_DIR . "/coagmentator/src/Rest/ReadController.php";' > .runtime/wordpress/src/wp-content/mu-plugins/zy-c02-controller.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-internal.xml
+cp tests/fixtures/c02-custom-server.php .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/custom-server.xml --log-junit .runtime/evidence/c02-custom-server-existing-credentials.xml
+rm .runtime/wordpress/src/wp-content/mu-plugins/zx-c02-custom-server.php
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/internal.xml --log-junit .runtime/evidence/c02-custom-server-restored.xml
+printf 'Competing server removed; normal guarded authentication and internal-dispatch controls restored.\n'
+"${compose[@]}" exec -T php php tests/environment/c02-control.php scenario replacement
+"${compose[@]}" restart php
+"${compose[@]}" run --rm client php tools/quality/vendor/bin/phpunit -c tests/security/replacement.xml --log-junit .runtime/evidence/c02-replacement.xml
+python3 tests/environment/check-evidence.py
+"${compose[@]}" exec -T php php tests/environment/c02-control.php cleanup

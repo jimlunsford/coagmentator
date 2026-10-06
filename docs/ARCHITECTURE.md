@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is NOT STARTED. No guard, authentication, bridge handler or MCP implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is IN PROGRESS on its dedicated branch, with the bounded custom-server correction verified across all three unit/quality jobs and six database lanes after sequential CI recovery, ready for human acceptance review. The tested runtime remains d039aed3c07ac357c6798d989ccbe3df76cec5d2; subsequent commits change documentation only. No real bridge handler, C03 foundation or MCP implementation exists.
 
 ## Components and authority
 
@@ -65,3 +65,13 @@ Content reads return stored raw source without executing blocks/shortcodes. Writ
 Continue the monorepo layout planned in Gate 0: `apps/mcp-server/`, `wordpress/coagmentator/`, `packages/contracts/`, `tests/`, and `docs/`. Only documentation is created in Gate 1. Gate 2 builds the WordPress read foundation and must-use guard; Gate 3 builds mutations, both bridge policy profiles, strict approval UI and journal; Gate 4 builds the MCP/OAuth adapter, durable handle ownership, file retrieval and result projection. Gates 5 and 6 validate non-production then separately authorized production use. Do not silently implement a later gate.
 
 [SECURITY.md](SECURITY.md) owns security invariants; [THREAT-MODEL.md](THREAT-MODEL.md) traces concrete attacks and residual risks; [ROADMAP.md](ROADMAP.md) owns status and acceptance. Work notes are evidence and handoffs, not alternate contracts.
+
+## C02 implementation boundary
+
+The independent package consists of the root MU loader and its five support classes. The loader retains denial and minimal failure encoding when support code is missing. The protected registry is operator-owned canonical JSON outside the web root, separate from the minimal feature-readiness file. Its user IDs impose restrictions even after role promotion or marker removal. WordPress-side service metadata only adds denial.
+
+The guard copies only authenticated user ID and matched credential UUID from core's Application Password events. The MU server owns one external dispatch scope, checks exact method/path and callback identity before validation, observes current-user changes and retains restrictions through nested or subsequent calls. Its expected future normal-plugin callback is the already-loaded final `Coagmentator\Rest\ReadController`, from the fixed package path, with operation-named methods and `authorize_guard_request`. The guard does not load or ship that class. C02 finalization only emits closed failures; it has no success serializer or read implementation. Broader binding, capability and operational controls remain C03/later work.
+
+A competing REST server selection is an unsupported Coagmentator environment and fails guard preflight before credential issuance. The guard preserves that custom selection for ordinary public and human REST instead of replacing it or recording a global authentication failure. Existing server-identity, authentication and dispatch checks deny all bridge access and protected/marked service access under the custom server. It is never implicitly trusted. Removing the competing selection restores the normal guarded server and preflight path on the next request.
+
+Missing registry/support triggers global remote-credential denial while core-validated human login/cookies, admin recovery and public anonymous traffic remain available. Disposable verification and exact execution evidence are recorded in the [security harness](../tests/security/README.md) and [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). No production installation or provisioning has occurred.

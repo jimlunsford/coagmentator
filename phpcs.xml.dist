@@ -5,6 +5,8 @@
   <file>tests</file>
   <arg name="extensions" value="php"/>
   <rule ref="WordPress"/>
+  <!-- WordPress auto-loads this required MU entry point; the fallback class must live here. -->
+  <rule ref="WordPress.Files.FileName.InvalidClassFileName"><exclude-pattern>wordpress/mu-plugins/coagmentator-guard.php</exclude-pattern></rule>
   <!-- PHPUnit class discovery uses *Test.php; these are never runtime plugin files. -->
   <rule ref="WordPress.Files.FileName"><exclude-pattern>tests/*</exclude-pattern></rule>
   <!-- Disposable CLI fixtures and probes intentionally read fixed local test files,
