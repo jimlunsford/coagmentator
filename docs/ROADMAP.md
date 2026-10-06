@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 is accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C02: Independent MU Guard is `IN PROGRESS`, unaccepted.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01 and C02 are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `NOT STARTED`.
 
 Preparation acceptance evidence:
 
@@ -108,9 +108,22 @@ Human-reviewed and accepted on 2026-10-05; merged unchanged using a merge commit
 - Both [environment blocker](work-notes/2026-10-05-gate-2-c01-environment-blocker.md) and [Actions continuation](work-notes/2026-10-05-gate-2-c01-actions-continuation.md) histories and the [CI recovery evidence JSON](work-notes/2026-10-05-gate-2-c01-ci-recovery-evidence.json) are preserved unchanged.
 - **C02: Independent MU Guard, NOT STARTED.** Exact next checkpoint, in a separately authorized execution. No guard, bridge REST route, service user or Application Password exists in the C01 package/test environment. No production access or deployment occurred.
 
-### C02: Independent MU Guard, IN PROGRESS
+### C02: Independent MU Guard, ACCEPTED
 
-The original implementation verification and subsequent bounded custom-server correction are recorded in the [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md). C01 closeout statements above remain historical. The authorized CI recovery continuation completed the five missing jobs sequentially in workflow `37364803455`, attempts 3 through 7. Final attempt 7 is SUCCESS with all three unit/quality jobs and all six database lanes covered. Every successful execution verifies runtime SHA `d039aed3c07ac357c6798d989ccbe3df76cec5d2`, tree `728d1c088587d53b9221bfd17b856cb941e0d44c`; later commits are documentation/status only. C02 is ready for human acceptance review, remains IN PROGRESS and unaccepted, and PR #4 remains open and unmerged. C03 has not begun. Earlier infrastructure cancellations remain historical evidence, not project test failures.
+Human-reviewed and accepted on 2026-10-05; merged unchanged using a normal merge commit.
+
+- Accepted PR: [#4](https://github.com/jimlunsford/coagmentator/pull/4), merged.
+- Accepted final documentation HEAD: `21402421f03c9ad2a08d5fe8b876b854ba86896a`; tree `ed714800c6d9306d97f04c90610d105046e31200`.
+- Accepted runtime/test HEAD: `d039aed3c07ac357c6798d989ccbe3df76cec5d2`; tree `728d1c088587d53b9221bfd17b856cb941e0d44c`. The two later candidate commits change only the four authorized Markdown files.
+- Final workflow [37364803455](https://github.com/jimlunsford/coagmentator/actions/runs/37364803455), attempt 7: SUCCESS. All three unit/quality jobs and six PHP/database lanes pass at the accepted runtime identity.
+- Pre-merge main: `d25e08732577e4ff3e55c6d938acd26dd7abdeb3`; tree `dee181535214e8d20c7faafb3f00b7453075866c`.
+- Merge commit: `88bbb46ae2593a7722d8cc8a06503f20a5041738`; immediate merge tree `ed714800c6d9306d97f04c90610d105046e31200`, exactly the accepted final PR tree. Ordered parents are the expected pre-merge main and accepted PR head.
+- Custom-server compatibility correction accepted: preserve public/human traffic, refuse Coagmentator preflight and issuance with zero credentials, deny protected service/native and bridge requests, restore guarded behavior after conflict removal.
+- [C02 closeout](work-notes/2026-10-05-gate-2-c02-closeout.md) records complete executed-job evidence and the final checkpoint. The earlier [C02 handoff](work-notes/2026-10-05-gate-2-c02-independent-mu-guard.md) remains unchanged, including failures, cancellations and recovery history.
+
+### C03: Authentication/config/operations foundation, NOT STARTED
+
+Exact next checkpoint, in a separately authorized execution, from the clean C02 closeout main. No real bridge read handler or C03 implementation exists. No production identity, production Application Password, production access or deployment was created or performed in C02 closeout. Gate 3 remains NOT STARTED.
 
 Goals:
 

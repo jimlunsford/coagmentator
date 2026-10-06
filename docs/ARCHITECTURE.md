@@ -1,6 +1,6 @@
 # Architecture
 
-Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is IN PROGRESS on its dedicated branch, with the bounded custom-server correction verified across all three unit/quality jobs and six database lanes after sequential CI recovery, ready for human acceptance review. The tested runtime remains d039aed3c07ac357c6798d989ccbe3df76cec5d2; subsequent commits change documentation only. No real bridge handler, C03 foundation or MCP implementation exists.
+Gate 0 established the component split. The detailed Gate 1 design below is accepted. C01 package/test scaffolding is human-accepted and merged on main after verification across the required matrix. C02: Independent MU Guard is human-accepted and merged unchanged on main through PR #4. The accepted custom-server correction has complete three-unit/six-database-lane evidence in workflow 37364803455, final attempt 7 SUCCESS. The tested runtime remains d039aed3c07ac357c6798d989ccbe3df76cec5d2; subsequent candidate and closeout changes are documentation only. See the [C02 closeout](work-notes/2026-10-05-gate-2-c02-closeout.md). Gate 2 remains IN PROGRESS; C03 and Gate 3 remain NOT STARTED. No real bridge handler, C03 foundation or MCP implementation exists.
 
 ## Components and authority
 
