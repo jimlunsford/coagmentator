@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02 and C03A are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03B the next unstarted checkpoint.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02 and C03A are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03B an unaccepted transport/proxy candidate.
 
 Preparation acceptance evidence:
 
@@ -140,7 +140,7 @@ Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge
 - [C03A closeout](work-notes/2026-10-06-gate-2-c03a-closeout.md) records verification and the final checkpoint. The original [work note](work-notes/2026-10-05-gate-2-c03a-authentication-configuration.md), including failed run `37398487754` and its correction history, remains unchanged.
 - C02 MU guard and fixture remain unchanged. No bridge handler, production service identity/Application Password, production access or deployment was created by this work.
 
-**C03B: NOT STARTED.** Transport/proxy work is the exact next checkpoint, only in a separately authorized execution.
+**C03B: IN PROGRESS.** The [transport/proxy candidate](C03B-TRANSPORT.md) implements closed deployment profiles and conjunctive server transport evidence. One focused CI execution is pending. It is not accepted. See the [work note](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md).
 
 **C03C: NOT STARTED.** Admission/audit/concurrency work remains deferred.
 

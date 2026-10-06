@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap/security.php" colors="false" failOnWarning="true" failOnRisky="true" failOnDeprecation="true">
+  <testsuites><testsuite name="C03B transport"><file>TransportTest.php</file></testsuite></testsuites>
+</phpunit>

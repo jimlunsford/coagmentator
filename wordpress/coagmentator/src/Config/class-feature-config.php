@@ -24,16 +24,24 @@ final class Feature_Config {
 	 * @var Credential_Window Approved UUID window.
 	 */
 	private Credential_Window $credentials;
+	/**
+	 * Validated transport profile.
+	 *
+	 * @var Transport_Policy Transport profile.
+	 */
+	private Transport_Policy $transport;
 
 	/**
 	 * Only the validating factory constructs policies.
 	 *
 	 * @param array<string, mixed> $values Validated fields.
 	 * @param Credential_Window    $credentials Validated credential window.
+	 * @param Transport_Policy     $transport Validated transport binding.
 	 */
-	private function __construct( array $values, Credential_Window $credentials ) {
+	private function __construct( array $values, Credential_Window $credentials, Transport_Policy $transport ) {
 		$this->values      = $values;
 		$this->credentials = $credentials;
+		$this->transport   = $transport;
 	}
 
 	/**
@@ -70,7 +78,7 @@ final class Feature_Config {
 			return null;
 		}
 		$data = json_decode( trim( $bytes ), true, 8 );
-		$keys = array( 'version', 'guard_api', 'enabled', 'site_id', 'actor_id', 'service_user_id', 'protected_user_ids', 'credential_uuids', 'rotation', 'home_origin', 'home_path', 'bridge_origin', 'bridge_path', 'private_reads', 'read_operations', 'policy_version', 'approval_profile', 'writes_enabled', 'storage' );
+		$keys = array( 'version', 'guard_api', 'enabled', 'site_id', 'actor_id', 'service_user_id', 'protected_user_ids', 'credential_uuids', 'rotation', 'home_origin', 'home_path', 'bridge_origin', 'bridge_path', 'transport', 'private_reads', 'read_operations', 'policy_version', 'approval_profile', 'writes_enabled', 'storage' );
 		if ( ! is_array( $data ) || array_keys( $data ) !== $keys ) {
 			return null;
 		}
@@ -98,7 +106,11 @@ final class Feature_Config {
 				return null;
 			}
 		}
-		if ( ! self::origin( $data['home_origin'] ) || $data['bridge_origin'] !== $data['home_origin'] || ! is_string( $data['home_path'] ) || strlen( $data['home_path'] ) > 256 || 1 !== preg_match( '#^/(?:[A-Za-z0-9_-]+/)*$#D', $data['home_path'] ) || rtrim( $data['home_path'], '/' ) . '/wp-json/coagmentator/v1' !== $data['bridge_path'] ) {
+		if ( ! self::origin( $data['home_origin'] ) || $data['bridge_origin'] !== $data['home_origin'] || ! is_string( $data['home_path'] ) || strlen( $data['home_path'] ) > 256 || 1 !== preg_match( '#^/(?:[A-Za-z0-9_-]+/)*$#D', $data['home_path'] ) || ! is_string( $data['bridge_path'] ) || rtrim( $data['home_path'], '/' ) . '/wp-json/coagmentator/v1' !== $data['bridge_path'] ) {
+			return null;
+		}
+		$transport = Transport_Policy::parse( $data['transport'], $data['home_origin'], $data['bridge_path'] );
+		if ( null === $transport ) {
 			return null;
 		}
 		$operations = $data['read_operations'];
@@ -121,14 +133,15 @@ final class Feature_Config {
 				return null;
 			}
 		}
-		return new self( $data, $window );
+		return new self( $data, $window, $transport );
 	}
 
 	/**
 	 * Canonical HTTPS DNS origin, without userinfo, paths, query or default port.
-	 * Deployment transport enforcement is deliberately deferred to C03B.
+	 * Transport enforcement uses the separately validated profile.
 	 *
 	 * @param mixed $origin Operator value.
+	 * @phpstan-assert-if-true string $origin
 	 * @return bool Valid origin.
 	 */
 	private static function origin( mixed $origin ): bool {
@@ -138,6 +151,15 @@ final class Feature_Config {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- Pure host configuration parser also runs without WordPress.
 		$port = parse_url( $origin, PHP_URL_PORT );
 		return strlen( $origin ) <= 253 && 1 === preg_match( '#^https://[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+(?::(?:[1-9][0-9]{0,4}))?$#D', $origin ) && ! str_ends_with( $origin, ':443' ) && ( null === $port || is_int( $port ) );
+	}
+
+	/**
+	 * Immutable host transport binding.
+	 *
+	 * @return Transport_Policy Validated profile.
+	 */
+	public function transport(): Transport_Policy {
+		return $this->transport;
 	}
 
 	/**
