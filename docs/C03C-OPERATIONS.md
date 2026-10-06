@@ -1,6 +1,6 @@
 # C03C Admission, Concurrency and Read Audit
 
-C03C is an implemented, unaccepted candidate. C03 and Gate 2 remain IN PROGRESS. C03A and C03B remain ACCEPTED. C03D full-matrix verification, C04, real bridge read routes and Gate 3 are not started. See the [C03C handoff](work-notes/2026-10-06-gate-2-c03c-admission-audit-concurrency.md) for executed evidence and current review readiness.
+C03C is an implemented, partial/unaccepted candidate blocked by final disposable-directory cleanup failure in its single focused CI run. It is not ready for acceptance review. C03 and Gate 2 remain IN PROGRESS. C03A and C03B remain ACCEPTED. C03D full-matrix verification, C04, real bridge read routes and Gate 3 are not started. See the [C03C handoff](work-notes/2026-10-06-gate-2-c03c-admission-audit-concurrency.md) for executed evidence and current review readiness.
 
 ## Boundary and ordering
 

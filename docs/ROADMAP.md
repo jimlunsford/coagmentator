@@ -82,7 +82,7 @@ No unmade architecture choice blocks review. Provider product, SDK/core support 
 
 **Status: IN PROGRESS**
 
-The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02, C03A and C03B are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03C implemented as an unaccepted partial candidate pending focused CI and human review.
+The Gate 2 preparation plan was human-reviewed and accepted on 2026-10-05, then merged unchanged. The [implementation plan](GATE-2-IMPLEMENTATION-PLAN.md), [nine read route specifications](GATE-2-READ-ROUTES.md) and [support/test matrix](TEST-MATRIX.md) are accepted preparation. C01, C02, C03A and C03B are accepted; Gate 2 as a whole is not accepted. Gate 2 remains `IN PROGRESS`; C03 remains `IN PROGRESS`, with C03C implemented as an unaccepted partial candidate blocked by cleanup failure in its single focused CI run.
 
 Preparation acceptance evidence:
 
@@ -155,7 +155,7 @@ Human-reviewed and accepted on 2026-10-06; merged unchanged using a normal merge
 - [C03B closeout](work-notes/2026-10-06-gate-2-c03b-closeout.md) records evidence and the final checkpoint. Original [implementation handoff](work-notes/2026-10-06-gate-2-c03b-transport-proxy.md) remains unchanged as historical evidence.
 - C02 guard and C03A identity/configuration semantics remain intact. No real bridge read handler, production service identity/Application Password, production access or deployment was created by this work.
 
-**C03C: IN PROGRESS, partial/unaccepted candidate.** [Operational foundation](C03C-OPERATIONS.md) and [handoff](work-notes/2026-10-06-gate-2-c03c-admission-audit-concurrency.md) record persistent admission, local concurrency, deadline, audit and focused verification. One focused CI checkpoint is authorized; C03D remains deferred.
+**C03C: IN PROGRESS, partial/unaccepted and blocked.** [Operational foundation](C03C-OPERATIONS.md) and [handoff](work-notes/2026-10-06-gate-2-c03c-admission-audit-concurrency.md) record persistent admission, local concurrency, deadline, audit and focused verification. The single authorized focused CI run 37539689554 failed during final disposable-directory cleanup after all assertions passed. No fix or rerun followed. C03C is not ready for acceptance review; C03D remains deferred.
 
 **C04: NOT STARTED.** No capability-policy or bridge-read implementation begins in this closeout.
 
